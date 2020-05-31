@@ -67,11 +67,11 @@ void PrimeMan::readFile(std::fstream& input)
         else assert(buf == "H" || buf == "V");
         int supply;
         input >> supply; //<defaultSupplyOfOneGGrid>
-        Layer* l = new Layer(str,idx,direction,supply,_area);
-        _layers[idx] = l;
+        Layer* l = new Layer(str,idx-1,direction,supply,_area);
+        _layers[idx-1] = l;
     }
+    //TODO
 
-    
 }
 
 void PrimeMan::constructCoordinate()
