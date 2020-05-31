@@ -36,7 +36,7 @@ class PinType
 {
 public:
     //Constructors
-    PinType(const std::string&  PinName, int layer, MasterCellType& MCT):
+    PinType(const std::string PinName, int layer, MasterCellType& MCT):
     _PinName(PinName), _layer(layer), _MCT(MCT)
     { assert(layer >= 0); }
 
@@ -45,7 +45,7 @@ public:
     { assert(a._layer >= 0); }
 
     //acceser
-    std::string getPinName() const                                  { return _PinName; }
+    std::string& getPinName() const                                 { return _PinName; }
     int         getLayer() const                                    { return _layer; }
 
     //friend
@@ -64,7 +64,7 @@ class BlockageType
 {
 public:
     //Constructors
-    BlockageType(const std::string& BlkgName, int layer, int demand):
+    BlockageType(const std::string BlkgName, int layer, int demand):
     _BlkgName(BlkgName), _layer(layer), _demand(demand)
     { assert(layer>=0 && demand>=0); }
 
@@ -93,18 +93,18 @@ class MasterCellType
 {
 public:
     //Constructor(no copy constructor)
-    MasterCellType(const std::string& MCName, unsigned id, int layer): _MCName(MCName), _Id(id), _layer(layer)
+    MasterCellType(const std::string MCName, unsigned id, int layer): _MCName(MCName), _Id(id), _layer(layer)
     {
         _LayerDemand.reserve(layer); for (int i = 0;i < layer; ++i) _LayerDemand.push_back(0);
     }
 
     //Modifier
-    void AddBlkg(const std::string& BlkgName, int layer, int demand)
+    void AddBlkg(const std::string BlkgName, int layer, int demand)
     {
         _Blkgs.push_back(BlockageType(BlkgName, layer, demand));
         _LayerDemand[layer] += demand;
     }
-    void MasterCellType::AddPin(const std::string& PinName, int layer)
+    void AddPin(const std::string PinName, int layer)
     {
         _PinName2Idx[PinName] = _Pins.size();
         _Pins.push_back(PinType(PinName, layer, *this));
@@ -123,7 +123,7 @@ public:
     }
 
     //acceser
-    std::string getMCName() const                                   { return _MCName; }
+    std::string& getMCName() const                                  { return _MCName; }
     unsigned getId() const                                          { return _Id; }
     unsigned getNumLayers() const                                   { return _layer; }
     int getLayerDemand(int i) const                                 { assert(i < _LayerDemand.size()); return _LayerDemand[i]; }

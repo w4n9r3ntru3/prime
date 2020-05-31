@@ -42,8 +42,8 @@ public:
     PinType& getPinType() const                         { return _PT; }
     Net& get_net() const                                { return _net; }
     Cell& get_cell() const                              { return _cell; }
-    unsigned getX() const                               { return _cell.getX(); }
-    unsigned getY() const                               { return _cell.getY(); }
+    unsigned getRow() const                             { return _cell.getRow(); }
+    unsigned getColumn() const                          { return _cell.getColumn(); }
     int getLayer() const                                { return _PT.getLayer(); }    
 
 private:
@@ -56,7 +56,7 @@ class Net
 {
 public:
     // Constructors(no copy constructor)
-    Net(const std::string& NetName, unsigned id, unsigned PinNum, unsigned layer): _NetName(NetName), _Id(id), _layer(layer)
+    Net(const std::string NetName, unsigned id, unsigned PinNum, unsigned layer): _NetName(NetName), _Id(id), _layer(layer)
     {
         _pins.reserve(PinNum);
     }
@@ -81,7 +81,7 @@ class Cell
 {
 public:
     //Constructors(no copy constructor)
-    Cell(const std::string& CellName, MasterCellType& MCT, bool movable, unsigned id):
+    Cell(const std::string CellName, MasterCellType& MCT, bool movable, unsigned id):
     _CellName(CellName), _MCT(MCT), _movable(movable), _Id(id)
     {
         int p = _MCT.getNumPins();
@@ -101,16 +101,16 @@ public:
     }
 
     //modifier
-    void setX(unsigned x)                               { _x = x; }
-    void setY(unsigned y)                               { _y = y; }
+    void setRow(unsigned x)                             { _row = x; }
+    void setColumn(unsigned y)                          { _column = y; }
 
     //accesser
-    std::string getCellName() const                     { return _CellName; }
+    std::string& getCellName() const                    { return _CellName; }
     bool movable() const                                { return _movable; }
-    unsigned getX() const                               { return _x; }
-    unsigned getY() const                               { return _y; }
+    unsigned getRow() const                             { return _row; }
+    unsigned getColumn() const                          { return _column; }
     Pin& getPin(size_t i) const                         { assert(i < _pins.size()); return _pins[i]; }
-    Pin& getPin(std::string str) const                  { return _pins[_MCT.getPin(str)]; }
+    Pin& getPin(std::string& str) const                 { return _pins[_MCT.getPin(str)]; }
     int getLayerDemand(int i) const                     { return _MCT.getLayerDemand(i); }
     int getSameGridDemand(Cell& a, int& layer) const    { return _MCT.getSameDemand(a._MCT,layer); }
     int getadjHGridDemand(Cell& a, int& layer) const    { return _MCT.getDemand(a._MCT,layer); }
@@ -126,8 +126,8 @@ private:
     MasterCellType&                     _MCT;
     const unsigned                      _Id;
     const bool                          _movable;
-    unsigned                            _x;
-    unsigned                            _y;
+    unsigned                            _row;
+    unsigned                            _column;
     std::vector<Pin>                    _pins;
     std::vector<std::vector<Pin*>*>     _Layer2pin;
 };
