@@ -109,15 +109,17 @@ public:
         _PinName2Idx[PinName] = _Pins.size();
         _Pins.push_back(PinType(PinName, layer, *this));
     }
-    void AddExtraSame(unsigned MC, int demand)
+    void AddExtraSame(unsigned MC, int demand, int layer)
     {
         _ExtraSameGrid[MC] = _SameGridDemand.size();
         _SameGridDemand.push_back(demand);
+        _SameGridLayer.push_back(layer);
     }
-    void AddExtraadjH(unsigned MC, int demand)
+    void AddExtraadjH(unsigned MC, int demand, int layer)
     {
         _ExtraadjHGrid[MC] = _HGridDemand.size();
         _adjHGridDemand.push_back(demand);
+        _adjHGridLayer.push_back(layer);
     }
 
     //acceser
@@ -131,28 +133,48 @@ public:
     PinType& getPinType(std::string& str) const                     { auto idx = _PinName2Idx.find(str); assert(idx != _PinName2Idx.end()); return _Pins[idx->second]; }
     size_t getPin(std::string& str) const                           { auto idx = _PinName2Idx.find(str); assert(idx != _PinName2Idx.end()); return idx->second; }
     BlockageType& getBlkg(size_t i) const                           { assert(i < _Blkgs.size()); return _Blkgs[i]; }
-    int getDemandSame(unsigned a) const                             
+    int getDemandSame(unsigned a, int& layer) const                             
     {
         auto idx = _ExtraSameGrid.find(a);
-        if(idx != _ExtraSameGrid.end()) return _SameGridDemand[idx->second];
+        if(idx != _ExtraSameGrid.end())
+        {
+            layer = _SameGridLayer[idx->second];
+            return _SameGridDemand[idx->second];
+        }
+        layer = -1;
         return 0;
     }
-    int getDemandSame(const MasterCellType& a) const
+    int getDemandSame(const MasterCellType& a, int& layer) const
     {
         auto idx = _ExtraSameGrid.find(a._Id);
-        if(idx != _ExtraSameGrid.end()) return _SameGridDemand[idx->second];
+        if(idx != _ExtraSameGrid.end())
+        {
+            layer = _SameGridLayer[idx->second];
+            return _SameGridDemand[idx->second];
+        }
+        layer = -1;
         return 0;
     }
-    int getDemandadjH(unsigned a) const                             
+    int getDemandadjH(unsigned a, int& layer) const                             
     {
         auto idx = _ExtraadjHGrid.find(a);
-        if(idx != _ExtraadjHGrid.end()) return _adjHGridDemand[idx->second];
+        if(idx != _ExtraadjHGrid.end())
+        {
+            layer = _adjHGridLayer[idx->second];
+            return _adjHGridDemand[idx->second];
+        }
+        layer = -1;
         return 0;
     }
-    int getDemandadjH(const MasterCellType& a) const
+    int getDemandadjH(const MasterCellType& a, int& layer) const
     {
         auto idx = _ExtraadjHGrid.find(a._Id);
-        if(idx != _ExtraadjHGrid.end()) return _adjHGridDemand[idx->second];
+        if(idx != _ExtraadjHGrid.end())
+        {
+            layer = _adjHGridLayer[idx->second];
+            return _adjHGridDemand[idx->second];
+        }
+        layer = -1;
         return 0;
     }
 
@@ -168,8 +190,10 @@ private:
     std::vector<BlockageType>                   _Blkgs;
     std::unordered_map<unsigned,unsigned>       _ExtraSameGrid;
     std::vector<int>                            _SameGridDemand;
+    std::vector<int>                            _SameGridLayer;
     std::unordered_map<unsigned,unsigned>       _ExtraadjHGrid;
     std::vector<int>                            _adjHGridDemand;
+    std::vector<int>                            _adjHGridLayer;
     std::unordered_map<std::string,unsigned>    _PinName2Idx;
 };
 

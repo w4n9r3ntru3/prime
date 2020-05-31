@@ -75,7 +75,7 @@ private:
     const unsigned                      _Id;
     const unsigned                      _layer;
     std::vector<Pin*>                   _pins;
-}
+};
 
 class Cell
 {
@@ -111,9 +111,9 @@ public:
     unsigned getY() const                               { return _y; }
     Pin& getPin(size_t i) const                         { assert(i < _pins.size()); return _pins[i]; }
     Pin& getPin(std::string str) const                  { return _pins[_MCT.getPin(str)]; }
-    int getBlkgDemand() const                           { return _MCT.getDemand(); }
-    int getSameGridDemand(Cell& a) const                { return _MCT.getSameDemand(a._MCT); }
-    int getadjHGridDemand(Cell& a) const                { return _MCT.getDemand(a._MCT); }
+    int getLayerDemand(int i) const                     { return _MCT.getLayerDemand(i); }
+    int getSameGridDemand(Cell& a, int& layer) const    { return _MCT.getSameDemand(a._MCT,layer); }
+    int getadjHGridDemand(Cell& a, int& layer) const    { return _MCT.getDemand(a._MCT,layer); }
     size_t getNumPins() const                           { return _pins.size(); }
     int getLayerDemand(int i) const                     { return _MCT.getLayerDemand(i); }
     std::vector<Pin*>& getPinLayer(int i) const         { return *_Layer2pin[i];}
@@ -132,6 +132,7 @@ private:
     std::vector<std::vector<Pin*>*>     _Layer2pin;
 };
 
-std::ostream& operator<<(std::ostream& os, const Cell& cell);
+std::ostream& operator<<(std::ostream& os, const Cell& cell)
+{ os << "CellName : " << cell.getCellName() << " MasterCellType : " << cell._MCT.getMCName() << '\n'; }
 
 #endif

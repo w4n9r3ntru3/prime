@@ -1,21 +1,22 @@
 /***********************************************************************
 
-  FileName    [Cell.h]
+  FileName    [Grid.h]
 
   Author      [Yang, Chien Yi]
 
-  This file defines the cells and their elements, pins and nets.
+  This file defines the Layers, the Grids, and their Coordinates(to
+  save cells).
 
 ***********************************************************************/
 
-#ifndef CELL_H
-#define CELL_H
+#ifndef GRID_H
+#define GRID_H
 
 ////////////////////////////////////////////////////////////////////////
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "MasterCell.h"
+#include "Cell.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
@@ -25,33 +26,31 @@
 ///                           CLASSES                                ///
 ////////////////////////////////////////////////////////////////////////
 
-class NormalGrid : public Grid
+class Grid;
+
+class Layer
 {
 public:
-    NormalGrid(unsigned i):Grid(i),_cost(0),_search(0),_nearPin(0) {}
-    NormalGrid(unsigned i,unsigned pi):Grid(i),_cost(0),_search(0),_nearPin(1),_pin(pi) {}
-    ~NormalGrid() {}
-    GridType type() const override { return Normal_Grid; }
-    bool routable(const unsigned target) const override
-    {
-        if(_nearPin&&target != _pin) return false;
-        return !_search;
-    }
-    int get_cost() const override { return _cost; }
-    int get_estimated() const override { return _estimated_cost; }
-    unsigned get_target() const override { return _pi; }//should be get_pi, only for virtual convenience
-    void assign_cost(int cost) override { _cost = cost; }
-    void assign_estimated(unsigned pi,int cost) override { _pi = pi; _estimated_cost = cost; _search = true; }
-    void reset() override { _search = false; }
 private:
-    int                 _cost;
-    unsigned            _pi;
-    bool                _nearPin;
-    unsigned            _pin;
-    int                 _estimated_cost;
-    bool                _search;
-    //bool                _nearby;
-    //bool                _init;
+};
+
+class Coordinate
+{
+public:
+private:
+
+};
+
+class Grid
+{
+public:
+    //constructors
+    Grid(unsigned i, int supply, Coordinate& c):_idx(i), _supply(supply), _coordinate(c) {}
+    Grid(Grid& a):_idx(a._idx), _supply(a._supply), _coordinate(a._coordinate) {}
+private:
+    unsigned                    _idx;
+    int                         _supply;
+    Coordinate&                 _coordinate;
 };
 
 #endif

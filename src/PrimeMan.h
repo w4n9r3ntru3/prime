@@ -1,16 +1,21 @@
 /***********************************************************************
 
-  FileName    [Cell.cpp]
+  FileName    [PrimeMan.h]
 
   Author      [Yang, Chien Yi]
 
-  This file describes the functions in Cell.h and MasterCell.h.
+  This file difines the data manager for prime.
 
 ***********************************************************************/
 
+#ifndef PRIMEMAN_H
+#define PRIMEMAN_H
+
 ////////////////////////////////////////////////////////////////////////
-///                          INCLUDES                                ///
+///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
+
+#include<fstream>
 
 #include "Cell.h"
 
@@ -19,9 +24,21 @@
 ////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////
-///                          FUNCTIONS                               ///
+///                           CLASSES                                ///
 ////////////////////////////////////////////////////////////////////////
 
-//MasterCellType
+class PrimeMan
+{
+public:
+    //Constructor
+    PrimeMan(std::fstream& input);
+private:
+    unsigned                  _maxMove;
 
-//Cell
+    //private function
+    void readFile(std::fstream& input);
+    void constructChip();
+};
+
+
+#endif
