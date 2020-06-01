@@ -46,14 +46,15 @@ private:
     int                                     _area;
     int                                     _layer;
     std::unordered_map<std::string,int>     _Layer2Idx;
-    std::vector<Layer>                      _layers;
+    std::vector<Layer*>                     _layers;
     std::vector<Coordinate*>                _coordinates;
+    std::vector<MasterCellType*>            _MasterCells;
 
     //private function
     void readFile(std::fstream& input);
     void constructCoordinate();
     void constructGrid(int layer);
-
+    void connectCoordinateGrid();
 };
 
 #endif

@@ -70,8 +70,71 @@ void PrimeMan::readFile(std::fstream& input)
         Layer* l = new Layer(str,idx-1,direction,supply,_area);
         _layers[idx-1] = l;
     }
-    //TODO
+    connectCoordinateGrid();
+    
+    /*NumNonDefaultSupplyGGrid <nonDefaultSupplyGGridCount>
+      <rowIdx> <colIdx> <LayIdx> <incrOrDecrValue>*/
+    input >> str; //NumNonDefaultSupplyGGrid
+    assert(str == "NumNonDefaultSupplyGGrid");
+    int count, row, column, layer, val;
+    input >> count;
+    for(int i = 0; i < count; ++i)
+    {
+        input >> row >> column >> layer >> val;
+        _layers[row-1]->getGrid(getIdx(row,column)).incSupply(val);
+    }
+    
+    /*NumMasterCell <masterCellCount>
+      MasterCell <masterCellName> <pinCount> <blockageCount>
+      Pin <pinName> <pinLayer>
+      Blkg <blockageName> <blockageLayer> <demand>
+    */
+    int demand;
+    input >> str; // NumMasterCell
+    assert(str == "NumMasterCell");
+    input >> count; //<masterCellCount>
+    _MasterCells.reserve(count);
+    for(int i = 0; i < count; ++i)
+    {
+        input >> str; // MasterCell
+        assert(str == "MasterCell");
+        input >> str; // <masterCellName>
+        MasterCellType* mct = new MasterCellType(str,i,_layer);
+        _MasterCells.push_back(mct);
+        int pin, blockage;
+        input >> pin >> blockage;
+        for(int j = 0; j < pin; ++j)
+        {
+            input >> str; // Pin
+            assert(str == "Pin");
+            input >> str >> layer; // <pinName> <pinLayer>
+            mct->AddPin(str,layer);
+        }
+        for(int j = 0; j < blockage; ++j)
+        {
+            input >> str; // Blkg
+            assert(str == "Blkg");
+            input >> str >> layer >> demand; // <blockageName> <blockageLayer> <demand>
+            mct->AddBlkg(str,layer,demand);
+        }
+    }
 
+    /*NumNeighborCellExtraDemand <count>
+      sameGGrid <masterCellName1> <masterCellName2> <layerName> <demand>
+      adjHGGrid <masterCellName1> <masterCellName2> <layerName> <demand>*/
+    input >> str; //NumNeighborCellExtraDemand
+    assert(str == "NumNeighborCellExtraDemand");
+    input >> count; //<count>
+    for(int i = 0; i < count; ++i)
+    {
+        input >> str; //sameGGrid || adjHGGrid
+        if(str == "sameGGrid")
+        {
+
+        }
+        else if(str == "adjHGGrid") 
+        else assert(str == "sameGGrid" || str == "adjHGGrid");
+    }
 }
 
 void PrimeMan::constructCoordinate()
@@ -84,6 +147,21 @@ void PrimeMan::constructCoordinate()
         {
             Coordinate* c = Coordinate(j,i,_layer);
             _coordinates.push_back(c);
+        }
+    }
+}
+
+void PrimeMan::connectCoordinateGrid()
+{
+    for(int i = 0;i < _area; ++i)
+    {
+        Coordinate* c = _coordinates[i];
+        for(int j = 0; j < _layer; ++j)
+        {
+            Layer* l = _layers[j];
+            Grid g = l->getGrid(i);
+            g.assignCoordinate(*c);
+            c->addGrid(&g);
         }
     }
 }

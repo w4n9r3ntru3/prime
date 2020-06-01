@@ -40,6 +40,7 @@ public:
 
     //accesser
     std::string& getLayerName() const       { return _LayerName; }
+    Grid& getGrid(int i) const              { return _grids[i]; }
 
 private:
     const std::string           _LayerName;
