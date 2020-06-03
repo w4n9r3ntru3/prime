@@ -2,7 +2,7 @@
 
   FileName    [MasterCell.h]
 
-  Author      [Yang, Chien Yi]
+  Author      [Yang Chien Yi]
 
   This file defines the master cells and their elements, pins and
   blockages.
@@ -45,7 +45,7 @@ public:
     { assert(a._layer >= 0); }
 
     //acceser
-    std::string& getPinName() const                                 { return _PinName; }
+    const std::string& getPinName() const                           { return _PinName; }
     int         getLayer() const                                    { return _layer; }
 
     //friend
@@ -87,7 +87,7 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& os, const BlockageType& BT)
-{ os << "Blockage Name : " << BT._PinName << " Layer : " << BT._layer << " Demand : " << BT._demand << '\n'; return os; }
+{ os << "Blockage Name : " << BT._BlkgName << " Layer : " << BT._layer << " Demand : " << BT._demand << '\n'; return os; }
 
 class MasterCellType
 {
@@ -117,22 +117,22 @@ public:
     }
     void AddExtraadjH(unsigned MC, int demand, int layer)
     {
-        _ExtraadjHGrid[MC] = _HGridDemand.size();
+        _ExtraadjHGrid[MC] = _adjHGridDemand.size();
         _adjHGridDemand.push_back(demand);
         _adjHGridLayer.push_back(layer);
     }
 
     //acceser
-    std::string& getMCName() const                                  { return _MCName; }
+    const std::string& getMCName() const                            { return _MCName; }
     unsigned getId() const                                          { return _Id; }
     unsigned getNumLayers() const                                   { return _layer; }
     int getLayerDemand(int i) const                                 { assert(i < _LayerDemand.size()); return _LayerDemand[i]; }
     size_t getNumPins() const                                       { return _Pins.size(); }
     size_t getNumBlkgs() const                                      { return _Blkgs.size(); }
-    PinType& getPinType(size_t i) const                             { assert(i < _Pins.size()); return _Pins[i]; }
-    PinType& getPinType(std::string& str) const                     { auto idx = _PinName2Idx.find(str); assert(idx != _PinName2Idx.end()); return _Pins[idx->second]; }
+    PinType& getPinType(size_t i)                                   { assert(i < _Pins.size()); return _Pins[i]; }
+    PinType& getPinType(std::string& str)                           { auto idx = _PinName2Idx.find(str); assert(idx != _PinName2Idx.end()); return _Pins[idx->second]; }
     size_t getPin(std::string& str) const                           { auto idx = _PinName2Idx.find(str); assert(idx != _PinName2Idx.end()); return idx->second; }
-    BlockageType& getBlkg(size_t i) const                           { assert(i < _Blkgs.size()); return _Blkgs[i]; }
+    BlockageType& getBlkg(size_t i)                                 { assert(i < _Blkgs.size()); return _Blkgs[i]; }
     int getDemandSame(unsigned a, int& layer) const                             
     {
         auto idx = _ExtraSameGrid.find(a);
@@ -205,9 +205,9 @@ std::ostream& operator<<(std::ostream& os, const MasterCellType& MCT)
     os << "Blockages : \n";
     for(size_t i = 0, n = MCT._Blkgs.size(); i < n; ++i) os << MCT._Blkgs[i];
     os << "Same Grid Extra Demand : \n";
-    for(size_t i = 0, n = _SameGridDemand.size(); i < n; ++i) os << i << " : " << _SameGridDemand[i] << '\n';
+    for(size_t i = 0, n = MCT._SameGridDemand.size(); i < n; ++i) os << i << " : " << MCT._SameGridDemand[i] << '\n';
     os << "Same Grid Extra Demand : \n";
-    for(size_t i = 0, n = _adjHGridDemand.size(); i < n; ++i) os << i << " : " << _adjHGridDemand[i] << '\n';
+    for(size_t i = 0, n = MCT._adjHGridDemand.size(); i < n; ++i) os << i << " : " << MCT._adjHGridDemand[i] << '\n';
     os << "---------------------------------------------" << '\n';
     return os;
 }

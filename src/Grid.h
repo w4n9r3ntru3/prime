@@ -2,7 +2,7 @@
 
   FileName    [Grid.h]
 
-  Author      [Yang, Chien Yi]
+  Author      [Yang Chien Yi]
 
   This file defines the Layers, the Grids, and their Coordinates(to
   save cells).
@@ -35,12 +35,13 @@ public:
     Layer(const std::string name, int i, bool d, int supply, int area):_direction(d), _LayerName(name), _idx(i)
     {
         _grids.reserve(area);
-        for (int i = 0; i < area; ++i) _grids.push_back(Grid(supply, this*));
+        for (int i = 0; i < area; ++i) _grids.push_back(Grid(supply, *this));
     }
 
     //accesser
-    std::string& getLayerName() const       { return _LayerName; }
-    Grid& getGrid(int i) const              { return _grids[i]; }
+    const std::string& getLayerName() const { return _LayerName; }
+    int getLayerIdx() const                 { return _idx; }
+    Grid& getGrid(int i)                    { return _grids[i]; }
 
 private:
     const std::string           _LayerName;
@@ -83,18 +84,18 @@ public:
     Grid(Grid& a):_layer(a._layer), _supply(a._supply), _coordinate(a._coordinate) {}
 
     //modifier
-    void assignCoordinate(Coordinate& c)    { _coordinate = c; }
+    void assignCoordinate(Coordinate* c)    { _coordinate = c; }
     void incSupply(int d)                   { _supply += d; }
 
     //accesser
-    int getRow() const                      { return _coordinate.getRow(); }
-    int getColumn() const                   { return _coordinate.getColumn(); }
-    int getLayer() const                    { return _layer; }
+    int getRow() const                      { return _coordinate->getRow(); }
+    int getColumn() const                   { return _coordinate->getColumn(); }
     int getSupply() const                   { return _supply; }
+    int getLayer() const                    { return _layer.getLayerIdx(); }
 private:
     int                         _supply;
-    Coordinate&                 _coordinate;
     Layer&                      _layer;
+    Coordinate*                 _coordinate;
 };
 
 #endif

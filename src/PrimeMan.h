@@ -2,7 +2,7 @@
 
   FileName    [PrimeMan.h]
 
-  Author      [Yang, Chien Yi]
+  Author      [Yang Chien Yi]
 
   This file difines the data manager for prime.
 

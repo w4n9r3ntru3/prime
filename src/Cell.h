@@ -2,7 +2,7 @@
 
   FileName    [Cell.h]
 
-  Author      [Yang, Chien Yi]
+  Author      [Yang Chien Yi]
 
   This file defines the cells and their elements, pins and nets.
 
@@ -32,24 +32,24 @@ class Pin
 {
 public:
     //Constructors
-    Pin(PinType& PT, Cell& cell): _PT(PT), _cell(cell) {}
+    Pin(PinType& PT, Cell* cell): _PT(PT), _cell(cell) {}
     Pin(Pin& a): _PT(a._PT), _cell(a._cell) {}
 
     //modifier
-    void setNet(Net& net) { _net = net; }
+    void setNet(Net* net) { _net = net; }
 
     //accesser
     PinType& getPinType() const                         { return _PT; }
-    Net& get_net() const                                { return _net; }
-    Cell& get_cell() const                              { return _cell; }
-    unsigned getRow() const                             { return _cell.getRow(); }
-    unsigned getColumn() const                          { return _cell.getColumn(); }
+    Net& get_net() const                                { return *_net; }
+    Cell& get_cell() const                              { return *_cell; }
+    unsigned getRow() const                             { return _cell->getRow(); }
+    unsigned getColumn() const                          { return _cell->getColumn(); }
     int getLayer() const                                { return _PT.getLayer(); }    
 
 private:
     PinType&                            _PT;
-    Cell&                               _cell;
-    Net&                                _net;
+    Cell*                               _cell;
+    Net*                                _net;
 };
 
 class Net
@@ -66,7 +66,7 @@ public:
     void addSegment()                                   {}
 
     //accesser
-    std::string& getName() const                        { return _NetName; }
+    const std::string& getName() const                  { return _NetName; }
     unsigned getId() const                              { return _Id; }
     unsigned getMinlayer() const                        { return _layer; }
 
@@ -86,8 +86,8 @@ public:
     {
         int p = _MCT.getNumPins();
         _pins.reserve(p);
-        _Layer2pin.reserve(l);
         int l = _MCT.getNumLayers();
+        _Layer2pin.reserve(l);
         for(int i = 0; i < l; ++i)
         {
             std::vector<Pin*>* v = new std::vector<Pin*>();
@@ -95,7 +95,7 @@ public:
         }
         for(int i = 0; i < p; ++i)
         {
-            _pins.push_back(Pin(_MCT.getPinType(i),*this));
+            _pins.push_back(Pin(_MCT.getPinType(i),this));
             _Layer2pin[_pins[i].getLayer()]->push_back(&_pins[i]);
         }
     }
@@ -105,15 +105,15 @@ public:
     void setColumn(unsigned y)                          { _column = y; }
 
     //accesser
-    std::string& getCellName() const                    { return _CellName; }
+    const std::string& getCellName() const              { return _CellName; }
     bool movable() const                                { return _movable; }
     unsigned getRow() const                             { return _row; }
     unsigned getColumn() const                          { return _column; }
-    Pin& getPin(size_t i) const                         { assert(i < _pins.size()); return _pins[i]; }
-    Pin& getPin(std::string& str) const                 { return _pins[_MCT.getPin(str)]; }
+    Pin& getPin(size_t i)                               { assert(i < _pins.size()); return _pins[i]; }
+    Pin& getPin(std::string& str)                       { return _pins[_MCT.getPin(str)]; }
     int getLayerDemand(int i) const                     { return _MCT.getLayerDemand(i); }
-    int getSameGridDemand(Cell& a, int& layer) const    { return _MCT.getSameDemand(a._MCT,layer); }
-    int getadjHGridDemand(Cell& a, int& layer) const    { return _MCT.getDemand(a._MCT,layer); }
+    int getSameGridDemand(Cell& a, int& layer) const    { return _MCT.getDemandSame(a._MCT,layer); }
+    int getadjHGridDemand(Cell& a, int& layer) const    { return _MCT.getDemandadjH(a._MCT,layer); }
     size_t getNumPins() const                           { return _pins.size(); }
     int getLayerDemand(int i) const                     { return _MCT.getLayerDemand(i); }
     std::vector<Pin*>& getPinLayer(int i) const         { return *_Layer2pin[i];}

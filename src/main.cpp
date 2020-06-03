@@ -2,7 +2,7 @@
 
   FileName    [main.cpp]
 
-  Author      [Yang, Chien Yi]
+  Author      [Yang Chien Yi]
 
   The main function.
 
@@ -12,7 +12,7 @@
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "primeMan.h"
+#include "PrimeMan.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///

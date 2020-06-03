@@ -2,7 +2,7 @@
 
   FileName    [PrimeMan.cpp]
 
-  Author      [Yang, Chien Yi]
+  Author      [Yang Chien Yi]
 
   This file describes the functions in "PrimeMan.h".
 
@@ -51,7 +51,7 @@ void PrimeMan::readFile(std::fstream& input)
     assert(str == "NumLayers");
     input >> _layer; //<LayerCount>
     _layers.reserve(_layer); for(int i = 0; i < _layer; ++i) { _layers.push_back(0); }
-    ConstructCoordinate();
+    constructCoordinate();
     for(int i = 0; i < _layer; ++i)
     {
         input >> str; //Lay
@@ -154,7 +154,7 @@ void PrimeMan::constructCoordinate()
     {
         for(int j = 0; j < _rowRange; ++j)
         {
-            Coordinate* c = Coordinate(j,i,_layer);
+            Coordinate* c = new Coordinate(j,i,_layer);
             _coordinates.push_back(c);
         }
     }
@@ -169,7 +169,7 @@ void PrimeMan::connectCoordinateGrid()
         {
             Layer* l = _layers[j];
             Grid g = l->getGrid(i);
-            g.assignCoordinate(*c);
+            g.assignCoordinate(c);
             c->addGrid(&g);
         }
     }
