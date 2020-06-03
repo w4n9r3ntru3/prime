@@ -146,7 +146,7 @@ void PrimeMan::readFile(std::fstream& input)
       CellInst <instName> <masterCellName> <gGridRowIdx> <gGridColIdx> <movableCstr>*/
     input >> str; // NumCellInst
     assert(str == "NumCellInst");
-    input >> count; //<cellInstCount>
+    input >> count; // <cellInstCount>
     _cells.reserve(count);
     for(int i = 0; i < count; ++i)
     {
@@ -156,7 +156,7 @@ void PrimeMan::readFile(std::fstream& input)
         assert(_Cell2Idx.count(str) == 0);
         _Cell2Idx[str] = i;
         input >> buf; // <masterCellName>
-        assert(_MasterCell2Idx[buf] > 0);
+        assert(_MasterCell2Idx[buf] == 1);
         MasterCellType MCT = *_MasterCells[_MasterCell2Idx[buf]];
         input >> row >> column >> buf; // <gGridRowIdx> <gGridColIdx> <movableCstr>
         bool movable;
@@ -164,10 +164,44 @@ void PrimeMan::readFile(std::fstream& input)
         else if(buf == "Fixed") movable = false;
         else assert(buf == "Fixed" || buf == "Movable");
         Cell* cell = new Cell(str,MCT,movable,i);
-        cell->setCoordinate(row,column);
+        _cells.push_back(cell);
+        cell->setCoordinate(row-_rowBase,column-_columnBase);
     }
-    
-    /*NumNets <netCount>Net <netName> <numPins> <minRoutingLayConstraint>Pin <instName>/<masterPinName>*/
+
+    /*NumNets <netCount>
+      Net <netName> <numPins> <minRoutingLayConstraint>
+      Pin <instName>/<masterPinName>*/
+    input >> str; // NumNets
+    assert(str == "NumNets");
+    input >> count; // <netCount>
+    for(int i = 0; i < count; ++i)
+    {
+        int numPins;
+        input >> str; // Net
+        assert(str == "Net");
+        input >> str; // <netName>
+        input >> numPins; // <numPins>
+        Net* net = new Net(str,i,numPins,_layer);
+        _nets.push_back(net);
+        std::string inst, masterPin;
+        std::string delimiter = "/";
+        for(int j = 0; j < numPins; ++j)
+        {
+            input >> str; // <instName>/<masterPinName>
+            size_t pos = str.find(delimiter);
+            inst = str.substr(0,pos);
+            pos++;
+            masterPin = str.substr(pos,str.size()-pos);
+            assert(_Cell2Idx.count(inst) == 1);
+            Cell* cell = _cells[_Cell2Idx[inst]];
+            Pin pin = cell->getPin(inst);
+            net->addPin(&pin);
+        }
+    }
+
+    /*NumRoutes <routeSegmentCount>
+      <sRowIdx> <sColIdx> <sLayIdx> <eRowIdx> <eColIdx> <eLayIdx> <netName>*/
+    int srow, scol, slay, erow, ecol, elay;
 }
 
 PrimeMan::~PrimeMan()
