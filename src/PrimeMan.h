@@ -36,8 +36,12 @@ public:
     //destructor
     ~PrimeMan();
 
-    //accesser
-    int getIdx(int row, int column) const               { return column*_rowRange+row; }
+    //accesser(get -1 if out of bound)
+    int getIdx(int row, int column) const               { assert(column >= 0 && column < _columnRange && row >= 0 && row < _rowRange); return column*_rowRange+row; }
+    int getLeft(int row, int column) const              { if(column == 0) return -1; return getIdx(row,column-1); }
+    int getRight(int row, int column) const             { if(column == _columnRange-1) return -1; return getIdx(row,column+1); }
+    int getDown(int row, int column) const              { if(row == 0) return -1; return getIdx(row-1,column); }
+    int getUp(int row, int column) const                { if(row == _rowRange-1) return -1; return getIdx(row+1,column); }
 
 private:
     unsigned                                    _maxMove;

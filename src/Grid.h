@@ -108,6 +108,7 @@ public:
     //modifier
     void assignCoordinate(Coordinate* c)            { _coordinate = c; }
     void incSupply(int d)                           { _supply += d; }
+    void decSupply(int d)                           { _supply -= d; }
     void addConstraint(unsigned mc, int demand)
     {
         if(_Cell2Demand.count(mc) == 0) _Cell2Demand[mc] = demand;

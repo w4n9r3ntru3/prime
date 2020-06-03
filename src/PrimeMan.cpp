@@ -165,7 +165,16 @@ void PrimeMan::readFile(std::fstream& input)
         else assert(buf == "Fixed" || buf == "Movable");
         Cell* cell = new Cell(str,MCT,movable,i);
         _cells.push_back(cell);
-        cell->setCoordinate(row-_rowBase,column-_columnBase);
+        int rIdx = row - _rowBase, cIdx = column - _columnBase;
+        cell->setCoordinate(rIdx,cIdx);
+        Coordinate* c = _coordinates[getIdx(rIdx,cIdx)];
+        int left, right;
+        left = getLeft(rIdx,cIdx); right = getRight(rIdx,cIdx);
+        Coordinate* c1 = 0;
+        Coordinate* c2 = 0;
+        if(left > -1) c1 = _coordinates[left];
+        if(right > -1) c2 = _coordinates[right];
+        c->addCell(cell,c1,c2);
     }
 
     /*NumNets <netCount>
@@ -181,6 +190,8 @@ void PrimeMan::readFile(std::fstream& input)
         assert(str == "Net");
         input >> str; // <netName>
         input >> numPins; // <numPins>
+        assert(_Net2Idx.count(str) == 0);
+        _Net2Idx[str] = i;
         Net* net = new Net(str,i,numPins,_layer);
         _nets.push_back(net);
         std::string inst, masterPin;
@@ -202,6 +213,14 @@ void PrimeMan::readFile(std::fstream& input)
     /*NumRoutes <routeSegmentCount>
       <sRowIdx> <sColIdx> <sLayIdx> <eRowIdx> <eColIdx> <eLayIdx> <netName>*/
     int srow, scol, slay, erow, ecol, elay;
+    input >> str; // NumRoutes
+    assert(str == "NumRoutes");
+    input >> count; // <routeSegmentCount>
+    for(int i = 0; i < count; ++i)
+    {
+        input >> srow >> scol >> slay >> erow >> ecol >> elay >> str; // <sRowIdx> <sColIdx> <sLayIdx> <eRowIdx> <eColIdx> <eLayIdx> <netName>
+
+    }
 }
 
 PrimeMan::~PrimeMan()
