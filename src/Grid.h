@@ -2,15 +2,14 @@
 
   FileName    [Grid.h]
 
-  Author      [Yang Chien Yi]
+  Author      [Yang Chien Yi, Ren-Chu Wang]
 
   This file defines the Layers, the Grids, and their Coordinates(to
   save cells).
 
 ***********************************************************************/
 
-#ifndef GRID_H
-#define GRID_H
+#pragma once
 
 ////////////////////////////////////////////////////////////////////////
 ///                           INCLUDES                               ///
@@ -42,8 +41,9 @@ class Layer {
 
     // destructor
     ~Layer() {
-        for (int i = 0, n = _grids.size(); i < n; ++i)
+        for (int i = 0, n = _grids.size(); i < n; ++i) {
             delete _grids[i];
+        }
     }
 
     // modifier
@@ -57,7 +57,7 @@ class Layer {
     const std::string _LayerName;
     const int _idx;
     bool _direction;  // 0 for H(column), 1 for V(row)
-    std::vector<Grid*> _grids;
+    safe::vector<Grid*> _grids;
 };
 
 class Coordinate {
@@ -73,23 +73,26 @@ class Coordinate {
         // for every layer
         for (int i = 0, n = _grids.size(); i < n; ++i) {
             _grids[i]->addCell(cell->getMasterCellId());
-            std::vector<unsigned> adjHMC = cell->getadjHGridMC(i);
-            std::vector<unsigned> SameMC = cell->getSameGridMC(i);
-            std::vector<int> adjHDemand = cell->getadjHGridDemand(i);
-            std::vector<int> SameDemand = cell->getSameGridDemand(i);
+            safe::vector<unsigned> adjHMC = cell->getadjHGridMC(i);
+            safe::vector<unsigned> SameMC = cell->getSameGridMC(i);
+            safe::vector<int> adjHDemand = cell->getadjHGridDemand(i);
+            safe::vector<int> SameDemand = cell->getSameGridDemand(i);
             addConstraint(i, SameMC, SameDemand);
-            if (c1)
+            if (c1) {
                 c1->addConstraint(i, adjHMC, adjHDemand);
-            if (c2)
+            }
+            if (c2) {
                 c2->addConstraint(i, adjHMC, adjHDemand);
+            }
         }
     }
     void addConstraint(int layer,
-                       std::vector<unsigned>& mc,
-                       std::vector<int>& demand) {
+                       safe::vector<unsigned>& mc,
+                       safe::vector<int>& demand) {
         assert(mc.size() == demand.size());
-        for (int i = 0, n = mc.size(); i < n; ++i)
+        for (int i = 0, n = mc.size(); i < n; ++i) {
             _grids[layer]->addConstraint(mc[i], demand[i]);
+        }
     }
 
     // accesser
@@ -100,7 +103,7 @@ class Coordinate {
    private:
     int _row;
     int _column;
-    std::vector<Grid*> _grids;
+    safe::vector<Grid*> _grids;
 };
 
 class Grid {
@@ -115,34 +118,45 @@ class Grid {
     void incSupply(int d) { _supply += d; }
     void decSupply(int d) { _supply -= d; }
     void addConstraint(unsigned mc, int demand) {
-        if (_Cell2Demand.count(mc) == 0)
+        // if (_Cell2Demand.find(mc) == _Cell2Demand.end()) {
+        if (contains(_Cell2Demand, mc)) {
             _Cell2Demand[mc] = demand;
-        else
+        } else {
             _Cell2Demand[mc] += demand;
+        }
     }
     void moveConstraint(unsigned mc, int demand) {
-        assert(_Cell2Demand.count(mc) > 0);
+        // assert(_Cell2Demand.count(mc) > 0);
+        assert(contains(_Cell2Demand, mc));
         demand = _Cell2Demand[mc] - demand;
-        if (demand > 0)
+        if (demand > 0) {
             _Cell2Demand[mc] = demand;
-        else
+        } else {
             _Cell2Demand.erase(mc);
+        }
     }
     void addCell(unsigned mc) {
         int demand;
-        if (getDemand(mc, demand))
+        if (getDemand(mc, demand)) {
             _supply -= demand;
+        }
     }
     void addNet(Net& net) {
-        if(_nets.count(net.getId()) == 0) {
-            _nets[net.getId()] = net;
+        // if (_nets.find(net.getId()) == _nets.end()) {
+        if (!contains(_nets, net.getId())) {
+            _nets[net.getId()] = &net;
             _supply -= 1;
         }
     }
-    bool getNet(Net& net) { return _nets.count(net->getId()) == 1;}
+    bool getNet(Net& net) {
+        // return _nets.find(net.getId()) != _nets.end();
+        return contains(_nets, net.getId());
+    }
     Net* getNet(unsigned i) {
-        if(_nets.count(i) == 0)
-            return 0;
+        // if (_nets.find(i) == _nets.end()) {
+        if (!contains(_nets, i)) {
+            return nullptr;
+        }
         return _nets[i];
     }
 
@@ -152,10 +166,12 @@ class Grid {
     int getSupply() const { return _supply; }
     int getLayer() const { return _layer.getLayerIdx(); }
     bool getDemand(unsigned mc, int& demand) {
-        if (_Cell2Demand.count(mc) == 0)
+        // if (_Cell2Demand.find(mc) == _Cell2Demand.end()) {
+        if (contains(_Cell2Demand, mc)) {
             return false;
-        else
+        } else {
             demand = _Cell2Demand[mc];
+        }
         return true;
     }
 
@@ -166,5 +182,3 @@ class Grid {
     std::unordered_map<unsigned, int> _Cell2Demand;
     std::unordered_map<unsigned, Net*> _nets;
 };
-
-#endif

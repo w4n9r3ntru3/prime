@@ -2,7 +2,7 @@
 
   FileName    [PrimeMan.cpp]
 
-  Author      [Yang Chien Yi]
+  Author      [Yang Chien Yi, Ren-Chu Wang]
 
   This file describes the functions in "PrimeMan.h".
 
@@ -65,12 +65,13 @@ void PrimeMan::readFile(std::fstream& input) {
         _Layer2Idx[str] = idx;
         bool direction;
         input >> buf;  //<RoutingDirection>
-        if (buf == "H")
+        if (buf == "H") {
             direction = false;
-        else if (buf == "V")
+        } else if (buf == "V") {
             direction = true;
-        else
+        } else {
             assert(buf == "H" || buf == "V");
+        }
         int supply;
         input >> supply;  //<defaultSupplyOfOneGGrid>
         Layer* l = new Layer(str, idx - 1, direction, supply, _area);
@@ -103,7 +104,8 @@ void PrimeMan::readFile(std::fstream& input) {
         input >> str;  // MasterCell
         assert(str == "MasterCell");
         input >> str;  // <masterCellName>
-        assert(_MasterCell2Idx.count(str) == 0);
+        // assert(_MasterCell2Idx.count(str) == 0);
+        assert(!contains(_MasterCell2Idx, str));
         _MasterCell2Idx[str] = i;
         MasterCellType* mct = new MasterCellType(str, i, _layer);
         _MasterCells.push_back(mct);
@@ -168,12 +170,13 @@ void PrimeMan::readFile(std::fstream& input) {
         input >> row >> column >>
             buf;  // <gGridRowIdx> <gGridColIdx> <movableCstr>
         bool movable;
-        if (buf == "Movable")
+        if (buf == "Movable") {
             movable = true;
-        else if (buf == "Fixed")
+        } else if (buf == "Fixed") {
             movable = false;
-        else
+        } else {
             assert(buf == "Fixed" || buf == "Movable");
+        }
         Cell* cell = new Cell(str, MCT, movable, i);
         _cells.push_back(cell);
         int rIdx = row - _rowBase, cIdx = column - _columnBase;
@@ -184,10 +187,12 @@ void PrimeMan::readFile(std::fstream& input) {
         right = getRight(rIdx, cIdx);
         Coordinate* c1 = 0;
         Coordinate* c2 = 0;
-        if (left > -1)
+        if (left > -1) {
             c1 = _coordinates[left];
-        if (right > -1)
+        }
+        if (right > -1) {
             c2 = _coordinates[right];
+        }
         c->addCell(cell, c1, c2);
     }
 
@@ -203,7 +208,8 @@ void PrimeMan::readFile(std::fstream& input) {
         assert(str == "Net");
         input >> str;      // <netName>
         input >> numPins;  // <numPins>
-        assert(_Net2Idx.count(str) == 0);
+        // assert(_Net2Idx.count(str) == 0);
+        assert(!contains(_Net2Idx, str));
         _Net2Idx[str] = i;
         Net* net = new Net(str, i, numPins, _layer);
         _nets.push_back(net);
@@ -215,7 +221,8 @@ void PrimeMan::readFile(std::fstream& input) {
             inst = str.substr(0, pos);
             pos++;
             masterPin = str.substr(pos, str.size() - pos);
-            assert(_Cell2Idx.count(inst) == 1);
+            // assert(_Cell2Idx.count(inst) == 1);
+            assert(contains(_Cell2Idx, inst));
             Cell* cell = _cells[_Cell2Idx[inst]];
             Pin pin = cell->getPin(inst);
             net->addPin(&pin);
@@ -229,22 +236,31 @@ void PrimeMan::readFile(std::fstream& input) {
     assert(str == "NumRoutes");
     input >> count;  // <routeSegmentCount>
     for (int i = 0; i < count; ++i) {
-        input >> srow >> scol >> slay >> erow >> ecol >> elay >> str;  // <sRowIdx> <sColIdx> <sLayIdx> <eRowIdx> <eColIdx> <eLayIdx> <netName>
-        assert(_Net2Idx.count(str) == 1);
-        Net* net = _Net2Idx[str];
-        assignRoute(srow - _rowBase, scol - _columnBase, slay - 1, erow - _rowBase, ecol - _columnBase, elay - 1, net);
+        input >> srow >> scol >> slay >> erow >> ecol >> elay >>
+            str;  // <sRowIdx> <sColIdx> <sLayIdx> <eRowIdx> <eColIdx> <eLayIdx>
+                  // <netName>
+        // assert(_Net2Idx.count(str) == 1);
+        assert(contains(_Net2Idx, str));
+        // FIXME in case it is wrong
+        Net* net = _nets[_Net2Idx[str]];
+        assignRoute(srow - _rowBase, scol - _columnBase, slay - 1,
+                    erow - _rowBase, ecol - _columnBase, elay - 1, net);
     }
 }
 
 PrimeMan::~PrimeMan() {
-    for (int i = 0, n = _layers.size(); i < n; ++i)
+    for (int i = 0, n = _layers.size(); i < n; ++i) {
         delete _layers[i];
-    for (int i = 0, n = _coordinates.size(); i < n; ++i)
+    }
+    for (int i = 0, n = _coordinates.size(); i < n; ++i) {
         delete _coordinates[i];
-    for (int i = 0, n = _MasterCells.size(); i < n; ++i)
+    }
+    for (int i = 0, n = _MasterCells.size(); i < n; ++i) {
         delete _MasterCells[i];
-    for (int i = 0, n = _cells.size(); i < n; ++i)
+    }
+    for (int i = 0, n = _cells.size(); i < n; ++i) {
         delete _cells[i];
+    }
 }
 
 void PrimeMan::constructCoordinate() {
@@ -270,15 +286,20 @@ void PrimeMan::connectCoordinateGrid() {
     }
 }
 
-void PrimeMan::assignRoute(int srow, int scol, int slay, int erow, int ecol, int elay, Net* net) {
-    for(int i = slay; i <= elay; ++i) {
+void PrimeMan::assignRoute(int srow,
+                           int scol,
+                           int slay,
+                           int erow,
+                           int ecol,
+                           int elay,
+                           Net* net) {
+    for (int i = slay; i <= elay; ++i) {
         Layer* l = _layers[i];
-        for(int j = scol; j <= ecol; ++j) {
-            for(int k = srow; k <= erow; ++k) {
-                Grid g = l->getGrid(getIdx(k,j));
+        for (int j = scol; j <= ecol; ++j) {
+            for (int k = srow; k <= erow; ++k) {
+                Grid g = l->getGrid(getIdx(k, j));
                 g.addNet(*net);
             }
         }
     }
-
 }

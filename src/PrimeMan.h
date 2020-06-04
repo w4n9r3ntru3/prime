@@ -2,14 +2,13 @@
 
   FileName    [PrimeMan.h]
 
-  Author      [Yang Chien Yi]
+  Author      [Yang Chien Yi, Ren-Chu Wang]
 
   This file difines the data manager for prime.
 
 ***********************************************************************/
 
-#ifndef PRIMEMAN_H
-#define PRIMEMAN_H
+#pragma once
 
 ////////////////////////////////////////////////////////////////////////
 ///                           INCLUDES                               ///
@@ -42,31 +41,46 @@ class PrimeMan {
         return column * _rowRange + row;
     }
     int getLeft(int row, int column) const {
-        if (column == 0)
+        if (column == 0) {
             return -1;
+        }
         return getIdx(row, column - 1);
     }
     int getRight(int row, int column) const {
-        if (column == _columnRange - 1)
+        if (column == _columnRange - 1) {
             return -1;
+        }
         return getIdx(row, column + 1);
     }
     int getDown(int row, int column) const {
-        if (row == 0)
+        if (row == 0) {
             return -1;
+        }
         return getIdx(row - 1, column);
     }
     int getUp(int row, int column) const {
-        if (row == _rowRange - 1)
+        if (row == _rowRange - 1) {
             return -1;
+        }
         return getIdx(row + 1, column);
     }
 
-    Layer& getLayer(int layer) { return *_layers[layer]; }
-    Coordinate& getCoordinate(int i) { return _coordinates[i]; }
-    Cell& getCell(unsigned i) { return _cells[i]; }
-    Net& getNet(unsigned i) { return _net[i]; }
-
+    Layer& getLayer(int layer) {
+        assert(layer < _layers.size());
+        return *_layers[layer];
+    }
+    Coordinate& getCoordinate(unsigned i) {
+        assert(i >= 0 && i < _coordinates.size());
+        return *_coordinates[i];
+    }
+    Cell& getCell(unsigned i) {
+        assert(i < _cells.size());
+        return *_cells[i];
+    }
+    Net& getNet(unsigned i) {
+        assert(i < _nets.size());
+        return *_nets[i];
+    }
 
    private:
     unsigned _maxMove;
@@ -80,18 +94,22 @@ class PrimeMan {
     std::unordered_map<std::string, int> _MasterCell2Idx;
     std::unordered_map<std::string, unsigned> _Cell2Idx;
     std::unordered_map<std::string, unsigned> _Net2Idx;
-    std::vector<Layer*> _layers;
-    std::vector<Coordinate*> _coordinates;
-    std::vector<MasterCellType*> _MasterCells;
-    std::vector<Cell*> _cells;
-    std::vector<Net*> _nets;
+    safe::vector<Layer*> _layers;
+    safe::vector<Coordinate*> _coordinates;
+    safe::vector<MasterCellType*> _MasterCells;
+    safe::vector<Cell*> _cells;
+    safe::vector<Net*> _nets;
 
     // private function
     void readFile(std::fstream& input);
     void constructCoordinate();
     void constructGrid(int layer);
     void connectCoordinateGrid();
-    void assignRoute(int srow, int scol, int slay, int erow, int ecol, int elay, Net* net);
+    void assignRoute(int srow,
+                     int scol,
+                     int slay,
+                     int erow,
+                     int ecol,
+                     int elay,
+                     Net* net);
 };
-
-#endif

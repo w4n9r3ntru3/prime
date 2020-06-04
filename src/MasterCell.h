@@ -9,18 +9,20 @@
 
 ***********************************************************************/
 
-#ifndef MASTERCELL_H
-#define MASTERCELL_H
+#pragma once
 
 ////////////////////////////////////////////////////////////////////////
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
+
 #include <iostream>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+#include "safe.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
@@ -107,13 +109,13 @@ class MasterCellType {
         _adjHGridDemand.reserve(layer);
         for (int i = 0; i < layer; ++i) {
             _LayerDemand.push_back(0);
-            std::vector<unsigned>* v1 = new std::vector<unsigned>();
+            safe::vector<unsigned>* v1 = new safe::vector<unsigned>();
             _SameGridMC.push_back(v1);
-            std::vector<unsigned>* v2 = new std::vector<unsigned>();
+            safe::vector<unsigned>* v2 = new safe::vector<unsigned>();
             _adjHGridMC.push_back(v2);
-            std::vector<int>* v3 = new std::vector<int>();
+            safe::vector<int>* v3 = new safe::vector<int>();
             _SameGridDemand.push_back(v3);
-            std::vector<int>* v4 = new std::vector<int>();
+            safe::vector<int>* v4 = new safe::vector<int>();
             _adjHGridDemand.push_back(v4);
         }
     }
@@ -174,16 +176,20 @@ class MasterCellType {
         assert(i < _Blkgs.size());
         return _Blkgs[i];
     }
-    std::vector<unsigned>& getSameGridMC(unsigned layer) {
+    safe::vector<unsigned>& getSameGridMC(unsigned layer) {
+        assert(layer < _SameGridMC.size());
         return *_SameGridMC[layer];
     }
-    std::vector<unsigned>& getadjHGridMC(unsigned layer) {
+    safe::vector<unsigned>& getadjHGridMC(unsigned layer) {
+        assert(layer < _adjHGridMC.size());
         return *_adjHGridMC[layer];
     }
-    std::vector<int>& getSameGridDemand(unsigned layer) {
+    safe::vector<int>& getSameGridDemand(unsigned layer) {
+        assert(layer < _SameGridDemand.size());
         return *_SameGridDemand[layer];
     }
-    std::vector<int>& getadjHGridDemand(unsigned layer) {
+    safe::vector<int>& getadjHGridDemand(unsigned layer) {
+        assert(layer < _adjHGridDemand.size());
         return *_adjHGridDemand[layer];
     }
 
@@ -195,26 +201,26 @@ class MasterCellType {
     const std::string _MCName;
     const unsigned _Id;
     const int _layer;
-    std::vector<int> _LayerDemand;
-    std::vector<PinType> _Pins;
-    std::vector<BlockageType> _Blkgs;
-    std::vector<std::vector<unsigned>*> _SameGridMC;
-    std::vector<std::vector<int>*> _SameGridDemand;
-    std::vector<std::vector<unsigned>*> _adjHGridMC;
-    std::vector<std::vector<int>*> _adjHGridDemand;
+    safe::vector<int> _LayerDemand;
+    safe::vector<PinType> _Pins;
+    safe::vector<BlockageType> _Blkgs;
+    safe::vector<safe::vector<unsigned>*> _SameGridMC;
+    safe::vector<safe::vector<int>*> _SameGridDemand;
+    safe::vector<safe::vector<unsigned>*> _adjHGridMC;
+    safe::vector<safe::vector<int>*> _adjHGridDemand;
     std::unordered_map<std::string, unsigned> _PinName2Idx;
 };
 
 std::ostream& operator<<(std::ostream& os, const MasterCellType& MCT) {
     os << "Master Cell Name : " << MCT._MCName << " Id : " << MCT._Id << '\n'
        << "Pins : \n";
-    for (size_t i = 0, n = MCT._Pins.size(); i < n; ++i)
+    for (size_t i = 0, n = MCT._Pins.size(); i < n; ++i) {
         os << MCT._Pins[i];
+    }
     os << "Blockages : \n";
-    for (size_t i = 0, n = MCT._Blkgs.size(); i < n; ++i)
+    for (size_t i = 0, n = MCT._Blkgs.size(); i < n; ++i) {
         os << MCT._Blkgs[i];
+    }
     os << "---------------------------------------------" << '\n';
     return os;
 }
-
-#endif
