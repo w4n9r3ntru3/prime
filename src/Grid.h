@@ -30,28 +30,17 @@ class Grid;
 class Layer {
    public:
     // constructor
-    Layer(const std::string name, int i, bool d, int supply, int area)
-        : _direction(d), _LayerName(name), _idx(i) {
-        _grids.reserve(area);
-        for (int i = 0; i < area; ++i) {
-            Grid* g = new Grid(supply, *this);
-            _grids.push_back(g);
-        }
-    }
+    Layer(const std::string name, int i, bool d, int supply, int area);
 
     // destructor
-    ~Layer() {
-        for (int i = 0, n = _grids.size(); i < n; ++i) {
-            delete _grids[i];
-        }
-    }
+    ~Layer();
 
     // modifier
 
     // accesser
-    const std::string& getLayerName() const { return _LayerName; }
-    int getLayerIdx() const { return _idx; }
-    Grid& getGrid(int i) { return *_grids[i]; }
+    const std::string& getLayerName() const;
+    int getLayerIdx() const;
+    Grid& getGrid(int i);
 
    private:
     const std::string _LayerName;
@@ -63,42 +52,19 @@ class Layer {
 class Coordinate {
    public:
     // constructor
-    Coordinate(int x, int y, int layer) : _row(x), _column(y) {
-        _grids.reserve(layer);
-    }
+    Coordinate(int x, int y, int layer);
 
     // modifier
-    void addGrid(Grid* g) { _grids.push_back(g); }
-    void addCell(Cell* cell, Coordinate* c1, Coordinate* c2) {
-        // for every layer
-        for (int i = 0, n = _grids.size(); i < n; ++i) {
-            _grids[i]->addCell(cell->getMasterCellId());
-            safe::vector<unsigned> adjHMC = cell->getadjHGridMC(i);
-            safe::vector<unsigned> SameMC = cell->getSameGridMC(i);
-            safe::vector<int> adjHDemand = cell->getadjHGridDemand(i);
-            safe::vector<int> SameDemand = cell->getSameGridDemand(i);
-            addConstraint(i, SameMC, SameDemand);
-            if (c1) {
-                c1->addConstraint(i, adjHMC, adjHDemand);
-            }
-            if (c2) {
-                c2->addConstraint(i, adjHMC, adjHDemand);
-            }
-        }
-    }
+    void addGrid(Grid* g);
+    void addCell(Cell* cell, Coordinate* c1, Coordinate* c2);
     void addConstraint(int layer,
                        safe::vector<unsigned>& mc,
-                       safe::vector<int>& demand) {
-        assert(mc.size() == demand.size());
-        for (int i = 0, n = mc.size(); i < n; ++i) {
-            _grids[layer]->addConstraint(mc[i], demand[i]);
-        }
-    }
+                       safe::vector<int>& demand);
 
     // accesser
-    Grid& getGrid(size_t i) { return *_grids[i]; }
-    int getRow() const { return _row; }
-    int getColumn() const { return _column; }
+    Grid& getGrid(size_t i);
+    int getRow() const;
+    int getColumn() const;
 
    private:
     int _row;
@@ -109,71 +75,26 @@ class Coordinate {
 class Grid {
    public:
     // constructors
-    Grid(int supply, Layer& layer) : _layer(layer), _supply(supply) {}
-    Grid(Grid& a)
-        : _layer(a._layer), _supply(a._supply), _coordinate(a._coordinate) {}
+    Grid(int supply, Layer& layer);
+    Grid(Grid& a);
 
     // modifier
-    void assignCoordinate(Coordinate* c) { _coordinate = c; }
-    void incSupply(int d) { _supply += d; }
-    void decSupply(int d) { _supply -= d; }
-    void addConstraint(unsigned mc, int demand) {
-        // if (_Cell2Demand.find(mc) == _Cell2Demand.end()) {
-        if (contains(_Cell2Demand, mc)) {
-            _Cell2Demand[mc] = demand;
-        } else {
-            _Cell2Demand[mc] += demand;
-        }
-    }
-    void moveConstraint(unsigned mc, int demand) {
-        // assert(_Cell2Demand.count(mc) > 0);
-        assert(contains(_Cell2Demand, mc));
-        demand = _Cell2Demand[mc] - demand;
-        if (demand > 0) {
-            _Cell2Demand[mc] = demand;
-        } else {
-            _Cell2Demand.erase(mc);
-        }
-    }
-    void addCell(unsigned mc) {
-        int demand;
-        if (getDemand(mc, demand)) {
-            _supply -= demand;
-        }
-    }
-    void addNet(Net& net) {
-        // if (_nets.find(net.getId()) == _nets.end()) {
-        if (!contains(_nets, net.getId())) {
-            _nets[net.getId()] = &net;
-            _supply -= 1;
-        }
-    }
-    bool getNet(Net& net) {
-        // return _nets.find(net.getId()) != _nets.end();
-        return contains(_nets, net.getId());
-    }
-    Net* getNet(unsigned i) {
-        // if (_nets.find(i) == _nets.end()) {
-        if (!contains(_nets, i)) {
-            return nullptr;
-        }
-        return _nets[i];
-    }
+    void assignCoordinate(Coordinate* c);
+    void incSupply(int d);
+    void decSupply(int d);
+    void addConstraint(unsigned mc, int demand);
+    void moveConstraint(unsigned mc, int demand);
+    void addCell(unsigned mc);
+    void addNet(Net& net);
+    bool getNet(Net& net);
+    Net* getNet(unsigned i);
 
     // accesser
-    int getRow() const { return _coordinate->getRow(); }
-    int getColumn() const { return _coordinate->getColumn(); }
-    int getSupply() const { return _supply; }
-    int getLayer() const { return _layer.getLayerIdx(); }
-    bool getDemand(unsigned mc, int& demand) {
-        // if (_Cell2Demand.find(mc) == _Cell2Demand.end()) {
-        if (contains(_Cell2Demand, mc)) {
-            return false;
-        } else {
-            demand = _Cell2Demand[mc];
-        }
-        return true;
-    }
+    int getRow() const;
+    int getColumn() const;
+    int getSupply() const;
+    int getLayer() const;
+    bool getDemand(unsigned mc, int& demand);
 
    private:
     int _supply;

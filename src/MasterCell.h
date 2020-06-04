@@ -153,7 +153,7 @@ class MasterCellType {
     unsigned getId() const { return _Id; }
     unsigned getNumLayers() const { return _layer; }
     int getLayerDemand(int i) const {
-        assert(i < _LayerDemand.size());
+        assert(i < int(_LayerDemand.size()));
         return _LayerDemand[i];
     }
     size_t getNumPins() const { return _Pins.size(); }

@@ -263,6 +263,60 @@ PrimeMan::~PrimeMan() {
     }
 }
 
+int PrimeMan::getIdx(int row, int column) const {
+    assert(column >= 0 && column < _columnRange && row >= 0 &&
+            row < _rowRange);
+    return column * _rowRange + row;
+}
+
+int PrimeMan::getLeft(int row, int column) const {
+    if (column == 0) {
+        return -1;
+    }
+    return getIdx(row, column - 1);
+}
+
+int PrimeMan::getRight(int row, int column) const {
+    if (column == _columnRange - 1) {
+        return -1;
+    }
+    return getIdx(row, column + 1);
+}
+
+int PrimeMan::getDown(int row, int column) const {
+    if (row == 0) {
+        return -1;
+    }
+    return getIdx(row - 1, column);
+}
+
+int PrimeMan::getUp(int row, int column) const {
+    if (row == _rowRange - 1) {
+        return -1;
+    }
+    return getIdx(row + 1, column);
+}
+
+Layer& PrimeMan::getLayer(int layer) {
+    assert(layer < int(_layers.size()));
+    return *_layers[layer];
+}
+
+Coordinate& PrimeMan::getCoordinate(unsigned i) {
+    assert(i >= 0 && i < _coordinates.size());
+    return *_coordinates[i];
+}
+
+Cell& PrimeMan::getCell(unsigned i) {
+    assert(i < _cells.size());
+    return *_cells[i];
+}
+
+Net& PrimeMan::getNet(unsigned i) {
+    assert(i < _nets.size());
+    return *_nets[i];
+}
+
 void PrimeMan::constructCoordinate() {
     _area = _columnRange * _rowRange;
     _coordinates.reserve(_area);
