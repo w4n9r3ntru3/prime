@@ -39,12 +39,11 @@ void PrimeMan::readFile(std::fstream& input) {
     input >> str;  // GGridBoundaryIdx
     assert(str == "GGridBoundaryIdx");
     int rb, cb, re, ce;
-    input >> rb >> cb >> re >>
-        ce;  //<rowBeginIdx> <colBeginIdx> <rowEndIdx> <colEndIdx>
+    input >> rb >> cb >> re >> ce;  //<rowBeginIdx> <colBeginIdx> <rowEndIdx> <colEndIdx>
     _rowBase = cb;
     _columnBase = rb;
-    _rowRange = ce - cb;
-    _columnRange = re - rb;
+    _rowRange = ce - cb + 1;
+    _columnRange = re - rb + 1;
 
     /*NumLayers <LayerCount>
       Lay <LayerName> <Idx> <RoutingDirection> <defaultSupplyOfOneGGrid>*/
@@ -62,6 +61,7 @@ void PrimeMan::readFile(std::fstream& input) {
         input >> str;  //<LayerName>
         int idx;
         input >> idx;  //<Idx>
+        assert(!_Layer2Idx.contains(str));
         _Layer2Idx[str] = idx;
         bool direction = false;
         input >> buf;  //<RoutingDirection>
@@ -87,7 +87,7 @@ void PrimeMan::readFile(std::fstream& input) {
     input >> count;
     for (int i = 0; i < count; ++i) {
         input >> row >> column >> layer >> val;
-        _layers[row - 1]->getGrid(getIdx(row, column)).incSupply(val);
+        _layers[row - 1]->getGrid(getIdx(row - _rowBase, column - _columnBase)).incSupply(val);
     }
 
     /*NumMasterCell <masterCellCount>
@@ -110,19 +110,20 @@ void PrimeMan::readFile(std::fstream& input) {
         MasterCellType* mct = new MasterCellType(str, i, _layer);
         _MasterCells.push_back(mct);
         int pin, blockage;
-        input >> pin >> blockage;
+        input >> pin >> blockage; // <pinCount> <blockageCount>
         for (int j = 0; j < pin; ++j) {
             input >> str;  // Pin
             assert(str == "Pin");
-            input >> str >> layer;  // <pinName> <pinLayer>
-            mct->AddPin(str, layer);
+            input >> str >> buf;  // <pinName> <pinLayer>
+            assert(_Layer2Idx.contains(buf));
+            mct->AddPin(str, _Layer2Idx[buf]);
         }
         for (int j = 0; j < blockage; ++j) {
             input >> str;  // Blkg
             assert(str == "Blkg");
-            input >> str >> layer >>
-                demand;  // <blockageName> <blockageLayer> <demand>
-            mct->AddBlkg(str, layer, demand);
+            input >> str >> buf >> demand;  // <blockageName> <blockageLayer> <demand>
+            assert(_Layer2Idx.contains(buf));
+            mct->AddBlkg(str, _Layer2Idx[buf], demand);
         }
     }
 
@@ -166,7 +167,6 @@ void PrimeMan::readFile(std::fstream& input) {
         assert(!_Cell2Idx.contains(str));
         _Cell2Idx[str] = i;
         input >> buf;  // <masterCellName>
-        assert(_MasterCell2Idx[buf] == 1);
         MasterCellType MCT = *_MasterCells[_MasterCell2Idx[buf]];
         input >> row >> column >>
             buf;  // <gGridRowIdx> <gGridColIdx> <movableCstr>

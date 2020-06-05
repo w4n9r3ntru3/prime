@@ -11,6 +11,9 @@ all:
 	$(MAKE) clean
 	$(MAKE) $(BINARY) -j
 
+dbg:
+	g++ src/main.cpp src/Cell.cpp src/Grid.cpp src/MasterCell.cpp src/PrimeMan.cpp -o dbg -std=c++11 -g
+
 $(BINARY): $(TARGETS)
 	$(CXX) $(CXXFLAGS) $? -o $(BINARY) $(FLAGS)
 
@@ -19,3 +22,6 @@ $(BINARY): $(TARGETS)
 
 clean:
 	rm -f $(BINARY) $(TARGETS)
+
+clean_dbg:
+	rm -f dbg
