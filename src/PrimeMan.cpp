@@ -24,7 +24,7 @@
 ///                          FUNCTIONS                               ///
 ////////////////////////////////////////////////////////////////////////
 
-PrimeMan::PrimeMan(std::fstream& input) {
+PrimeMan::PrimeMan(std::fstream& input): _numMoved(0) {
     readFile(input);
 }
 
@@ -331,6 +331,10 @@ Cell& PrimeMan::getCell(unsigned i) {
 
 Net& PrimeMan::getNet(unsigned i) {
     return *_nets[i];
+}
+
+Grid& PrimeMan::getGrid(int layer, unsigned idx) {
+    return _layers[layer]->getGrid(idx);
 }
 
 void PrimeMan::constructCoordinate() {

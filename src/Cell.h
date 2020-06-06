@@ -66,7 +66,7 @@ class Net {
     // accesser
     const std::string& getName() const;
     unsigned getId() const;
-    unsigned getMinlayer() const;
+    unsigned getMinlayer() const; //min routing layer constraint
     size_t getNumPin() const;
     Pin& getPin(unsigned i);
 
@@ -88,8 +88,8 @@ class Cell {
     // modifier
     void setRow(unsigned x);
     void setColumn(unsigned y);
-    void setCoordinate(unsigned x, unsigned y);
-    void move();
+    void setCoordinate(unsigned row, unsigned column);
+    void move(); // use this to specify that this cell is moved
 
     // accesser
     const std::string& getCellName() const;
@@ -100,7 +100,7 @@ class Cell {
     unsigned getColumn() const;
     Pin& getPin(size_t i);
     Pin& getPin(std::string& str);
-    int getLayerDemand(int i) const;
+    int getLayerDemand(int layer) const;
     safe::vector<unsigned>& getSameGridMC(unsigned layer);
     safe::vector<unsigned>& getadjHGridMC(unsigned layer);
     safe::vector<int>& getSameGridDemand(unsigned layer);
