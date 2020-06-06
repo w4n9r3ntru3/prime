@@ -20,8 +20,16 @@
 #include "Grid.h"
 
 ////////////////////////////////////////////////////////////////////////
-///                          PARAMETERS                              ///
+///                          DESCRIPTION                             ///
 ////////////////////////////////////////////////////////////////////////
+
+/* 1. How to get elements :
+      Cell : getCell()
+      
+ *
+ *
+ *
+ */
 
 ////////////////////////////////////////////////////////////////////////
 ///                           CLASSES                                ///
@@ -34,7 +42,7 @@ class PrimeMan {
     // destructor
     ~PrimeMan();
 
-    // index(get -1 if out of bound)
+    // index(return -1 if out of bound)
     int getIdx(int row, int column) const;
     int getLeft(int row, int column) const;
     int getRight(int row, int column) const;
@@ -43,9 +51,9 @@ class PrimeMan {
 
     // accesser
     Layer& getLayer(int layer);
-    Coordinate& getCoordinate(unsigned i);
-    Cell& getCell(unsigned i);
-    Net& getNet(unsigned i);
+    Coordinate& getCoordinate(unsigned idx); // use getIdx() to get the idx
+    Cell& getCell(unsigned idx);
+    Net& getNet(unsigned idx);
 
    private:
     unsigned _maxMove;

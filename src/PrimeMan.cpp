@@ -291,6 +291,9 @@ PrimeMan::~PrimeMan() {
     for (int i = 0, n = _cells.size(); i < n; ++i) {
         delete _cells[i];
     }
+    for (int i = 0, n = _nets.size(); i < n; ++i) {
+        delete _nets[i];
+    }
 }
 
 int PrimeMan::getIdx(int row, int column) const {
