@@ -95,7 +95,7 @@ class Cell {
     const std::string& getCellName() const;
     MasterCellType& getMasterCell();
     int getMasterCellId() const;
-    bool movable(bool constraint) const;
+    bool movable(bool constraint) const; //constraint means the limit of movable number
     unsigned getRow() const;
     unsigned getColumn() const;
     Pin& getPin(size_t i);
