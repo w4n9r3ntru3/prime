@@ -68,8 +68,8 @@ class PrimeMan {
     int getUp(int row, int column) const;
 
     // modifier
-    void incNumMoved();  // trigger it if you move a cell
-    void decNumMoved();  // trigger it if you move a cell back to its original
+    bool incNumMoved();  // trigger it if you want to move a cell
+    void decNumMoved();  // trigger it if you want to move a cell back to its original
                          // position
 
     // accesser(use getIdx() to get the idx of Grid and Coordinate)

@@ -306,6 +306,20 @@ int PrimeMan::getUp(int row, int column) const {
     return (row == _rowRange - 1) ? -1 : getIdx(row + 1, column);
 }
 
+bool PrimeMan::incNumMoved() {
+    assert(_numMoved <= _maxMove);
+    if(_numMoved == _maxMove) {
+        return false;
+    }
+    ++_numMoved;
+    return true;
+}
+
+void PrimeMan::decNumMoved() {
+    assert(_numMoved > 0);
+    --_numMoved;
+}
+
 Layer& PrimeMan::getLayer(int layer) {
     return *_layers[layer];
 }
