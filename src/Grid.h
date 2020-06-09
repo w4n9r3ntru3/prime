@@ -57,11 +57,9 @@ class Coordinate {
     // modifier
     void addAdjH(Coordinate* c1, Coordinate* c2);// you don't need this'
     void addGrid(Grid* g);// you don't need this
-    void addConstraint(int layer,
-                       safe::vector<unsigned>& mc,
-                       safe::vector<int>& demand);// you don't need this
     bool CanAddCell(Cell& cell);// to see if you can add this cell
     void addCell(Cell& cell); 
+    void moveCell(Cell& cell);
 
     // accesser
     Grid& getGrid(size_t i);
@@ -74,6 +72,13 @@ class Coordinate {
     Coordinate* _c1;
     Coordinate* _c2;
     safe::vector<Grid*> _grids;
+
+    void addConstraint(int layer,
+                       safe::vector<unsigned>& mc,
+                       safe::vector<int>& demand);
+    void moveConstraint(int layer,
+                       safe::vector<unsigned>& mc,
+                       safe::vector<int>& demand);
 };
 
 class Grid {
@@ -90,6 +95,7 @@ class Grid {
     void moveConstraint(unsigned mc, int demand);
     bool CanAddCell(unsigned mc);
     void addCell(unsigned mc);
+    void moveCell(unsigned mc);
     void addNet(Net& net);
     bool getNet(Net& net);
     Net* getNet(unsigned i);
