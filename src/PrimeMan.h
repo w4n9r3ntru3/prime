@@ -78,6 +78,7 @@ class PrimeMan {
     Cell& getCell(unsigned idx);
     Net& getNet(unsigned idx);
     Grid& getGrid(int layer, unsigned idx);
+    bool limited() const;
 
    private:
     unsigned _maxMove;

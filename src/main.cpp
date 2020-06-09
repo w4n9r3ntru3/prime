@@ -13,6 +13,7 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "PrimeMan.h"
+#include "Force.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
@@ -45,5 +46,6 @@ int main(int argc, char* argv[]) {
 
     // call solver
     PrimeMan Mgr(inputfile);
+    Force fr(Mgr);
     return 0;
 }

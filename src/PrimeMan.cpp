@@ -340,6 +340,10 @@ Grid& PrimeMan::getGrid(int layer, unsigned idx) {
     return _layers[layer]->getGrid(idx);
 }
 
+bool PrimeMan::limited() const {
+    return _numMoved == _maxMove;
+}
+
 void PrimeMan::constructCoordinate() {
     _area = _columnRange * _rowRange;
     _coordinates.reserve(_area);
