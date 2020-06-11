@@ -69,7 +69,7 @@ void Coordinate::addGrid(Grid* g) {
 
 bool Coordinate::CanAddCell(Cell& cell) {
     for (int i = 0, n = _grids.size(); i < n; ++i) {
-        if (!_grids[i]->CanAddCell(cell.getMasterCellId())) {
+        if (!_grids[i]->CanAddCell(cell.getMasterCell())) {
             return false;
         }
     }
@@ -79,7 +79,7 @@ bool Coordinate::CanAddCell(Cell& cell) {
 void Coordinate::addCell(Cell& cell) {
     // for every layer
     for (int i = 0, n = _grids.size(); i < n; ++i) {
-        _grids[i]->addCell(cell.getMasterCellId());
+        _grids[i]->addCell(cell.getMasterCell());
         safe::vector<unsigned>& adjHMC = cell.getadjHGridMC(i);
         safe::vector<unsigned>& SameMC = cell.getSameGridMC(i);
         safe::vector<int>& adjHDemand = cell.getadjHGridDemand(i);
@@ -105,7 +105,7 @@ void Coordinate::addConstraint(int layer,
 
 void Coordinate::moveCell(Cell& cell) {
     for (int i = 0, n = _grids.size(); i < n; ++i) {
-        _grids[i]->moveCell(cell.getMasterCellId());
+        _grids[i]->moveCell(cell.getMasterCell());
         safe::vector<unsigned>& adjHMC = cell.getadjHGridMC(i);
         safe::vector<unsigned>& SameMC = cell.getSameGridMC(i);
         safe::vector<int>& adjHDemand = cell.getadjHGridDemand(i);
@@ -180,9 +180,10 @@ void Grid::moveConstraint(unsigned mc, int demand) {
     }
 }
 
-bool Grid::CanAddCell(unsigned mc) {
-    int demand;
-    if (getDemand(mc, demand)) {
+bool Grid::CanAddCell(MasterCellType& mct) {
+    int demand = 0;
+    demand += mct.getLayerDemand(_layer.getLayerIdx());
+    if (getDemand(mct.getId(), demand)) {
         if (demand > _supply) {
             return false;
         }
@@ -190,16 +191,18 @@ bool Grid::CanAddCell(unsigned mc) {
     return true;
 }
 
-void Grid::addCell(unsigned mc) {
-    int demand;
-    if (getDemand(mc, demand)) {
+void Grid::addCell(MasterCellType& mct) {
+    int demand = 0;
+    _supply -= mct.getLayerDemand(_layer.getLayerIdx());
+    if (getDemand(mct.getId(), demand)) {
         _supply -= demand;
     }
 }
 
-void Grid::moveCell(unsigned mc) {
-    int demand;
-    if (getDemand(mc, demand)) {
+void Grid::moveCell(MasterCellType& mct) {
+    int demand = 0;
+    _supply += mct.getLayerDemand(_layer.getLayerIdx());
+    if (getDemand(mct.getId(), demand)) {
         _supply += demand;
     }
 }
@@ -246,6 +249,6 @@ bool Grid::getDemand(unsigned mc, int& demand) {
     if (!_Cell2Demand.contains(mc)) {
         return false;
     }
-    demand = _Cell2Demand[mc];
+    demand += _Cell2Demand[mc];
     return true;
 }

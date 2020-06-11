@@ -93,9 +93,9 @@ class Grid {
     void decSupply(int d);
     void addConstraint(unsigned mc, int demand);
     void moveConstraint(unsigned mc, int demand);
-    bool CanAddCell(unsigned mc);
-    void addCell(unsigned mc);
-    void moveCell(unsigned mc);
+    bool CanAddCell(MasterCellType& mct);
+    void addCell(MasterCellType& mct);
+    void moveCell(MasterCellType& mct);
     void addNet(Net& net);
     bool getNet(Net& net);
     Net* getNet(unsigned i);
