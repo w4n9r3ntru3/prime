@@ -370,6 +370,10 @@ bool PrimeMan::limited() const {
     return _movedCells.size() == _maxMove;
 }
 
+void PrimeMan::log() const {
+    maxNetDegree();
+}
+
 void PrimeMan::output(std::fstream& output) {
     int n = _movedCells.size();
     output << "NumMovedCellInst " << n << '\n';
@@ -453,4 +457,15 @@ void PrimeMan::outputRoute(std::fstream& output) {
                    << segments[6 * j + 4] + _columnBase << " "
                    << segments[6 * j + 5] + 1 << " " << net->getName() << '\n';
     }
+}
+
+void PrimeMan::maxNetDegree() const {
+    int maxDegree = 0;
+    for (int i = 0, n = _nets.size(); i < n; ++i) {
+        int d = _nets[i]->getNumPin();
+        if (d > maxDegree) {
+            maxDegree = d;
+        }
+    }
+    std::cout << "Max Net Degree : " << maxDegree << '\n';
 }

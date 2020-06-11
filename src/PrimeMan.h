@@ -97,6 +97,7 @@ class PrimeMan {
     Grid& getGrid(int layer, unsigned idx);
     MasterCellType& getMasterCell(unsigned idx);
     bool limited() const;
+    void log() const;
 
     // output
     void output(std::fstream& output);
@@ -133,4 +134,5 @@ class PrimeMan {
                      int elay,
                      Net* net);
     void outputRoute(std::fstream& output);
+    void maxNetDegree() const;
 };
