@@ -23,7 +23,12 @@
 ///                          DESCRIPTION                             ///
 ////////////////////////////////////////////////////////////////////////
 
-/* 1. How to get elements :
+/* Which ".h" files does the classes belong to?
+ * Cell.h : GridNet, Cell, Pin
+ * Grid.h : Layer, Coordinate, Grid
+ * MasterCell.h : PinType, BlockageType(probably useless), MasterCellType
+ * 
+ * 1. How to get elements :
  *    Cell : getCell()
  *    Net : getNet()
  *    Coordinate : getCoordinate()
