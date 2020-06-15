@@ -12,8 +12,8 @@
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "PrimeMan.h"
 #include "Force.h"
+#include "PrimeMan.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
@@ -46,7 +46,9 @@ int main(int argc, char* argv[]) {
 
     // call solver
     PrimeMan Mgr(inputfile);
+#ifdef FORCE
     Force fr(Mgr);
+#endif
     Mgr.log();
     Mgr.output(outputfile);
     return 0;

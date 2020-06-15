@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include <algorithm>
+#include <iostream>
 #include <memory>
 #include <set>
 #include <sstream>

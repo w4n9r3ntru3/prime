@@ -142,7 +142,8 @@ int Coordinate::getColumn() const {
 }
 
 // Grid
-Grid::Grid(int supply, Layer& layer) : _supply(supply), _layer(layer) {}
+Grid::Grid(int supply, Layer& layer)
+    : _supply(supply), _layer(layer), _coordinate(nullptr) {}
 
 Grid::Grid(Grid& a)
     : _supply(a._supply), _layer(a._layer), _coordinate(a._coordinate) {}
@@ -160,17 +161,14 @@ void Grid::decSupply(int d) {
 }
 
 void Grid::addConstraint(unsigned mc, int demand) {
-    // if (_Cell2Demand.find(mc) == _Cell2Demand.end()) {
-    if (!_Cell2Demand.contains(mc)) {
-        _Cell2Demand[mc] = demand;
-    } else {
+    if (_Cell2Demand.contains(mc)) {
         _Cell2Demand[mc] += demand;
+    } else {
+        _Cell2Demand[mc] = demand;
     }
 }
 
 void Grid::moveConstraint(unsigned mc, int demand) {
-    // assert(_Cell2Demand.count(mc) > 0);
-    assert(_Cell2Demand.contains(mc));
     demand = _Cell2Demand.at(mc) - demand;
     assert(demand >= 0);
     if (demand > 0) {
@@ -181,14 +179,11 @@ void Grid::moveConstraint(unsigned mc, int demand) {
 }
 
 bool Grid::CanAddCell(MasterCellType& mct) {
+    // FIXME inconsistency?
     int demand = 0;
     demand += mct.getLayerDemand(_layer.getLayerIdx());
-    if (getDemand(mct.getId(), demand)) {
-        if (demand > _supply) {
-            return false;
-        }
-    }
-    return true;
+    // https://stackoverflow.com/a/5683030
+    return !(getDemand(mct.getId(), demand) && demand > _supply);
 }
 
 void Grid::addCell(MasterCellType& mct) {

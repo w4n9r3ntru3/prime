@@ -226,9 +226,10 @@ bool Cell::moved() const {
 
 bool Cell::movable(bool constraint) const {
     if (constraint) {
-        return constraint && _moved;
+        return _moved;
+    } else {
+        return _movable;
     }
-    return _movable;
 }
 
 unsigned Cell::getRow() const {

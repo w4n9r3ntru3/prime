@@ -1,3 +1,5 @@
+#ifdef FORCE
+
 /***********************************************************************
 
   FileName    [Force.cpp]
@@ -40,3 +42,5 @@ Force::Force(PrimeMan& pm) : _pm(pm) {
 void Force::solve() { 
   
 }
+
+#endif

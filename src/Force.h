@@ -1,3 +1,8 @@
+// FIXME
+// this class is diabled because of missing parts
+
+#ifdef FORCE
+
 /***********************************************************************
 
   FileName    [Force.h]
@@ -14,8 +19,8 @@
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "PrimeMan.h"
 #include "BucketList.h"
+#include "PrimeMan.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
@@ -30,11 +35,13 @@ class Force {
     // Constructor
     Force(PrimeMan& pm);
 
-    //solver
+    // solver
     void solve();
 
    private:
-    PrimeMan&                   _pm;
-    BucketList*                 _bkList;
-    std::vector<Node*>          _nodes;
+    PrimeMan& _pm;
+    BucketList* _bkList;
+    std::vector<Node*> _nodes;
 };
+
+#endif

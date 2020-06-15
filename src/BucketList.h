@@ -1,3 +1,8 @@
+// FIXME
+// this class is diabled because of missing parts
+
+#ifdef BUCKET
+
 /***********************************************************************
 
   FileName    [BucketList.h]
@@ -161,3 +166,5 @@ class BucketList {
     int _maxGain;
     int _iter;
 };
+
+#endif
