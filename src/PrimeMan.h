@@ -102,6 +102,7 @@ class PrimeMan {
     Cell& getCell(unsigned idx);
     GridNet& getNet(unsigned idx);
     Grid& getGrid(int layer, unsigned idx);
+    Grid& getGrid(int layer, int row, int column);
     MasterCellType& getMasterCell(unsigned idx);
     bool limited() const;
     void log() const;
@@ -121,7 +122,7 @@ class PrimeMan {
     safe::unordered_map<std::string, int> _MasterCell2Idx;
     safe::unordered_map<std::string, unsigned> _Cell2Idx;
     safe::unordered_map<std::string, unsigned> _Net2Idx;
-    safe::vector<Layer*> _layers;
+    safe::vector<Layer> _layers;
     safe::vector<Coordinate*> _coordinates;
     safe::vector<MasterCellType> _MasterCells;
     safe::vector<Cell> _cells;

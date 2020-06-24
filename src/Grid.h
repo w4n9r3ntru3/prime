@@ -49,7 +49,8 @@ class Grid;
 class Layer {
    public:
     // constructor
-    Layer(const std::string name, int i, bool d, int supply, int area);
+    Layer(const std::string name, int i, bool d, int supply, int area) noexcept;
+    Layer(const Layer& l) noexcept;
 
     // destructor
     ~Layer();
@@ -72,6 +73,7 @@ class Coordinate {
    public:
     // constructor
     Coordinate(int x, int y, int layer);
+    Coordinate(const Coordinate& c) noexcept;
 
     // modifier
     void addAdjH(Coordinate* c1, Coordinate* c2);  // you don't need this'
@@ -116,7 +118,7 @@ class Grid {
     void addCell(MasterCellType& mct);
     void moveCell(MasterCellType& mct);
     void addNet(GridNet& net);
-    bool getNet(GridNet& net);
+    bool canGetNet(GridNet& net);
     GridNet* getNet(unsigned i);
 
     // accesser

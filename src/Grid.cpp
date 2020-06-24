@@ -17,8 +17,6 @@
 
 #include <iostream>
 
-
-
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
 ////////////////////////////////////////////////////////////////////////
@@ -28,7 +26,11 @@
 ////////////////////////////////////////////////////////////////////////
 
 // Layer
-Layer::Layer(const std::string name, int i, bool d, int supply, int area)
+Layer::Layer(const std::string name,
+             int i,
+             bool d,
+             int supply,
+             int area) noexcept
     : _LayerName(name), _idx(i), _direction(d) {
     _grids.reserve(area);
     for (int i = 0; i < area; ++i) {
@@ -36,6 +38,12 @@ Layer::Layer(const std::string name, int i, bool d, int supply, int area)
         _grids.push_back(g);
     }
 }
+
+Layer::Layer(const Layer& l) noexcept
+    : _LayerName(l._LayerName),
+      _idx(l._idx),
+      _direction(l._direction),
+      _grids(l._grids) {}
 
 Layer::~Layer() {
     for (int i = 0, n = _grids.size(); i < n; ++i) {
@@ -212,7 +220,7 @@ void Grid::addNet(GridNet& net) {
     }
 }
 
-bool Grid::getNet(GridNet& net) {
+bool Grid::canGetNet(GridNet& net) {
     // return _nets.find(net.getId()) != _nets.end();
     return _nets.contains(net.getId());
 }

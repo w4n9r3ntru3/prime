@@ -56,9 +56,6 @@ void PrimeMan::readFile(std::fstream& input) {
     safe::assert(str == "NumLayer");
     input >> _layer;  //<LayerCount>
     _layers.reserve(_layer);
-    for (int i = 0; i < _layer; ++i) {
-        _layers.push_back(0);
-    }
     constructCoordinate();
     for (int i = 0; i < _layer; ++i) {
         input >> str;  // Lay
@@ -83,8 +80,7 @@ void PrimeMan::readFile(std::fstream& input) {
         // }
         int supply;
         input >> supply;  //<defaultSupplyOfOneGGrid>
-        Layer* l = new Layer(str, idx - 1, direction, supply, _area);
-        _layers[idx - 1] = l;
+        _layers.push_back(Layer(str, idx - 1, direction, supply, _area));
     }
     connectCoordinateGrid();
 
@@ -97,7 +93,7 @@ void PrimeMan::readFile(std::fstream& input) {
     for (int i = 0; i < count; ++i) {
         input >> row >> column >> layer >> val;
         _layers[layer - 1]
-            ->getGrid(getIdx(row - _rowBase, column - _columnBase))
+            .getGrid(getIdx(row - _rowBase, column - _columnBase))
             .incSupply(val);
     }
 
@@ -288,9 +284,6 @@ void PrimeMan::readFile(std::fstream& input) {
 }
 
 PrimeMan::~PrimeMan() {
-    for (Layer* ptr : _layers) {
-        delete ptr;
-    }
     for (Coordinate* ptr : _coordinates) {
         delete ptr;
     }
@@ -355,7 +348,7 @@ size_t PrimeMan::getNumMasterCells() const {
 }
 
 Layer& PrimeMan::getLayer(int layer) {
-    return *_layers[layer];
+    return _layers[layer];
 }
 
 Coordinate& PrimeMan::getCoordinate(unsigned i) {
@@ -371,7 +364,11 @@ GridNet& PrimeMan::getNet(unsigned i) {
 }
 
 Grid& PrimeMan::getGrid(int layer, unsigned idx) {
-    return _layers[layer]->getGrid(idx);
+    return _layers[layer].getGrid(idx);
+}
+
+Grid& PrimeMan::getGrid(int layer, int row, int column) {
+    return getGrid(layer, getIdx(row, column));
 }
 
 MasterCellType& PrimeMan::getMasterCell(unsigned idx) {
@@ -421,8 +418,8 @@ void PrimeMan::connectCoordinateGrid() {
     for (int i = 0; i < _area; ++i) {
         Coordinate* c = _coordinates[i];
         for (int j = 0; j < _layer; ++j) {
-            Layer* l = _layers[j];
-            Grid& g = l->getGrid(i);
+            Layer& l = _layers[j];
+            Grid& g = l.getGrid(i);
             g.assignCoordinate(c);
             c->addGrid(&g);
         }
@@ -438,10 +435,10 @@ void PrimeMan::assignRoute(int srow,
                            GridNet& net) {
     net.addSegment(srow, scol, slay, erow, ecol, elay);
     for (int i = slay; i <= elay; ++i) {
-        Layer* l = _layers[i];
+        Layer& l = _layers[i];
         for (int j = scol; j <= ecol; ++j) {
             for (int k = srow; k <= erow; ++k) {
-                Grid& g = l->getGrid(getIdx(k, j));
+                Grid& g = l.getGrid(getIdx(k, j));
                 g.addNet(net);
             }
         }
