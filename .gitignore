@@ -3,6 +3,9 @@
 !*/
 !*.*
 
+!Makefile
+!LICENCE
+
 # Prerequisites
 *.d
 
@@ -40,3 +43,4 @@
 .DS_Store
 .vscode
 evaluator/*
+*.dSYM

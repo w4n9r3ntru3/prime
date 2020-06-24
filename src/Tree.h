@@ -26,7 +26,7 @@ class Tree {
         : nodes(std::move(tn.nodes)), data(std::move(tn.data)) {}
 
     // operator=
-    Tree& operator=(Tree&& tn) {
+    Tree& operator=(Tree&& tn) noexcept {
         nodes = std::move(tn.nodes);
         data = std::move(tn.data);
 
