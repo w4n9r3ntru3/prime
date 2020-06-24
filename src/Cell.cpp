@@ -14,6 +14,8 @@
 
 #include "Cell.h"
 
+#include <assert.h>
+
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
 ////////////////////////////////////////////////////////////////////////
@@ -48,17 +50,17 @@ void Pin::setNet(GridNet* net) {
 }
 
 PinType& Pin::getPinType() const {
-    safe::assert(_PT != nullptr);
+    assert(_PT != nullptr);
     return *_PT;
 }
 
 GridNet& Pin::get_net() const {
-    safe::assert(_net != nullptr);
+    assert(_net != nullptr);
     return *_net;
 }
 
 Cell& Pin::get_cell() const {
-    safe::assert(_cell != nullptr);
+    assert(_cell != nullptr);
     return *_cell;
 }
 
@@ -148,7 +150,7 @@ Cell::Cell(const std::string CellName,
       _Id(id),
       _movable(movable),
       _moved(false) {
-    safe::assert(_MCT != nullptr);
+    assert(_MCT != nullptr);
 
     size_t p = getMasterCell().getNumPins();
     _pins.reserve(p);
@@ -216,12 +218,12 @@ unsigned Cell::getId() const {
 }
 
 const MasterCellType& Cell::getMasterCell() const {
-    safe::assert(_MCT != nullptr);
+    assert(_MCT != nullptr);
     return *_MCT;
 }
 
 MasterCellType& Cell::getMasterCell() {
-    safe::assert(_MCT != nullptr);
+    assert(_MCT != nullptr);
     return *_MCT;
 }
 

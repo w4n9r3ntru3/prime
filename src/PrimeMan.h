@@ -18,7 +18,7 @@
 
 #include "Cell.h"
 #include "Grid.h"
-#include "TreeNet.h"
+// #include "TreeNet.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          DESCRIPTION                             ///
@@ -127,7 +127,7 @@ class PrimeMan {
     safe::vector<MasterCellType> _MasterCells;
     safe::vector<Cell> _cells;
 
-    // ! 
+    // !
     safe::vector<GridNet> _grid_nets;
 
     // ! substituted

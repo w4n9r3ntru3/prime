@@ -4,13 +4,13 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include <algorithm>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <vector>
-
-#include "safe_assert.h"
 
 namespace safe {
 
@@ -46,11 +46,11 @@ class vector {
     void pop_back() { return field.pop_back(); }
 
     const T& operator[](size_t index) const {
-        safe::assert(index < field.size());
+        assert(index < field.size());
         return field[index];
     }
     T& operator[](size_t index) {
-        safe::assert(index < field.size());
+        assert(index < field.size());
         return field[index];
     }
 

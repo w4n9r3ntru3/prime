@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <assert.h>
+
+#include <iostream>
 #include <utility>
 
 #include "Node.h"
@@ -26,7 +29,7 @@ bool is_root(const TreeNode& node) {
 template <bool orphan = false>
 unsigned find(unsigned idx, safe::vector<TreeNode>& tree) {
     TreeNode& node = tree[idx];
-    safe::assert(node.has_self());
+    assert(node.has_self());
 
     // root node
     bool isroot = is_root<orphan>(node);
@@ -43,8 +46,8 @@ unsigned find(unsigned idx, safe::vector<TreeNode>& tree) {
 }
 
 template <bool orphan = false>
-void union_find(safe::vector<TreeNode>& treenodes,
-                const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
+void run_union_find(safe::vector<TreeNode>& treenodes,
+                    const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
     auto ranks = safe::vector<unsigned>(treenodes.size());
     std::fill(ranks.begin(), ranks.end(), 0);
 
@@ -71,5 +74,5 @@ void union_find(safe::vector<TreeNode>& treenodes,
         ++compared;
     }
 
-    safe::assert(compared == treenodes.size() - 1);
+    assert(compared == treenodes.size() - 1);
 }

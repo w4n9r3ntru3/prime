@@ -15,6 +15,8 @@
 
 #include "Grid.h"
 
+#include <assert.h>
+
 #include <iostream>
 
 ////////////////////////////////////////////////////////////////////////
@@ -107,7 +109,7 @@ void Coordinate::addCell(Cell& cell) {
 void Coordinate::addConstraint(int layer,
                                safe::vector<unsigned>& mc,
                                safe::vector<int>& demand) {
-    safe::assert(mc.size() == demand.size());
+    assert(mc.size() == demand.size());
     for (int i = 0, n = mc.size(); i < n; ++i) {
         _grids[layer]->addConstraint(mc[i], demand[i]);
     }
@@ -133,7 +135,7 @@ void Coordinate::moveCell(Cell& cell) {
 void Coordinate::moveConstraint(int layer,
                                 safe::vector<unsigned>& mc,
                                 safe::vector<int>& demand) {
-    safe::assert(mc.size() == demand.size());
+    assert(mc.size() == demand.size());
     for (int i = 0, n = mc.size(); i < n; ++i) {
         _grids[layer]->moveConstraint(mc[i], demand[i]);
     }
@@ -180,7 +182,7 @@ void Grid::addConstraint(unsigned mc, int demand) {
 
 void Grid::moveConstraint(unsigned mc, int demand) {
     demand = _Cell2Demand.at(mc) - demand;
-    safe::assert(demand >= 0);
+    assert(demand >= 0);
     if (demand > 0) {
         _Cell2Demand[mc] = demand;
     } else {

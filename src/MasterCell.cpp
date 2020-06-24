@@ -15,6 +15,8 @@
 
 #include "MasterCell.h"
 
+#include <assert.h>
+
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
 ////////////////////////////////////////////////////////////////////////
@@ -26,17 +28,17 @@
 // PinType
 PinType::PinType(const std::string PinName, int layer, MasterCellType& MCT)
     : _PinName(PinName), _layer(layer), _MCT(&MCT) {
-    safe::assert(layer >= 0);
+    assert(layer >= 0);
 }
 
 // PinType::PinType(const PinType& a)
 //     : _PinName(a._PinName), _layer(a._layer), _MCT(a._MCT) {
-//     safe::assert(a._layer >= 0);
+//     assert(a._layer >= 0);
 // }
 
 PinType::PinType(PinType&& a)
     : _PinName(std::move(a._PinName)), _layer(a._layer), _MCT(a._MCT) {
-    safe::assert(_layer >= 0);
+    assert(_layer >= 0);
     a._MCT = nullptr;
 }
 
@@ -74,17 +76,17 @@ std::ostream& operator<<(std::ostream& os, const PinType& PT) {
 
 BlockageType::BlockageType(const std::string BlkgName, int layer, int demand)
     : _BlkgName(BlkgName), _layer(layer), _demand(demand) {
-    safe::assert(layer >= 0 && demand >= 0);
+    assert(layer >= 0 && demand >= 0);
 }
 
 BlockageType::BlockageType(const BlockageType& a)
     : _BlkgName(a._BlkgName), _layer(a._layer), _demand(a._demand) {
-    safe::assert(a._layer >= 0 && a._demand >= 0);
+    assert(a._layer >= 0 && a._demand >= 0);
 }
 
 BlockageType::BlockageType(BlockageType&& a)
     : _BlkgName(std::move(a._BlkgName)), _layer(a._layer), _demand(a._demand) {
-    safe::assert(_layer >= 0 && _demand >= 0);
+    assert(_layer >= 0 && _demand >= 0);
 }
 
 BlockageType& BlockageType::operator=(const BlockageType& a) {
@@ -200,19 +202,19 @@ size_t MasterCellType::getNumBlkgs() const {
 }
 
 PinType& MasterCellType::getPinType(size_t i) {
-    safe::assert(i < _Pins.size());
+    assert(i < _Pins.size());
     return _Pins[i];
 }
 
 PinType& MasterCellType::getPinType(std::string& str) {
     auto idx = _PinName2Idx.find(str);
-    safe::assert(idx != _PinName2Idx.end());
+    assert(idx != _PinName2Idx.end());
     return _Pins[idx->second];
 }
 
 size_t MasterCellType::getPin(std::string& str) const {
     auto idx = _PinName2Idx.find(str);
-    safe::assert(idx != _PinName2Idx.end());
+    assert(idx != _PinName2Idx.end());
     return idx->second;
 }
 

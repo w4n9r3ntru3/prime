@@ -4,22 +4,80 @@
 
 #pragma once
 
+#include <iostream>
 #include <memory>
+#include <utility>
 
 #include "Node.h"
 #include "safe.h"
+#include "union_find.h"
 
-template <typename T>
+// * A tree only represents a structure
+// ! no data involved
 class Tree {
    public:
     // constructor
-    Tree() noexcept
+
+    Tree() noexcept;
+    Tree(size_t size) noexcept;
+    Tree(Tree&& tn) noexcept;
+
+    // operator=
+
+    Tree& operator=(Tree&& tn) noexcept;
+
+    // getter
+
+    const TreeNode& node(size_t idx) const;
+    TreeNode& node(size_t idx);
+
+    bool has_self(size_t idx) const;
+    bool has_parent(size_t idx) const;
+    bool has_left(size_t idx) const;
+    bool has_right(size_t idx) const;
+
+    unsigned node_parent(size_t idx) const;
+    unsigned node_left(size_t idx) const;
+    unsigned node_right(size_t idx) const;
+
+    const TreeNode& operator[](size_t idx) const;
+    TreeNode& operator[](size_t idx);
+
+    const TreeNode& at(size_t idx) const;
+    TreeNode& at(size_t idx);
+
+    bool is_leaf(size_t idx) const;
+
+    void push_back(TreeNode&& node);
+
+    size_t size() const;
+
+    // others
+    // defined here because of templates
+    template <bool orphan = false>
+    void union_find(const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
+        run_union_find<orphan>(nodes, pairs);
+    }
+
+   private:
+    // fields
+    safe::vector<TreeNode> nodes;
+
+    // friends
+    friend std::ostream& operator<<(std::ostream& out, const Tree& tree);
+};
+
+template <typename T>
+class DataTree {
+   public:
+    // constructor
+    DataTree() noexcept
         : nodes(std::move(safe::vector<TreeNode>())),
           data(std::move(safe::vector<T>())) {}
-    explicit Tree(size_t size) noexcept
+    explicit DataTree(size_t size) noexcept
         : nodes(std::move(safe::vector<TreeNode>(size))),
           data(std::move(safe::vector<T>(size))) {}
-    explicit Tree(safe::vector<T>&& data_list) noexcept
+    explicit DataTree(safe::vector<T>&& data_list) noexcept
         : data(std::move(data_list)) {
         nodes = safe::vector<TreeNode>();
         nodes.reserve(data.size());
@@ -27,11 +85,11 @@ class Tree {
             nodes.push_back(TreeNode((unsigned)i));
         }
     }
-    Tree(Tree&& tn) noexcept
+    DataTree(DataTree&& tn) noexcept
         : nodes(std::move(tn.nodes)), data(std::move(tn.data)) {}
 
     // operator=
-    Tree& operator=(Tree&& tn) noexcept {
+    DataTree& operator=(DataTree&& tn) noexcept {
         nodes = std::move(tn.nodes);
         data = std::move(tn.data);
 
@@ -78,7 +136,7 @@ class Tree {
     }
 
     void push(T&& dat) {
-        safe::assert(nodes.size() == data.size());
+        assert(nodes.size() == data.size());
         const unsigned size = nodes.size();
         nodes.push_back(std::move(TreeNode(size)));
         data.push_back(std::move(dat));

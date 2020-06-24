@@ -4,13 +4,13 @@
 
 #pragma once
 
+#include <assert.h>
+
 #include <algorithm>
 #include <iostream>
 #include <memory>
 #include <set>
 #include <sstream>
-
-#include "safe_assert.h"
 
 namespace safe {
 

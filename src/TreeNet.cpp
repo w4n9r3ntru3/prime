@@ -84,7 +84,7 @@ void Segment::target(Point&& point) {
 //       tree_root(tn.tree_root),
 //       tree_size(tn.tree_size) {
 //     if (size()) {
-//         safe::assert(tree_root != nullptr);
+//         assert(tree_root != nullptr);
 //     }
 //     tn.tree_root = nullptr;
 // }
@@ -109,6 +109,6 @@ void Segment::target(Point&& point) {
 // }
 
 // void TreeNet::add_pin(Pin&& pin) {
-//     safe::assert(connected.size() < connected.capacity());
+//     assert(connected.size() < connected.capacity());
 //     connected.push_back(std::move(pin));
 // }

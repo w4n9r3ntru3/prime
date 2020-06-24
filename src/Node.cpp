@@ -4,6 +4,8 @@
 
 #include "Node.h"
 
+#include <assert.h>
+
 TreeNode::TreeNode() noexcept : slf(-1), par(-1), lft(-1), rgt(-1) {}
 
 TreeNode::TreeNode(unsigned idx) noexcept
@@ -71,19 +73,19 @@ bool TreeNode::has_right() const {
 }
 
 unsigned TreeNode::self() const {
-    safe::assert(has_self());
+    assert(has_self());
     return (unsigned)slf;
 }
 unsigned TreeNode::parent() const {
-    safe::assert(has_parent());
+    assert(has_parent());
     return (unsigned)par;
 }
 unsigned TreeNode::left() const {
-    safe::assert(has_left());
+    assert(has_left());
     return (unsigned)lft;
 }
 unsigned TreeNode::right() const {
-    safe::assert(has_right());
+    assert(has_right());
     return (unsigned)rgt;
 }
 
