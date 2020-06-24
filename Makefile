@@ -1,7 +1,7 @@
 
 CXX = g++
-CXXFLAGS = -O3 -std=c++11 -Wall -Wextra -Werror
-TARGETS = main.o Cell.o Grid.o MasterCell.o PrimeMan.o Force.o TreeNet.o Node.o safe_assert.o
+CXXFLAGS = -O3 -std=c++11 -Wall -Wextra
+TARGETS = main.o Cell.o Grid.o MasterCell.o PrimeMan.o TreeNet.o Node.o safe_assert.o
 BINARY = prime
 FLAGS =
 

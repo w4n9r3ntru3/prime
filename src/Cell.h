@@ -85,8 +85,9 @@ class GridNet {
     GridNet(const GridNet& g) noexcept;
 
     // modifier
-    void addPin(Pin* pin); // you don't need this
-    void addSegment(int srow, int scol, int slay, int erow, int ecol, int elay);
+    void addPin(Pin* pin);  // you don't need this
+    // void addSegment(int srow, int scol, int slay, int erow, int ecol, int
+    // elay);
 
     // accesser
     const std::string& getName() const;
@@ -94,8 +95,8 @@ class GridNet {
     unsigned getMinlayer() const;  // min routing layer constraint
     size_t getNumPin() const;
     Pin& getPin(unsigned i);
-    size_t getNumSegments() const;
-    safe::vector<unsigned>& getSegments();
+    // size_t getNumSegments() const;
+    // safe::vector<unsigned>& getSegments();
 
    private:
     const std::string _NetName;
@@ -105,7 +106,7 @@ class GridNet {
     safe::vector<Pin*> _pins;
 
     // ! TODO deprecate this
-    safe::vector<unsigned> _segments;  // srow, scol, slay, erow, ecol, elay
+    // safe::vector<unsigned> _segments;  // srow, scol, slay, erow, ecol, elay
 };
 
 class Cell {

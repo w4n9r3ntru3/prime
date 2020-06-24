@@ -16,8 +16,6 @@
 
 #include <iostream>
 
-
-
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
 ////////////////////////////////////////////////////////////////////////
@@ -383,17 +381,17 @@ void PrimeMan::log() const {
     maxNetDegree();
 }
 
-void PrimeMan::output(std::fstream& output) {
-    int n = _movedCells.size();
-    output << "NumMovedCellInst " << n << '\n';
-    for (int i = 0; i < n; ++i) {
-        const Cell& cell = _cells[i];
-        output << "CellInst " << cell.getCellName() << " "
-               << cell.getRow() + _rowBase << " "
-               << cell.getColumn() + _columnBase << '\n';
-    }
-    outputRoute(output);
-}
+// void PrimeMan::output(std::fstream& output) {
+//     int n = _movedCells.size();
+//     output << "NumMovedCellInst " << n << '\n';
+//     for (int i = 0; i < n; ++i) {
+//         const Cell& cell = _cells[i];
+//         output << "CellInst " << cell.getCellName() << " "
+//                << cell.getRow() + _rowBase << " "
+//                << cell.getColumn() + _columnBase << '\n';
+//     }
+//     outputRoute(output);
+// }
 
 void PrimeMan::constructCoordinate() {
     _area = _columnRange * _rowRange;
@@ -433,7 +431,7 @@ void PrimeMan::assignRoute(int srow,
                            int ecol,
                            int elay,
                            GridNet& net) {
-    net.addSegment(srow, scol, slay, erow, ecol, elay);
+    // net.addSegment(srow, scol, slay, erow, ecol, elay);
     for (int i = slay; i <= elay; ++i) {
         Layer& l = _layers[i];
         for (int j = scol; j <= ecol; ++j) {
@@ -445,28 +443,29 @@ void PrimeMan::assignRoute(int srow,
     }
 }
 
-void PrimeMan::outputRoute(std::fstream& output) {
-    output << "NumRoutes ";
-    int numRoutes = 0;
-    for (int i = 0, n = _grid_nets.size(); i < n; ++i) {
-        numRoutes += _grid_nets[i].getNumSegments();
-    }
-    safe::assert((numRoutes % 6) == 0);
-    numRoutes /= 6;
-    output << numRoutes << '\n';
-    for (int i = 0, n = _grid_nets.size(); i < n; ++i) {
-        GridNet& net = _grid_nets[i];
-        safe::vector<unsigned>& segments = net.getSegments();
-        safe::assert((segments.size() % 6) == 0);
-        for (int j = 0, m = segments.size() / 6; j < m; ++j)
-            output << segments[6 * j] + _rowBase << " "
-                   << segments[6 * j + 1] + _columnBase << " "
-                   << segments[6 * j + 2] + 1 << " "
-                   << segments[6 * j + 3] + _rowBase << " "
-                   << segments[6 * j + 4] + _columnBase << " "
-                   << segments[6 * j + 5] + 1 << " " << net.getName() << '\n';
-    }
-}
+// void PrimeMan::outputRoute(std::fstream& output) {
+//     output << "NumRoutes ";
+//     int numRoutes = 0;
+//     for (int i = 0, n = _grid_nets.size(); i < n; ++i) {
+//         numRoutes += _grid_nets[i].getNumSegments();
+//     }
+//     safe::assert((numRoutes % 6) == 0);
+//     numRoutes /= 6;
+//     output << numRoutes << '\n';
+//     for (int i = 0, n = _grid_nets.size(); i < n; ++i) {
+//         GridNet& net = _grid_nets[i];
+//         safe::vector<unsigned>& segments = net.getSegments();
+//         safe::assert((segments.size() % 6) == 0);
+//         for (int j = 0, m = segments.size() / 6; j < m; ++j)
+//             output << segments[6 * j] + _rowBase << " "
+//                    << segments[6 * j + 1] + _columnBase << " "
+//                    << segments[6 * j + 2] + 1 << " "
+//                    << segments[6 * j + 3] + _rowBase << " "
+//                    << segments[6 * j + 4] + _columnBase << " "
+//                    << segments[6 * j + 5] + 1 << " " << net.getName() <<
+//                    '\n';
+//     }
+// }
 
 void PrimeMan::maxNetDegree() const {
     int maxDegree = 0;

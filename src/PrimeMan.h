@@ -108,7 +108,7 @@ class PrimeMan {
     void log() const;
 
     // output
-    void output(std::fstream& output);
+    // void output(std::fstream& output);
 
    private:
     unsigned _maxMove;
@@ -147,6 +147,6 @@ class PrimeMan {
                      int ecol,
                      int elay,
                      GridNet& net);
-    void outputRoute(std::fstream& output);
+    // void outputRoute(std::fstream& output);
     void maxNetDegree() const;
 };

@@ -14,8 +14,6 @@
 
 #include "Cell.h"
 
-
-
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
 ////////////////////////////////////////////////////////////////////////
@@ -89,26 +87,28 @@ GridNet::GridNet(const GridNet& g) noexcept
     : _NetName(g._NetName),
       _Id(g._Id),
       _minLayer(g._minLayer),
-      _pins(g._pins),
-      _segments(g._segments) {}
+      _pins(g._pins)
+//   ,
+//   _segments(g._segments)
+{}
 
 void GridNet::addPin(Pin* pin) {
     _pins.push_back(pin);
 }
 
-void GridNet::addSegment(int srow,
-                         int scol,
-                         int slay,
-                         int erow,
-                         int ecol,
-                         int elay) {
-    _segments.push_back(srow);
-    _segments.push_back(scol);
-    _segments.push_back(slay);
-    _segments.push_back(erow);
-    _segments.push_back(ecol);
-    _segments.push_back(elay);
-}
+// void GridNet::addSegment(int srow,
+//                          int scol,
+//                          int slay,
+//                          int erow,
+//                          int ecol,
+//                          int elay) {
+//     _segments.push_back(srow);
+//     _segments.push_back(scol);
+//     _segments.push_back(slay);
+//     _segments.push_back(erow);
+//     _segments.push_back(ecol);
+//     _segments.push_back(elay);
+// }
 
 const std::string& GridNet::getName() const {
     return _NetName;
@@ -130,13 +130,13 @@ Pin& GridNet::getPin(unsigned i) {
     return *_pins[i];
 }
 
-size_t GridNet::getNumSegments() const {
-    return _segments.size();
-}
+// size_t GridNet::getNumSegments() const {
+//     return _segments.size();
+// }
 
-safe::vector<unsigned>& GridNet::getSegments() {
-    return _segments;
-}
+// safe::vector<unsigned>& GridNet::getSegments() {
+//     return _segments;
+// }
 
 // Cell
 Cell::Cell(const std::string CellName,
