@@ -4,8 +4,7 @@
 
 #pragma once
 
-
-
+#include <iostream>
 #include <memory>
 
 #include "safe.h"
@@ -45,4 +44,7 @@ class TreeNode {
 
    private:
     int slf, par, lft, rgt;
+
+    // friends
+    friend std::ostream& operator<<(std::ostream& out, const TreeNode& tn);
 };

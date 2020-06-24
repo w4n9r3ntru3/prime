@@ -4,8 +4,6 @@
 
 #include "Node.h"
 
-
-
 TreeNode::TreeNode() noexcept : slf(-1), par(-1), lft(-1), rgt(-1) {}
 
 TreeNode::TreeNode(unsigned idx) noexcept
@@ -100,4 +98,11 @@ void TreeNode::left(unsigned l) {
 }
 void TreeNode::right(unsigned r) {
     rgt = (int)r;
+}
+
+std::ostream& operator<<(std::ostream& out, const TreeNode& tn) {
+    out << "TreeNode{s:" << tn.slf << ", p:" << tn.par << ", l:" << tn.lft
+        << ", r:" << tn.rgt << "}";
+
+    return out;
 }

@@ -20,6 +20,7 @@ class vector {
     vector() noexcept : field(std::vector<T>()) {}
     vector(const vector& vec) noexcept : field(vec.field) {}
     vector(vector&& vec) noexcept : field(std::move(vec.field)) {}
+    vector(size_t size) noexcept : field(std::move(std::vector<T>(size))) {}
 
     vector& operator=(const vector& vec) noexcept {
         field = vec.field;
