@@ -76,7 +76,7 @@ class Coordinate {
     Coordinate(const Coordinate& c) noexcept;
 
     // modifier
-    void addAdjH(Coordinate* c1, Coordinate* c2);  // you don't need this'
+    void addAdjH(Coordinate* c1, Coordinate* c2);  // you don't need this
     void addGrid(Grid* g);                         // you don't need this
     bool CanAddCell(Cell& cell);  // to see if you can add this cell
     void addCell(Cell& cell);
@@ -93,13 +93,7 @@ class Coordinate {
     Coordinate* _c1;
     Coordinate* _c2;
     safe::vector<Grid*> _grids;
-
-    void addConstraint(int layer,
-                       safe::vector<unsigned>& mc,
-                       safe::vector<int>& demand);
-    void moveConstraint(int layer,
-                        safe::vector<unsigned>& mc,
-                        safe::vector<int>& demand);
+    safe::unordered_map<unsigned, unsigned> _MCT2Num;
 };
 
 class Grid {
@@ -112,11 +106,8 @@ class Grid {
     void assignCoordinate(Coordinate* c);
     void incSupply(int d);
     void decSupply(int d);
-    void addConstraint(unsigned mc, int demand);
-    void moveConstraint(unsigned mc, int demand);
-    bool CanAddCell(MasterCellType& mct);
-    void addCell(MasterCellType& mct);
-    void moveCell(MasterCellType& mct);
+    bool addDemand(int n);
+    bool moveDemand(int n);
     void addNet(GridNet& net);
     bool canGetNet(GridNet& net);
     GridNet* getNet(unsigned i);
@@ -126,12 +117,10 @@ class Grid {
     int getColumn() const;
     int getSupply() const;
     int getLayer() const;
-    bool getDemand(unsigned mc, int& demand);
 
    private:
     int _supply;
     Layer& _layer;
     Coordinate* _coordinate;
-    safe::unordered_map<unsigned, int> _Cell2Demand;
     safe::unordered_map<unsigned, GridNet*> _nets;
 };

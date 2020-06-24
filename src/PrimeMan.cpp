@@ -158,7 +158,9 @@ void PrimeMan::readFile(std::fstream& input) {
         } else {
             assert(str == "adjHGGrid");
             _MasterCells[mc1].AddExtraadjH(mc2, demand, layer);
-            _MasterCells[mc2].AddExtraadjH(mc1, demand, layer);
+            if(mc1 != mc2) {
+                _MasterCells[mc2].AddExtraadjH(mc1, demand, layer);
+            }
         }
         // } else if (str == "adjHGGrid") {
         //     _MasterCells[mc1]->AddExtraadjH(mc2, demand, layer);
