@@ -80,11 +80,12 @@ void Coordinate::addGrid(Grid* g) {
 }
 
 bool Coordinate::CanAddCell(Cell& cell) const {
+    //FIXME
     unsigned id = cell.getMasterCellId();
     unsigned n;
     if (_MCT2Num.contains(id)) {
-        assert(_MCT2Num[id] >= 1);
-        n = _MCT2Num[id] + 1;
+        assert(_MCT2Num.find(id)->second >= 1);
+        n = _MCT2Num.find(id)->second + 1;
     } else {
         n = 1;
     }
@@ -97,15 +98,15 @@ bool Coordinate::CanAddCell(Cell& cell) const {
         assert(sameGridMC.size() == sameGridDemand.size());
         assert(adjHGridMC.size() == adjHGridDemand.size());
         for (int j = 0, o = sameGridMC.size(); j < o; ++j) {
-            if (n <= _MCT2Num[sameGridMC[j]]) {
+            if (n <= _MCT2Num.find(sameGridMC[j])->second) {
                 d += sameGridDemand[j];
             }
         }
         for (int j = 0, o = adjHGridMC.size(); j < o; ++j) {
             int k = adjHGridDemand[j];
             if (_c1) {
-                if (n <= _c1->_MCT2Num.contains(adjHGridMC[j])) {
-                    if (n <= _c1->_MCT2Num[adjHGridMC[j]]) {
+                if (_c1->_MCT2Num.contains(adjHGridMC[j])) {
+                    if (n <= _c1->_MCT2Num.find(adjHGridMC[j])->second) {
                         if (_c1->_grids[i]->getSupply() < k) {
                             return false;
                         }
@@ -114,8 +115,8 @@ bool Coordinate::CanAddCell(Cell& cell) const {
                 }
             }
             if (_c2) {
-                if (n <= _c2->_MCT2Num.contains(adjHGridMC[j])) {
-                    if (n <= _c2->_MCT2Num[adjHGridMC[j]]) {
+                if (_c2->_MCT2Num.contains(adjHGridMC[j])) {
+                    if (n <= _c2->_MCT2Num.find(adjHGridMC[j])->second) {
                         if (_c2->_grids[i]->getSupply() < k) {
                             return false;
                         }
@@ -157,15 +158,19 @@ void Coordinate::addCell(Cell& cell) {
         for (int j = 0, p = sameGridMC.size(); j < p; ++j) {
             int k = adjHGridDemand[j];
             if (_c1) {
-                if (n <= _c1->_MCT2Num[adjHGridMC[j]]) {
-                    d += k;
-                    _c1->_grids[i]->decSupply(k);
+                if (_c1->_MCT2Num.contains(adjHGridMC[j])) {
+                    if (n <= _c1->_MCT2Num[adjHGridMC[j]]) {
+                        d += k;
+                        _c1->_grids[i]->decSupply(k);
+                    }
                 }
             }
             if (_c2) {
-                if (n <= _c2->_MCT2Num[adjHGridMC[j]]) {
-                    d += k;
-                    _c2->_grids[i]->decSupply(k);
+                if (_c2->_MCT2Num.contains(adjHGridMC[j])) {
+                    if (n <= _c2->_MCT2Num[adjHGridMC[j]]) {
+                        d += k;
+                        _c2->_grids[i]->decSupply(k);
+                    }
                 }
             }
         }
@@ -196,15 +201,19 @@ void Coordinate::moveCell(Cell& cell) {
         for (int j = 0, p = sameGridMC.size(); j < p; ++j) {
             int k = adjHGridDemand[j];
             if (_c1) {
-                if (n < _c1->_MCT2Num[adjHGridMC[j]]) {
-                    d += k;
-                    _c1->_grids[i]->incSupply(k);
+                if (_c1->_MCT2Num.contains(adjHGridMC[j])) {
+                    if (n < _c1->_MCT2Num[adjHGridMC[j]]) {
+                        d += k;
+                        _c1->_grids[i]->incSupply(k);
+                    }
                 }
             }
             if (_c2) {
-                if (n <= _c2->_MCT2Num[adjHGridMC[j]]) {
-                    d += k;
-                    _c2->_grids[i]->incSupply(k);
+                if (_c2->_MCT2Num.contains(adjHGridMC[j])) {
+                    if (n < _c2->_MCT2Num[adjHGridMC[j]]) {
+                        d += k;
+                        _c2->_grids[i]->incSupply(k);
+                    }
                 }
             }
         }
