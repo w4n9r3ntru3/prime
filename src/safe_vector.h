@@ -17,7 +17,7 @@ namespace safe {
 template <typename T>
 class vector {
    public:
-    vector() noexcept : field(std::vector<T>()) {}
+    vector(void) noexcept : field(std::vector<T>()) {}
     vector(const vector& vec) noexcept : field(vec.field) {}
     vector(vector&& vec) noexcept : field(std::move(vec.field)) {}
     vector(size_t size) noexcept : field(std::move(std::vector<T>(size))) {}
@@ -35,15 +35,15 @@ class vector {
     void reserve(size_t capacity) { field.reserve(capacity); }
 
     void resize(size_t new_size) { field.resize(new_size); }
-    size_t size() const { return field.size(); }
-    size_t capacity() const { return field.capacity(); }
-    bool empty() const { return field.empty(); }
-    void clear() { field.clear(); }
+    size_t size(void) const { return field.size(); }
+    size_t capacity(void) const { return field.capacity(); }
+    bool empty(void) const { return field.empty(); }
+    void clear(void) { field.clear(); }
 
     void push_back(T& value) { field.push_back(value); }
     void push_back(T&& value) { field.push_back(std::move(value)); }
 
-    void pop_back() { return field.pop_back(); }
+    void pop_back(void) { return field.pop_back(); }
 
     const T& operator[](size_t index) const {
         assert(index < field.size());
@@ -57,13 +57,15 @@ class vector {
     const T& at(size_t index) const { return (*this)[index]; }
     T& at(size_t index) { return (*this)[index]; }
 
-    typename std::vector<T>::iterator begin() { return field.begin(); }
-    typename std::vector<T>::const_iterator begin() const {
+    typename std::vector<T>::iterator begin(void) { return field.begin(); }
+    typename std::vector<T>::const_iterator begin(void) const {
         return field.begin();
     }
 
-    typename std::vector<T>::iterator end() { return field.end(); }
-    typename std::vector<T>::const_iterator end() const { return field.end(); }
+    typename std::vector<T>::iterator end(void) { return field.end(); }
+    typename std::vector<T>::const_iterator end(void) const {
+        return field.end();
+    }
 
     typename std::vector<T>::iterator find(const T& element) {
         return std::find(field.begin(), field.end(), element);

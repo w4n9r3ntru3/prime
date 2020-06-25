@@ -9,6 +9,8 @@ Tree::Tree(void) noexcept : nodes(std::move(safe::vector<TreeNode>())) {}
 Tree::Tree(size_t size) noexcept
     : nodes(std::move(safe::vector<TreeNode>(size))) {}
 
+Tree::Tree(safe::vector<TreeNode>&& nodes) : nodes(std::move(nodes)) {}
+
 Tree::Tree(Tree&& tn) noexcept : nodes(std::move(tn.nodes)) {}
 
 // operator=
@@ -81,6 +83,13 @@ void Tree::push_back(TreeNode&& node) {
 
 size_t Tree::size(void) const {
     return nodes.size();
+}
+
+const safe::vector<TreeNode>& Tree::field(void) const {
+    return nodes;
+}
+safe::vector<TreeNode>& Tree::field(void) {
+    return nodes;
 }
 
 std::ostream& operator<<(std::ostream& out, const Tree& tree) {

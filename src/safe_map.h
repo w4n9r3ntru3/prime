@@ -16,7 +16,7 @@ namespace safe {
 template <typename K, typename V>
 class map {
    public:
-    map() noexcept : field(std::map<K, V>()) {}
+    map(void) noexcept : field(std::map<K, V>()) {}
     map(const map& hashmap) noexcept : field(hashmap.field) {}
     map(map&& hashmap) noexcept : field(std::move(hashmap.field)) {}
 
@@ -30,18 +30,18 @@ class map {
     }
 
     void reserve(size_t capacity) { field.reserve(capacity); }
-    bool empty() const { return field.empty(); }
-    void clear() { field.clear(); }
+    bool empty(void) const { return field.empty(); }
+    void clear(void) { field.clear(); }
 
     void rehash(size_t new_size) { field.rehash(new_size); }
-    size_t size() const { return field.size(); }
+    size_t size(void) const { return field.size(); }
 
     const V& operator[](const K& key) const { return find(key)->second; }
     V& operator[](const K& key) { return field[key]; }
 
     const V& at(const K& key) const {
         auto iter = find(key);
-        assert(key != end());
+        assert(iter != end());
         return iter->second;
     }
     V& at(const K& key) {
@@ -54,13 +54,15 @@ class map {
         return field.erase(key);
     }
 
-    typename std::map<K, V>::iterator begin() { return field.begin(); }
-    typename std::map<K, V>::const_iterator begin() const {
+    typename std::map<K, V>::iterator begin(void) { return field.begin(); }
+    typename std::map<K, V>::const_iterator begin(void) const {
         return field.begin();
     }
 
-    typename std::map<K, V>::iterator end() { return field.end(); }
-    typename std::map<K, V>::const_iterator end() const { return field.end(); }
+    typename std::map<K, V>::iterator end(void) { return field.end(); }
+    typename std::map<K, V>::const_iterator end(void) const {
+        return field.end();
+    }
 
     typename std::map<K, V>::iterator find(const K& key) {
         return field.find(key);

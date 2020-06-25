@@ -16,7 +16,7 @@ namespace safe {
 template <typename K, typename V>
 class unordered_map {
    public:
-    unordered_map() noexcept : field(std::unordered_map<K, V>()) {}
+    unordered_map(void) noexcept : field(std::unordered_map<K, V>()) {}
     unordered_map(const unordered_map& hashmap) noexcept
         : field(hashmap.field) {}
     unordered_map(unordered_map&& hashmap) noexcept
@@ -32,18 +32,18 @@ class unordered_map {
     }
 
     void reserve(size_t capacity) { field.reserve(capacity); }
-    bool empty() const { return field.empty(); }
-    void clear() { field.clear(); }
+    bool empty(void) const { return field.empty(); }
+    void clear(void) { field.clear(); }
 
     void rehash(size_t new_size) { field.rehash(new_size); }
-    size_t size() const { return field.size(); }
+    size_t size(void) const { return field.size(); }
 
     const V& operator[](const K& key) const { return find(key)->second; }
     V& operator[](const K& key) { return field[key]; }
 
     const V& at(const K& key) const {
         auto iter = find(key);
-        assert(key != end());
+        assert(iter != end());
         return iter->second;
     }
     V& at(const K& key) {
@@ -56,15 +56,17 @@ class unordered_map {
         return field.erase(key);
     }
 
-    typename std::unordered_map<K, V>::iterator begin() {
+    typename std::unordered_map<K, V>::iterator begin(void) {
         return field.begin();
     }
-    typename std::unordered_map<K, V>::const_iterator begin() const {
+    typename std::unordered_map<K, V>::const_iterator begin(void) const {
         return field.begin();
     }
 
-    typename std::unordered_map<K, V>::iterator end() { return field.end(); }
-    typename std::unordered_map<K, V>::const_iterator end() const {
+    typename std::unordered_map<K, V>::iterator end(void) {
+        return field.end();
+    }
+    typename std::unordered_map<K, V>::const_iterator end(void) const {
         return field.end();
     }
 

@@ -84,9 +84,8 @@ bool Coordinate::CanAddCell(Cell& cell) const {
     unsigned id = cell.getMasterCellId();
     unsigned n;
     if (_MCT2Num.contains(id)) {
-        // assert(_MCT2Num.find(id)->second >= 1);
-        assert(_MCT2Num[id] >= 1);
-        n = _MCT2Num.find(id)->second + 1;
+        assert(_MCT2Num.at(id) >= 1);
+        n = _MCT2Num.at(id) + 1;
     } else {
         n = 1;
     }

@@ -17,7 +17,7 @@ namespace safe {
 template <typename T>
 class unordered_set {
    public:
-    unordered_set() noexcept : field(std::unordered_set<T>()) {}
+    unordered_set(void) noexcept : field(std::unordered_set<T>()) {}
     unordered_set(const unordered_set& set) noexcept : field(set.field) {}
     unordered_set(unordered_set&& set) noexcept : field(std::move(set.field)) {}
 
@@ -31,8 +31,8 @@ class unordered_set {
     }
 
     // * wrapper functions
-    void clear() { field.clear(); }
-    bool empty() const { return field.empty(); }
+    void clear(void) { field.clear(); }
+    bool empty(void) const { return field.empty(); }
     std::pair<typename std::unordered_set<T>::iterator, bool> insert(
         const T& val) {
         return field.insert(std::move(val));
@@ -41,13 +41,15 @@ class unordered_set {
         return field.insert(std::move(val));
     }
 
-    typename std::unordered_set<T>::iterator begin() { return field.begin(); }
-    typename std::unordered_set<T>::const_iterator begin() const {
+    typename std::unordered_set<T>::iterator begin(void) {
+        return field.begin();
+    }
+    typename std::unordered_set<T>::const_iterator begin(void) const {
         return field.begin();
     }
 
-    typename std::unordered_set<T>::iterator end() { return field.end(); }
-    typename std::unordered_set<T>::const_iterator end() const {
+    typename std::unordered_set<T>::iterator end(void) { return field.end(); }
+    typename std::unordered_set<T>::const_iterator end(void) const {
         return field.end();
     }
 

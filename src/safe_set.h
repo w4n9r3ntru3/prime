@@ -17,7 +17,7 @@ namespace safe {
 template <typename T>
 class set {
    public:
-    set() noexcept : field(std::set<T>()) {}
+    set(void) noexcept : field(std::set<T>()) {}
     set(const set& set) noexcept : field(set.field) {}
     set(set&& set) noexcept : field(std::move(set.field)) {}
 
@@ -31,8 +31,8 @@ class set {
     }
 
     // * wrapper functions
-    void clear() { field.clear(); }
-    bool empty() const { return field.empty(); }
+    void clear(void) { field.clear(); }
+    bool empty(void) const { return field.empty(); }
     std::pair<typename std::set<T>::iterator, bool> insert(const T& val) {
         return field.insert(std::move(val));
     }
@@ -40,11 +40,13 @@ class set {
         return field.insert(std::move(val));
     }
 
-    typename std::set<T>::iterator begin() { return field.begin(); }
-    typename std::set<T>::const_iterator begin() const { return field.begin(); }
+    typename std::set<T>::iterator begin(void) { return field.begin(); }
+    typename std::set<T>::const_iterator begin(void) const {
+        return field.begin();
+    }
 
-    typename std::set<T>::iterator end() { return field.end(); }
-    typename std::set<T>::const_iterator end() const { return field.end(); }
+    typename std::set<T>::iterator end(void) { return field.end(); }
+    typename std::set<T>::const_iterator end(void) const { return field.end(); }
 
     typename std::set<T>::iterator find(const T& element) {
         return field.find(element);

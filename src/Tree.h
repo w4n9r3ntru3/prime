@@ -20,6 +20,7 @@ class Tree {
 
     Tree() noexcept;
     Tree(size_t size) noexcept;
+    Tree(safe::vector<TreeNode>&& nodes) noexcept;
     Tree(Tree&& tn) noexcept;
 
     // operator=
@@ -52,14 +53,10 @@ class Tree {
 
     size_t size() const;
 
-    // others
-    // defined here because of templates
-    template <bool orphan = false>
-    void union_find(const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
-        run_union_find<orphan>(nodes, pairs);
-    }
+    const safe::vector<TreeNode>& field(void) const;
+    safe::vector<TreeNode>& field(void);
 
-   private:
+   protected:
     // fields
     safe::vector<TreeNode> nodes;
 
