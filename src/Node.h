@@ -20,8 +20,8 @@ class TreeNode {
              unsigned parent,
              unsigned left,
              unsigned right) noexcept;
-    TreeNode(const TreeNode& tn) noexcept;
-    TreeNode(TreeNode&& tn) noexcept;
+    explicit TreeNode(const TreeNode& tn) noexcept;
+    explicit TreeNode(TreeNode&& tn) noexcept;
 
     // operator=
     TreeNode& operator=(const TreeNode& tn) noexcept;

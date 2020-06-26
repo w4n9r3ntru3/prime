@@ -4,85 +4,36 @@
 
 #pragma once
 
-#include <assert.h>
-
-#include <iostream>
-#include <utility>
-
 #include "Node.h"
 #include "safe.h"
 
 // * These functions can be used in merging tree constructors
 
-// * orphan means that parent can be illegal values (such as -1)
-// * normally to indicate a root node, node.parent == node.self
-
-template <bool orphan = false>
-bool is_root(const TreeNode& node) {
-    if (orphan) {
-        return node.parent() < 0;
-    } else {
-        return node.self() == node.parent();
-    }
-}
-
-template <bool orphan = false>
+template <bool compression>
 unsigned find(unsigned idx, safe::vector<TreeNode>& tree) {
     TreeNode& node = tree[idx];
     assert(node.has_self());
 
-    // root node
-    bool isroot = is_root<orphan>(node);
-
     // returns the root
-    if (isroot) {
+    if (!(node.has_parent())) {
         return node.self();
     } else {
         // recursively calls parent
-        unsigned root = find<orphan>(node.parent(), tree);
-        node.parent(root);
+        unsigned root = find(node.parent(), tree);
+        if (compression) {
+            node.parent(root);
+        }
         return root;
     }
 }
+bool group_by_rank(safe::vector<TreeNode>& treenodes,
+                   safe::vector<unsigned>& ranks,
+                   unsigned first_group,
+                   unsigned second_group);
 
-template <bool orphan = false>
 bool union_find_once(safe::vector<TreeNode>& treenodes,
                      safe::vector<unsigned>& ranks,
                      unsigned first,
-                     unsigned second) {
-    unsigned first_group = find(first, treenodes),
-             second_group = find(second, treenodes);
-    unsigned first_rank = ranks[first_group], second_rank = ranks[second_group];
-    if (first_group == second_group) {
-        return false;
-    }
-    if (first_rank < second_rank) {
-        treenodes[first_group].parent(second_group);
-    } else {
-        treenodes[second_group].parent(first_group);
-        if (first_rank == second_rank) {
-            ++(ranks[first_group]);
-        }
-    }
-    return true;
-}
-
-template <bool orphan = false>
+                     unsigned second);
 void union_find(safe::vector<TreeNode>& treenodes,
-                const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
-    auto ranks = safe::vector<unsigned>(treenodes.size());
-    std::fill(ranks.begin(), ranks.end(), 0);
-
-    // number of times the loop does not terminate early
-    unsigned compared = 0;
-
-    for (auto pr : pairs) {
-        unsigned first = pr.first, second = pr.second;
-
-        if (union_find_once<orphan>(treenodes, ranks, first, second)) {
-            ++compared;
-        }
-    }
-
-    assert(compared == treenodes.size() - 1);
-}
+                const safe::vector<std::pair<unsigned, unsigned>>& pairs);

@@ -1,7 +1,7 @@
 
 CXX = g++
 CXXFLAGS = -O3 -std=c++11 -Wall -Wextra -Werror -flto
-TARGETS = main.o Cell.o Grid.o MasterCell.o PrimeMan.o Node.o Tree.o
+TARGETS = main.o Cell.o Grid.o MasterCell.o PrimeMan.o Node.o Tree.o MergeTree.o
 BINARY = prime
 FLAGS =
 

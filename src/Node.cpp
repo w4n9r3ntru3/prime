@@ -9,7 +9,7 @@
 TreeNode::TreeNode() noexcept : slf(-1), par(-1), lft(-1), rgt(-1) {}
 
 TreeNode::TreeNode(unsigned idx) noexcept
-    : slf((int)idx), par((int)idx), lft(-1), rgt(-1) {}
+    : slf((int)idx), par(-1), lft(-1), rgt(-1) {}
 
 TreeNode::TreeNode(unsigned self,
                    unsigned parent,
