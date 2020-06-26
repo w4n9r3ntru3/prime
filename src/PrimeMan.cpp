@@ -214,7 +214,6 @@ void PrimeMan::readFile(std::fstream& input) {
         Coordinate* c = _coordinates[getIdx(rIdx, cIdx)];
         c->addCell(*cell);
         _cells[i] = cell;
-
     }
 
     /*NumNets <netCount>
@@ -267,7 +266,8 @@ void PrimeMan::readFile(std::fstream& input) {
             // std::cout << &cell << " " << &cell_ << std::endl;
             _grid_nets[i].addPin(&pin);
             pin.setNet(&_grid_nets[i]);
-            Grid& g = _layers[pin.getLayer()]->getGrid(getIdx(pin.getRow(), pin.getColumn()));
+            Grid& g = _layers[pin.getLayer()]->getGrid(
+                getIdx(pin.getRow(), pin.getColumn()));
             g.addNet(_grid_nets[i]);
         }
     }
@@ -307,16 +307,16 @@ PrimeMan::~PrimeMan() {
         delete ptr;
     }
 
-    //debug
+    // debug
     std::fstream out("out.txt", std::ios::out);
     for (Layer* ptr : _layers) {
         for (int i = 0; i < _rowRange; ++i) {
             for (int j = 0; j < _columnRange; ++j) {
-                out << ptr->getGrid(getIdx(i,j)).getSupply() << std::endl;
+                out << ptr->getGrid(getIdx(i, j)).getSupply() << std::endl;
             }
         }
     }
-    //debug
+    // debug
 
     for (Layer* ptr : _layers) {
         delete ptr;
@@ -471,13 +471,13 @@ void PrimeMan::assignRoute(int srow,
                            int elay,
                            GridNet& net) {
     // net.addSegment(srow, scol, slay, erow, ecol, elay);
-    if(srow > erow) {
+    if (srow > erow) {
         std::swap(srow, erow);
     }
-    if(scol > ecol) {
+    if (scol > ecol) {
         std::swap(scol, ecol);
     }
-    if(slay > elay) {
+    if (slay > elay) {
         std::swap(slay, elay);
     }
     for (int i = slay; i <= elay; ++i) {
@@ -523,5 +523,5 @@ void PrimeMan::maxNetDegree() const {
             maxDegree = d;
         }
     }
-    //std::cout << "Max Net Degree : " << maxDegree << '\n';
+    // std::cout << "Max Net Degree : " << maxDegree << '\n';
 }

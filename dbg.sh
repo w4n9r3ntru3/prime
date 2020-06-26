@@ -1,1 +1,0 @@
-g++ -g src/*.cpp -o prime_dbg

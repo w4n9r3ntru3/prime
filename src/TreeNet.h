@@ -4,8 +4,6 @@
 
 #pragma once
 
-
-
 #include "Cell.h"
 #include "safe.h"
 #include "union_find.h"

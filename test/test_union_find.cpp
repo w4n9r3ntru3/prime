@@ -37,7 +37,7 @@ int main(int argc, char const* argv[]) {
     }
     std::cout << "\n";
 
-    run_union_find(nodes.field(), pairs);
+    union_find(nodes.field(), pairs);
 
     std::cout << nodes << "\n";
 

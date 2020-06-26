@@ -244,7 +244,10 @@ Grid::Grid(int supply, Layer& layer)
     : _supply(supply), _layer(layer), _coordinate(nullptr) {}
 
 Grid::Grid(Grid& a)
-    : _supply(a._supply), _layer(a._layer), _coordinate(a._coordinate), _nets(safe::unordered_map<unsigned,GridNet*>()) {}
+    : _supply(a._supply),
+      _layer(a._layer),
+      _coordinate(a._coordinate),
+      _nets(safe::unordered_map<unsigned, GridNet*>()) {}
 
 void Grid::assignCoordinate(Coordinate* c) {
     _coordinate = c;

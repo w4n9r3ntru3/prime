@@ -47,7 +47,7 @@
 class Grid;
 
 class Layer {
-	//FIXME why does pointer of vector survie
+    // FIXME why does pointer of vector survie
    public:
     // constructor
     Layer(const std::string name, int i, bool d, int supply, int area) noexcept;

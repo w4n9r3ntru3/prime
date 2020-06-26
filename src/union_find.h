@@ -46,8 +46,30 @@ unsigned find(unsigned idx, safe::vector<TreeNode>& tree) {
 }
 
 template <bool orphan = false>
-void run_union_find(safe::vector<TreeNode>& treenodes,
-                    const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
+bool union_find_once(safe::vector<TreeNode>& treenodes,
+                     safe::vector<unsigned>& ranks,
+                     unsigned first,
+                     unsigned second) {
+    unsigned first_group = find(first, treenodes),
+             second_group = find(second, treenodes);
+    unsigned first_rank = ranks[first_group], second_rank = ranks[second_group];
+    if (first_group == second_group) {
+        return false;
+    }
+    if (first_rank < second_rank) {
+        treenodes[first_group].parent(second_group);
+    } else {
+        treenodes[second_group].parent(first_group);
+        if (first_rank == second_rank) {
+            ++(ranks[first_group]);
+        }
+    }
+    return true;
+}
+
+template <bool orphan = false>
+void union_find(safe::vector<TreeNode>& treenodes,
+                const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
     auto ranks = safe::vector<unsigned>(treenodes.size());
     std::fill(ranks.begin(), ranks.end(), 0);
 
@@ -56,22 +78,10 @@ void run_union_find(safe::vector<TreeNode>& treenodes,
 
     for (auto pr : pairs) {
         unsigned first = pr.first, second = pr.second;
-        unsigned first_group = find(first, treenodes),
-                 second_group = find(second, treenodes);
-        unsigned first_rank = ranks[first_group],
-                 second_rank = ranks[second_group];
-        if (first_group == second_group) {
-            continue;
+
+        if (union_find_once<orphan>(treenodes, ranks, first, second)) {
+            ++compared;
         }
-        if (first_rank < second_rank) {
-            treenodes[first_group].parent(second_group);
-        } else {
-            treenodes[second_group].parent(first_group);
-            if (first_rank == second_rank) {
-                ++(ranks[first_group]);
-            }
-        }
-        ++compared;
     }
 
     assert(compared == treenodes.size() - 1);
