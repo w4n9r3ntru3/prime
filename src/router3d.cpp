@@ -2,8 +2,9 @@
 
 #include "iostream"
 
-Router3D::Router3D(PrimeMan& pm)
-    :_pm(pm), _area(pm.getArea()) {
+int grid::_global_search = 0;
+
+Router3D::Router3D(PrimeMan& pm) : _pm(pm), _area(pm.getArea()) {
     size_t n = pm.getVolume();
     _GridList.reserve(n);
     for (size_t i = 0; i < n; i++) {
@@ -12,23 +13,22 @@ Router3D::Router3D(PrimeMan& pm)
     }
 }
 
-Router3D::~Router3D(){
-    for (int i = 0, n = _GridList.size(); _vol; i++)
+Router3D::~Router3D() {
+    for (int i = 0, n = _GridList.size(); i < n; i++)
         delete _GridList[i];
 }
 
-int Router3D::A_star(const unsigned origin,
-                IdxList& ans)  // return the cost of the rout
+int Router3D::A_star(unsigned srow,
+                     unsigned scol,
+                     unsigned slay,
+                     unsigned erow,
+                     unsigned ecol,
+                     unsigned elay,
+                     GridNet& net)  // return the cost of the rout
 {
     _PriorityGrid = new priority_grid;
-    unsigned x = origin;
-    const unsigned target = _GridList[x]->get_target();
-    while (!propagate(x, target)) {
+    while (!propagate(srow, scol, slay, erow, ecol, elay, net)) {
         if (_PriorityGrid->empty()) {
-            std::cout << "Network " << get_x(origin) << " " << get_y(origin)
-                      << " " << get_z(origin) << " " << get_x(target) << " "
-                      << get_y(target) << " " << get_z(target)
-                      << " has no solution." << std::endl;
             clear_space(origin);
             clear_space(target);
             reset();
@@ -49,7 +49,7 @@ int Router3D::A_star(const unsigned origin,
     return ret;
 }
 
-void Die::init_clear(const unsigned pi, const unsigned target) {
+void Router3D::init_clear(const unsigned pi, const unsigned target) {
     unsigned x = get_x(pi);
     unsigned y = get_y(pi);
     unsigned z = get_z(pi);
@@ -79,7 +79,7 @@ void Die::init_clear(const unsigned pi, const unsigned target) {
         init_grid(pi + _area, target);
 }
 
-void Die::init_grid(const unsigned x, const unsigned target) {
+void Router3D::init_grid(const unsigned x, const unsigned target) {
     if (_GridList[x] == 0)
         _GridList[x] = new NormalGrid(x, target);
     else {
@@ -88,8 +88,13 @@ void Die::init_grid(const unsigned x, const unsigned target) {
     }
 }
 
-bool Die::propagate(const unsigned pi,
-                    const unsigned target)  // true means find target
+bool Router3D::propagate(unsigned srow,
+                         unsigned scol,
+                         unsigned slay,
+                         unsigned erow,
+                         unsigned ecol,
+                         unsigned elay,
+                         GridNet& net) // true means find target
 {
     unsigned x = get_x(pi);
     unsigned y = get_y(pi);
@@ -128,7 +133,7 @@ bool Die::propagate(const unsigned pi,
     return false;
 }
 
-inline bool Die::sub_propagate(
+inline bool Router3D::sub_propagate(
     const int x,
     const unsigned pi,
     const unsigned front,
@@ -148,13 +153,13 @@ inline bool Die::sub_propagate(
     return false;
 }
 
-void Die::reset() {
+void Router3D::reset() {
     delete _PriorityGrid;
     for (int i = 0; i < _vol; i++)
         _GridList[i]->reset();
 }
 
-void Die::backtrace(const unsigned target, IdxList& ans) {
+void Router3D::backtrace(const unsigned target, IdxList& ans) {
     unsigned x = target;
     unsigned y;
     ans.push_back(x);
@@ -166,7 +171,7 @@ void Die::backtrace(const unsigned target, IdxList& ans) {
     }
 }
 
-inline void Die::use_grid(unsigned x) {
+inline void Router3D::use_grid(unsigned x) {
     // if(_GridList[x] == 0) _GridList[x] = new BlockGrid(x);
     if (_GridList[x]->type() == Normal_Grid) {
         delete _GridList[x];
@@ -179,7 +184,7 @@ inline void Die::use_grid(unsigned x) {
     }*/
 }
 
-void Die::clear_space(const unsigned pi) {
+void Router3D::clear_space(const unsigned pi) {
     unsigned x = get_x(pi);
     unsigned y = get_y(pi);
     unsigned z = get_z(pi);
@@ -209,7 +214,7 @@ void Die::clear_space(const unsigned pi) {
         use_grid(pi + _area);
 }
 
-void Die::revive(const unsigned pi) {
+void Router3D::revive(const unsigned pi) {
     unsigned x = get_x(pi);
     unsigned y = get_y(pi);
     unsigned z = get_z(pi);
@@ -239,7 +244,7 @@ void Die::revive(const unsigned pi) {
         revive_grid(pi + _area);
 }
 
-void Die::revive_grid(const unsigned x) {
+void Router3D::revive_grid(const unsigned x) {
     if (_GridList[x]->type() == Block_Grid) {
         delete _GridList[x];
         _GridList[x] = new NormalGrid(x);

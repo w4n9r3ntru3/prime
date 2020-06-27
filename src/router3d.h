@@ -33,16 +33,11 @@ enum cost_type {
 
 };
 
-// typedef
-typedef std::vector<grid*> GridList;
-typedef std::vector<unsigned> IdxList;
-typedef std::priority_queue<grid*, std::vector<grid*>, MyComp> priority_grid;
-
 // initialization
 
 class grid {
    public:
-    grid() {}
+    grid() : _search(0) {}
     ~grid() {}
 
     bool routable(const unsigned) const { return _global_search != _search; }
@@ -57,8 +52,6 @@ class grid {
     }
 
     void assign_cost(int cost) { _cost = cost; }
-
-    // functions
 
     static int _global_search;
 
@@ -78,6 +71,11 @@ class MyComp {
     }
 };
 
+// typedef
+typedef std::vector<grid*> GridList;
+typedef std::vector<unsigned> IdxList;
+typedef std::priority_queue<grid*, GridList, MyComp> priority_grid;
+
 class Router3D {
    public:
     // friend class of cost functions
@@ -88,12 +86,12 @@ class Router3D {
     // public functions
     Router3D(PrimeMan& pm);
     ~Router3D();
-    int A_star(int srow,
-               int scol,
-               int slay,
-               int erow,
-               int ecol,
-               int elay,
+    int A_star(unsigned srow,
+               unsigned scol,
+               unsigned slay,
+               unsigned erow,
+               unsigned ecol,
+               unsigned elay,
                GridNet& net);
 
     // cost functions
@@ -110,7 +108,13 @@ class Router3D {
     //
 
     // private functions
-    bool propagate(unsigned, unsigned);
+    bool propagate(unsigned srow,
+                   unsigned scol,
+                   unsigned slay,
+                   unsigned erow,
+                   unsigned ecol,
+                   unsigned elay,
+                   GridNet& net);
     bool sub_propagate(int, unsigned, unsigned, unsigned);
     void init_cost(cost_type);
     void backtrace(unsigned, IdxList&);
