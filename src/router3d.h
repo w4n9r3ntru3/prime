@@ -80,12 +80,7 @@ typedef std::priority_queue<grid*, GridList, MyComp> priority_grid;
 
 class Router3D {
    public:
-    // friend class of cost functions
-    friend class CostGen;
-    friend class ManDist;
-    friend priority_grid;
-
-    // public functions
+    // interface functions
     Router3D(Chip& pm);
     ~Router3D();
     unsigned A_star(
@@ -95,11 +90,24 @@ class Router3D {
         const unsigned erow,
         const unsigned ecol,
         const unsigned elay,
-        const bool allow_middle_point,  // true if you want to return when find a
-                                        // middle point of the same net
+        const bool allow_middle_point,  // true if you want to return when find
+                                        // a middle point of the same net
         const GridNet& net,
-        IdxList& ans,   // row, column, layer
+        IdxList& ans,  // row, column, layer
         cost_type t);  // start, end, net, return route, cost type
+
+
+
+    // friend class of cost functions
+    friend class CostGen;
+    friend class ManDist;
+    friend priority_grid;
+
+   private:
+    Chip& _pm;
+    GridList _GridList;
+    priority_grid* _PriorityGrid;
+    cost_type _CostType;
 
     // cost functions
     int get_cost(unsigned a, unsigned b);
@@ -117,13 +125,6 @@ class Router3D {
         return layer * _pm.getArea() + column * _pm.getNumRows() + row;
     }
     unsigned get_idx_area(unsigned idx) const { return idx % _pm.getArea(); }
-
-   private:
-    Chip& _pm;
-    GridList _GridList;
-    priority_grid* _PriorityGrid;
-    cost_type _CostType;
-    //
 
     // private functions
     bool propagate(const unsigned, const unsigned, const bool, const GridNet&);
