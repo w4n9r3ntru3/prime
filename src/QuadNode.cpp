@@ -71,7 +71,9 @@ SimpleEdge::SimpleEdge(unsigned _v1, unsigned _v2, unsigned _w) noexcept
     : v1(_v1), v2(_v2), weight(_w) {}
 
 const bool SimpleEdge::operator<(const SimpleEdge& se) const {
-    return weight < se.weight;
+    if(weight != se.weight) return weight < se.weight;
+    else if(v1 != se.v1)    return v1 < se.v1;
+    else                    return v2 < se.v2;
 }
 
 const unsigned SimpleEdge::get_v1()     const { return v1; }

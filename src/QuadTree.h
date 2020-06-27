@@ -22,6 +22,7 @@ class QuadTree {
     // constructor
     QuadTree() noexcept;
     explicit QuadTree(std::string n, int n_id, int min_lay) noexcept;
+    ~QuadTree() noexcept;
 
     const std::string&    get_name() const;
     const int           get_net_id() const;
@@ -40,12 +41,12 @@ class QuadTree {
     int                     root_idx;
     safe::vector<QuadNode>     nodes; // pins will be at the front of this vector
     safe::vector<Pin*>          pins;
+    safe::unordered_map<CoordPair, unsigned> pinCoord2Idx;
 
     // Temporary members for constructing the tree
     safe::vector<NetSegment> segments;
 
     // Private functions
-    // void expand_memory(); // TODO: not sure if this is needed (insertion/deletion?)
     void insert_node();
 
     void segment_to_tree();
@@ -87,24 +88,36 @@ class NetSegment{
     const int get_ys() const { return y_start; }
     const int get_xe() const { return   x_end; }
     const int get_ye() const { return   y_end; }
+    const CoordPair get_start() const { return CoordPair(x_start, y_start); }
+    const CoordPair get_end()   const { return CoordPair(x_end,   y_end);   }
     // direction: true -> vertical, false -> horizontal
     const bool get_direction() const { return (x_start < x_end) ? true : false; }
+    const unsigned get_length() const { return (x_end - x_start) + (y_end - y_start); }
 
     const bool check_overlap(const NetSegment& ns) const {
         // Check whether two parallel segments overlap
         if(get_direction() != ns.get_direction()) return false;
-        if(get_direction()){ // vertical
+        if(get_direction() && y_start == ns.get_ys()){        // vertical
             if(x_start <= ns.get_xs() && x_end   >= ns.get_xs()) return true;
             if(x_start >= ns.get_xs() && x_start <= ns.get_xe()) return true;
-        } else {             // horizontal
+        }
+        else if(!get_direction() && x_start == ns.get_xs()) { // horizontal
             if(y_start <= ns.get_ys() && y_end   >= ns.get_ys()) return true;
             if(y_start >= ns.get_ys() && y_start <= ns.get_ye()) return true;
         }
         return false;
     }
+    const CoordPair check_shared_point(const NetSegment& ns) const {
+        if(x_start == ns.get_xs() && y_start == ns.get_ys()) return CoordPair(x_start, y_start);
+        if(x_start == ns.get_xe() && y_start == ns.get_ye()) return CoordPair(x_start, y_start);
+        if(x_end   == ns.get_xs() && y_end   == ns.get_ys()) return CoordPair(  x_end,   y_end);
+        if(x_end   == ns.get_xe() && y_end   == ns.get_ye()) return CoordPair(  x_end,   y_end);
+        return CoordPair(-1, -1);
+    }
     const CoordPair get_instersect(const NetSegment& ns) const {
         // Find the intersection of the two orthogonal segments
         if(get_direction() == ns.get_direction()) return CoordPair(-1, -1);
+        if(check_shared_point(ns) != CoordPair(-1, -1)) return CoordPair(-1, -1);
         if(get_direction()){ // vertical
             if(x_start <= ns.get_xs() && ns.get_xs() <= x_end
                 && ns.get_ys() <= y_start && y_start <= ns.get_ys()){
@@ -121,13 +134,24 @@ class NetSegment{
     const bool check_instersect(const NetSegment& ns) const { return get_instersect(ns) != CoordPair(-1, -1); }
 
     void merge_segment(NetSegment& ns) { // merge two parallel segments
-        if(get_direction() != ns.get_direction() || !check_instersect(ns)) return;
+        if(!check_overlap(ns)) return;
         if(get_direction()){ // vertical
             if (x_start > ns.get_xs()) x_start = ns.get_xs();
             if (x_end   < ns.get_xe()) x_end   = ns.get_xe();
         } else {             // horizontal
             if (y_start > ns.get_ys()) x_start = ns.get_ys();
             if (y_end   < ns.get_ye()) x_end   = ns.get_ye();
+        }
+    }
+    NetSegment& split_segment(CoordPair& coord) { // split segment
+        if(get_direction()){ // vertical (difference: x)
+            NetSegment splitted(coord.first, y_start, x_end, y_end);
+            x_end = coord.first;
+            return splitted;
+        } else { // horizontal
+            NetSegment splitted(x_start, coord.second, x_end, y_end);
+            y_end = coord.second;
+            return splitted;
         }
     }
 
