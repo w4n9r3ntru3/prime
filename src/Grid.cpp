@@ -284,6 +284,16 @@ GridNet& Grid::getNet(unsigned i) {
     return *_nets[i];
 }
 
+void Grid::rmNet(GridNet& net) {
+    assert(_nets.contains(net.getId()));
+    _nets.erase(net.getId());
+}
+
+void Grid::rmNet(unsigned i) {
+    assert(_nets.contains(i));
+    _nets.erase(i);
+}
+
 int Grid::getRow() const {
     return _coordinate->getRow();
 }

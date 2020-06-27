@@ -109,6 +109,8 @@ class Grid {
     void decSupply(int d);
     void addNet(GridNet& net);
     GridNet& getNet(unsigned i);
+    void rmNet(GridNet& net);
+    void rmNet(unsigned i);
 
     // accesser
     int getRow() const;
