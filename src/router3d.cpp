@@ -18,16 +18,16 @@ Router3D::~Router3D() {
         delete _GridList[i];
 }
 
-unsigned Router3D::A_star(const unsigned srow,
-                          const unsigned scol,
-                          const unsigned slay,
-                          const unsigned erow,
-                          const unsigned ecol,
-                          const unsigned elay,
-                          const bool allow_middle_point,
-                          const GridNet& net,
-                          std::vector<unsigned>& ans,
-                          cost_type t)  // return the cost of the rout
+bool Router3D::A_star(const unsigned srow,
+                      const unsigned scol,
+                      const unsigned slay,
+                      const unsigned erow,
+                      const unsigned ecol,
+                      const unsigned elay,
+                      const bool allow_middle_point,
+                      const GridNet& net,
+                      std::vector<unsigned>& ans,
+                      cost_type t)  // return the cost of the rout
 {
     _CostType = t;
     grid::_global_search++;
@@ -47,7 +47,7 @@ unsigned Router3D::A_star(const unsigned srow,
         _GridList[x]->assign_cost(cost + 1);
     }
     backtrace(target, origin, ans);
-    return ans.size();
+    return true;
 }
 
 bool Router3D::propagate(const unsigned pi,

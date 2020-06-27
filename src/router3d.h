@@ -83,7 +83,7 @@ class Router3D {
     // interface functions
     Router3D(Chip& pm);
     ~Router3D();
-    unsigned A_star(
+    bool A_star(
         const unsigned srow,
         const unsigned scol,
         const unsigned slay,
@@ -94,9 +94,7 @@ class Router3D {
                                         // a middle point of the same net
         const GridNet& net,
         IdxList& ans,  // row, column, layer
-        cost_type t);  // start, end, net, return route, cost type
-
-
+        cost_type t);  // start, end, net, return route, cost type; true if there is a route, false if no
 
     // friend class of cost functions
     friend class CostGen;
