@@ -14,7 +14,6 @@
 #include "Cell.h"
 #include "safe.h"
 
-typedef std::pair<int, int> CoordPair; // Coordinate of points
 typedef std::pair<unsigned, unsigned> VEPair; // vertex index v.s. edge index pair
 const double DINF = 1e9;
 const double EPS  = 1e-8;
@@ -62,6 +61,11 @@ class QuadTree {
                                     safe::vector<double>&  vertex_rank, 
                                     const unsigned tree_size,
                                     const unsigned now, const unsigned parent);
+    inline void dfs_construct_tree(safe::vector<unsigned> SimpleTree[],
+                                   safe::unordered_map<unsigned, CoordPair>& Vertices,
+                                   safe::vector<int>& new_idx_mapping,
+                                   const unsigned now, const int parent);
+    const unsigned check_direction(const CoordPair c_1, const CoordPair c_2) const;
     void tree_to_segment();
 
     // friends

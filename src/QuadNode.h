@@ -7,43 +7,54 @@
 #include <iostream>
 #include <memory>
 
+typedef std::pair<int, int> CoordPair; // Coordinate of points
+
 class QuadNode {
    public:
     // constructor
     QuadNode() noexcept;
-    QuadNode(unsigned idx) noexcept;
-    QuadNode(unsigned self, unsigned parent,
-             unsigned left, unsigned right,
-             unsigned up  , unsigned down) noexcept;
+    QuadNode(int idx) noexcept;
+    QuadNode(int _s, int _p,
+             int _l, int _r,
+             int _u, int _d,
+             int _x ,int _y) noexcept;
     QuadNode(const QuadNode& qn) noexcept;
     QuadNode(QuadNode&& qn) noexcept;
 
     QuadNode& operator=(const QuadNode& tn) noexcept;
     QuadNode& operator=(QuadNode&& tn) noexcept;
 
-    bool has_self()   const;
-    bool has_parent() const;
-    bool has_left()   const;
-    bool has_right()  const;
-    bool has_up()     const;
-    bool has_down()   const;
+    const bool is_root()    const;
+    const bool has_self()   const;
+    const bool has_parent() const;
+    const bool has_left()   const;
+    const bool has_right()  const;
+    const bool has_up()     const;
+    const bool has_down()   const;
 
-    unsigned get_self()   const;
-    unsigned get_parent() const;
-    unsigned get_left()   const;
-    unsigned get_right()  const;
-    unsigned get_up()     const;
-    unsigned get_down()   const;
+    const int get_self()    const;
+    const int get_parent()  const;
+    const int get_left()    const;
+    const int get_right()   const;
+    const int get_up()      const;
+    const int get_down()    const;
 
-    void set_self  (unsigned s);
-    void set_parent(unsigned p);
-    void set_left  (unsigned l);
-    void set_right (unsigned r);
-    void set_up    (unsigned u);
-    void set_down  (unsigned d);
+    void set_self  (int s);
+    void set_parent(int p);
+    void set_left  (int l);
+    void set_right (int r);
+    void set_up    (int u);
+    void set_down  (int d);
+    void reset_node(int s, int p, int l, int r, int u, int d);
+
+    void set_x      (int c_x);
+    void set_y      (int c_y);
+    void reset_coord(CoordPair c);
+    void reset_coord(int c_x, int c_y);
 
    private:
     int self, parent, left, right, up, down;
+    int coord_x, coord_y;
 
     // friends
     friend std::ostream& operator<<(std::ostream& out, const QuadNode& qn);
