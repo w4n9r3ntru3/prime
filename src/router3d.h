@@ -37,28 +37,30 @@ enum cost_type {
 
 class grid {
    public:
-    grid() : _search(0) {}
+    grid(unsigned i) : _idx(i), _search(0) {}
     ~grid() {}
 
-    bool routable(const unsigned) const { return _global_search != _search; }
-
+    // access functions
+    unsigned get_idx() const { return _idx; }
+    bool routable() const { return _global_search != _search; }
     int get_cost() const { return _cost; }
-
     int get_estimated() const { return _estimated_cost; }
+    unsigned get_pi() const { return _pi; }
 
+    // modifier
     void assign_estimated(unsigned pi, int e) {
         _pi = pi;
         _estimated_cost = e;
+        _search = _global_search;
     }
-
     void assign_cost(int cost) { _cost = cost; }
 
     static int _global_search;
 
    private:
-    int _cost;
+    unsigned _idx;
     unsigned _pi;
-    unsigned _pin;
+    int _cost;
     int _estimated_cost;
     int _search;
 };
@@ -86,44 +88,51 @@ class Router3D {
     // public functions
     Router3D(PrimeMan& pm);
     ~Router3D();
-    int A_star(unsigned srow,
-               unsigned scol,
-               unsigned slay,
-               unsigned erow,
-               unsigned ecol,
-               unsigned elay,
-               GridNet& net);
+    unsigned A_star(
+        const unsigned srow,
+        const unsigned scol,
+        const unsigned slay,
+        const unsigned erow,
+        const unsigned ecol,
+        const unsigned elay,
+        const bool allow_middle_point,  // true if you want to return when find a
+                                        // middle point of the same net
+        const GridNet& net,
+        IdxList& ans,   // row, column, layer
+        cost_type t);  // start, end, net, return route, cost type
 
     // cost functions
     int get_cost(unsigned a, unsigned b);
     int ManDist(unsigned a, unsigned b) const;
+
+    // idx functions
+    unsigned get_row(unsigned idx) const {
+        return (idx % _pm.getArea()) % _pm.getNumRows();
+    }
+    unsigned get_column(unsigned idx) const {
+        return (idx % _pm.getArea()) / _pm.getNumRows();
+    }
+    unsigned get_layer(unsigned idx) const { return idx / _pm.getArea(); }
+    unsigned get_idx(unsigned row, unsigned column, unsigned layer) const {
+        return layer * _pm.getArea() + column * _pm.getNumRows() + row;
+    }
+    unsigned get_idx_area(unsigned idx) const { return idx % _pm.getArea(); }
 
    private:
     PrimeMan& _pm;
     GridList _GridList;
     priority_grid* _PriorityGrid;
     cost_type _CostType;
-    // constant
-    const unsigned _area;
     //
 
     // private functions
-    bool propagate(unsigned srow,
-                   unsigned scol,
-                   unsigned slay,
-                   unsigned erow,
-                   unsigned ecol,
-                   unsigned elay,
-                   GridNet& net);
-    bool sub_propagate(int, unsigned, unsigned, unsigned);
-    void init_cost(cost_type);
-    void backtrace(unsigned, IdxList&);
-    void reset();
-    void use_grid(unsigned);
-    void clear_space(const unsigned);
-    void revive(const unsigned);
-    void revive_grid(const unsigned);
-    void init_clear(const unsigned, const unsigned);
-    void init_grid(const unsigned, const unsigned);
+    bool propagate(const unsigned, const unsigned, const bool, const GridNet&);
+    bool sub_propagate(const int,
+                       const unsigned,
+                       const unsigned,
+                       const unsigned,
+                       const bool,
+                       const GridNet&);
+    void backtrace(const unsigned, const unsigned, IdxList&);
     // operator overloading
 };

@@ -269,7 +269,7 @@ void Grid::addNet(GridNet& net) {
     }
 }
 
-bool Grid::canGetNet(GridNet& net) const {
+bool Grid::canGetNet(const GridNet& net) const {
     // return _nets.find(net.getId()) != _nets.end();
     return _nets.contains(net.getId());
 }

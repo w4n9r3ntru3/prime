@@ -115,7 +115,7 @@ class Grid {
     int getColumn() const;
     int getSupply() const;
     int getLayer() const;
-    bool canGetNet(GridNet& net) const;
+    bool canGetNet(const GridNet& net) const;
     bool canGetNet(unsigned i) const;
 
    private:
