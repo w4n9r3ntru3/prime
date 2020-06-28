@@ -15,8 +15,8 @@ class QuadNode {
     QuadNode() noexcept;
     QuadNode(int idx) noexcept;
     QuadNode(int _s, int _p,
-             int _l, int _r,
              int _u, int _d,
+             int _l, int _r,
              int _x ,int _y) noexcept;
     QuadNode(const QuadNode& qn) noexcept;
     QuadNode(QuadNode&& qn) noexcept;
@@ -27,25 +27,25 @@ class QuadNode {
     bool is_root()    const;
     bool has_self()   const;
     bool has_parent() const;
-    bool has_left()   const;
-    bool has_right()  const;
     bool has_up()     const;
     bool has_down()   const;
+    bool has_left()   const;
+    bool has_right()  const;
 
     int get_self()    const;
     int get_parent()  const;
-    int get_left()    const;
-    int get_right()   const;
     int get_up()      const;
     int get_down()    const;
+    int get_left()    const;
+    int get_right()   const;
 
     void set_self  (int s);
     void set_parent(int p);
-    void set_left  (int l);
-    void set_right (int r);
     void set_up    (int u);
     void set_down  (int d);
-    void reset_node(int s, int p, int l, int r, int u, int d);
+    void set_left  (int l);
+    void set_right (int r);
+    void reset_node(int s, int p, int u, int d, int l, int r);
 
     void set_x      (int c_x);
     void set_y      (int c_y);
@@ -53,7 +53,7 @@ class QuadNode {
     void reset_coord(int c_x, int c_y);
 
    private:
-    int self, parent, left, right, up, down;
+    int self, parent, up, down, left, right;
     int coord_x, coord_y;
 
     // friends

@@ -43,14 +43,20 @@ class QuadTree {
     int                     root_idx;
     safe::vector<QuadNode>     nodes; // pins will be at the front of this vector
     safe::vector<Pin*>          pins;
-    safe::unordered_map<CoordPair, unsigned> pinCoord2Idx;
+    // safe::unordered_map<CoordPair, unsigned> pinCoord2Idx;
 
     // Temporary members for constructing the tree
     safe::vector<NetSegment> segments;
 
     // Private functions
+    // Basic operations
     void insert_node();
 
+    // Optimization
+    void self_optimize();
+    void optimize(unsigned max_iter);
+
+    // Segment / Tree conversion functions
     void segment_to_tree();
     inline bool dfs_tree_graph(safe::vector<VEPair> TreeGraph[], 
                                safe::vector<int>&  selected_edges, 
@@ -66,6 +72,7 @@ class QuadTree {
                                    safe::vector<int>& new_idx_mapping,
                                    const unsigned now, const int parent);
     unsigned check_direction(const CoordPair c_1, const CoordPair c_2) const;
+    
     void tree_to_segment(); // TODO: return net as segments
 
     // friends
@@ -87,6 +94,7 @@ class NetSegment{
     NetSegment& operator=(const NetSegment& ns) noexcept {
         x_start = ns.x_start; x_end = ns.x_end;
         y_start = ns.y_start; y_end = ns.y_end;
+        return *this;
     }
     bool operator<(const NetSegment& ns) const {
         if      (x_start < ns.get_xs()) return  true;
@@ -172,7 +180,7 @@ class NetSegment{
             y_end = coord.second;
             return splitted;
         } else {
-            NetSegment();
+            return NetSegment();
         }
     }
 

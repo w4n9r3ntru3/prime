@@ -67,7 +67,7 @@ void QuadTree::segment_to_tree(){
         }
     }
     safe::unordered_map<unsigned, CoordPair> Vertices;
-    safe::unordered_map<CoordPair, unsigned> Coord2Vertices;
+    safe::map<CoordPair, unsigned> Coord2Vertices;
     safe::vector<SimpleEdge> EdgeGraph;
     // Construct vertices from pins
     unsigned pNum = 0;
@@ -145,7 +145,7 @@ void QuadTree::segment_to_tree(){
 
     // Translate vertex indices to new indices
     safe::vector<int> new_idx_mapping(vNum); // maps old indices to new ones
-    int new_idx = 0;
+    unsigned new_idx = 0;
     for(size_t i = 0; i < vNum; ++i){
         if(vertex_rank[i] > -EPS){
             new_idx_mapping[i] = new_idx++;
@@ -156,7 +156,7 @@ void QuadTree::segment_to_tree(){
     assert(new_idx == tree_size);
 
     // Construct quad nodes
-    for(int i = 0; i < new_idx; ++i){
+    for(size_t i = 0; i < new_idx; ++i){
         nodes.push_back(QuadNode(i));
     }
     // Construct quad tree
@@ -222,7 +222,7 @@ inline unsigned QuadTree::dfs_tree_center(
     double score = 0.0;
     unsigned total = 0;
     double average_score = ((double)tree_size - 1.0) / (double)num_branch;
-    for(int i = 0; i < num_vertices.size(); ++i){
+    for(size_t i = 0; i < num_vertices.size(); ++i){
         total += num_vertices[i];
         score += ((double)num_vertices[i] - average_score) *
                  ((double)num_vertices[i] - average_score);
@@ -246,14 +246,14 @@ inline void QuadTree::dfs_construct_tree(
     for(size_t i = 0; i < SimpleTree[now].size(); ++i){
         if((int)SimpleTree[now][i] != parent){
             unsigned direction = check_direction(Vertices[now], Vertices[SimpleTree[now][i]]);
-            if(direction == 1){        // left
-                nodes[new_idx_mapping[now]].set_left(new_idx_mapping[SimpleTree[now][i]]);
-            } else if(direction == 2){ // right
-                nodes[new_idx_mapping[now]].set_right(new_idx_mapping[SimpleTree[now][i]]);
-            } else if(direction == 3){ // up
+            if(direction == 1){        // up
                 nodes[new_idx_mapping[now]].set_up(new_idx_mapping[SimpleTree[now][i]]);
-            } else if(direction == 4){ // down
+            } else if(direction == 2){ // down
                 nodes[new_idx_mapping[now]].set_down(new_idx_mapping[SimpleTree[now][i]]);
+            } else if(direction == 3){ // left
+                nodes[new_idx_mapping[now]].set_left(new_idx_mapping[SimpleTree[now][i]]);
+            } else if(direction == 4){ // right
+                nodes[new_idx_mapping[now]].set_right(new_idx_mapping[SimpleTree[now][i]]);
             }
             dfs_construct_tree(SimpleTree, Vertices, new_idx_mapping, SimpleTree[now][i], now);
         }
@@ -262,10 +262,10 @@ inline void QuadTree::dfs_construct_tree(
 
 unsigned QuadTree::check_direction(const CoordPair c_1, const CoordPair c_2) const {
     // find the relative direction between the two vertices
-    if(c_1.first <  c_2.first && c_1.second == c_2.second) return 1; // left
-    if(c_1.first >  c_2.first && c_1.second == c_2.second) return 2; // right
-    if(c_1.first == c_2.first && c_1.second <  c_2.second) return 3; // up
-    if(c_1.first == c_2.first && c_1.second >  c_2.second) return 4; // down
+    if(c_1.first <  c_2.first && c_1.second == c_2.second) return 1; // up
+    if(c_1.first >  c_2.first && c_1.second == c_2.second) return 2; // down
+    if(c_1.first == c_2.first && c_1.second <  c_2.second) return 3; // left
+    if(c_1.first == c_2.first && c_1.second >  c_2.second) return 4; // right
     assert(false);
     return 0;
 }
