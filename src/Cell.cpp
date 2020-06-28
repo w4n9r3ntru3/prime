@@ -157,7 +157,7 @@ Cell::Cell(const std::string CellName,
     size_t l = getMasterCell().getNumLayers();
     _Layer2pin.reserve(l);
     for (size_t i = 0; i < l; ++i) {
-        safe::vector<Pin*> v = safe::vector<Pin*>();
+        safe::vector<Pin*> v;
         _Layer2pin.push_back(std::move(v));
     }
     for (size_t i = 0; i < p; ++i) {
