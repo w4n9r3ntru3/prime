@@ -242,7 +242,7 @@ void Chip::readFile(std::fstream& input) {
 
         _grid_nets.push_back(GridNet(str, i, numPins, minLay));
         // TODO:
-        _quad_tree_nets.push_back(QuadTree(str, i, minLay));
+        _quad_tree_nets.push_back(QuadTree(str, i, minLay, _rowRange, _columnRange));
 
         // ! substituted
         // TreeNet tree_net = TreeNet(std::move(str), i, numPins, minLay);
