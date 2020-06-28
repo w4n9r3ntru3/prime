@@ -5,33 +5,78 @@
 #include "QuadTree.h"
 
 QuadTree::QuadTree() noexcept
-    : _NetName(""), _NetId(-1), _minLayer(-1) {
+    : _NetName(""), _NetId(-1), _minLayer(-1), _maxRows(0), _maxCols(0), root_idx(-1) {
+    segments.clear();
+}
+
+QuadTree::QuadTree(std::string n, int n_id, int min_lay, int max_row, int max_col) noexcept
+    : _NetName(n), _NetId(n_id), _minLayer(min_lay), _maxRows(max_row), _maxCols(max_col), root_idx(-1) {
     segments.clear();
 }
 
 QuadTree::~QuadTree() noexcept {
     nodes.clear();
     pins.clear();
+    coord2Node.clear();
 }
 
+// access to basic attributes
 const std::string& QuadTree::get_name() const { return  _NetName; }
 const int& QuadTree::get_net_id()       const { return    _NetId; }
 const int& QuadTree::get_min_layer()    const { return _minLayer; }
 const int& QuadTree::get_root_idx()     const { return  root_idx; }
+bool QuadTree::is_built()               const { return root_idx != -1; }
 
-void QuadTree::add_pin(Pin* p){
-    pins.push_back(p);
+// get nodes / pins
+unsigned  QuadTree::size()              const { assert(is_built()); return nodes.size(); }
+unsigned  QuadTree::pin_num()           const { assert(is_built()); return pins.size(); }
+unsigned  QuadTree::pseudo_pin_num()    const { assert(is_built()); return size() - pin_num(); }
+bool QuadTree::exist_node(const CoordPair& _coord) const {
+    assert(is_built()); return coord2Node.contains(_coord);
+}
+bool QuadTree::exist_node(const unsigned _x, const unsigned _y) const {
+    assert(is_built()); return coord2Node.contains(CoordPair(_x, _y));
+}
+bool QuadTree::is_pin(unsigned idx) const {
+    assert(is_built()); return idx < pin_num();
+}
+bool QuadTree::is_pseudo_pin(unsigned idx) const {
+    assert(is_built()); return idx >= pin_num() && idx < size();
+}
+int QuadTree::get_node_idx(const CoordPair& _coord) const {
+    assert(is_built());
+    return (coord2Node.contains(_coord)) ? coord2Node[_coord] : -1;
+}
+int QuadTree::get_node_idx(const unsigned _x, const unsigned _y) const {
+    assert(is_built());
+    return (coord2Node.contains(CoordPair(_x, _y))) ? coord2Node[CoordPair(_x, _y)] : -1;
+}
+QuadNode& QuadTree::get_node(unsigned idx){
+    assert(is_built() && idx < size());
+    return nodes[idx];
+}
+QuadNode& QuadTree::get_node(const CoordPair& _coord){
+    int idx = get_node_idx(_coord);
+    assert(is_built() && idx >= 0);
+    return nodes[idx];
+}
+QuadNode& QuadTree::get_node(const unsigned _x, const unsigned _y){
+    int idx = get_node_idx(_x, _y);
+    assert(is_built() && idx >= 0);
+    return nodes[idx];
 }
 
+
+void QuadTree::add_pin(Pin* p) { pins.push_back(p); }
 void QuadTree::add_segment(int srow, int scol, int slay, 
                            int erow, int ecol, int elay){
     if(slay != elay) return; // ignore via
     segments.push_back(NetSegment(srow, scol, erow, ecol));
 }
-
 void QuadTree::construct_tree(){
     // TODO:
     segment_to_tree();
+    optimize();
 }
 
 // Private functions
@@ -79,6 +124,7 @@ void QuadTree::segment_to_tree(){
             ++pNum;
         }
     } // Now we know the number of pins is pNum
+    assert(pNum == pins.size());
     // Construct graph by segments
     unsigned vNum = pNum;
     for(size_t i = 0; i < segments.size(); ++i){ // Add segments to graph
@@ -160,7 +206,13 @@ void QuadTree::segment_to_tree(){
         nodes.push_back(QuadNode(i));
     }
     // Construct quad tree
-    dfs_construct_tree(SimpleTree, Vertices, new_idx_mapping, 0, -1);
+    dfs_construct_tree(SimpleTree, Vertices, new_idx_mapping, found_center, -1);
+    
+    // Final preperation
+    root_idx = new_idx_mapping[found_center];
+    for(size_t i = 0; i < nodes.size(); ++i){ // set coordinate to node index mapping
+        coord2Node[nodes[i].get_coord()] = i;
+    }
 
     segments.clear();
 }

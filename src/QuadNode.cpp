@@ -53,6 +53,7 @@ int QuadNode::get_up()     const { assert(has_up());     return up;     }
 int QuadNode::get_down()   const { assert(has_down());   return down;   }
 int QuadNode::get_left()   const { assert(has_left());   return left;   }
 int QuadNode::get_right()  const { assert(has_right());  return right;  }
+CoordPair QuadNode::get_coord() const { return CoordPair(coord_x, coord_y); }
 
 void QuadNode::set_self   (int s) { self   = s; }
 void QuadNode::set_parent (int p) { parent = p; }

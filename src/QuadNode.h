@@ -38,6 +38,7 @@ class QuadNode {
     int get_down()    const;
     int get_left()    const;
     int get_right()   const;
+    CoordPair get_coord() const;
 
     void set_self  (int s);
     void set_parent(int p);
