@@ -61,6 +61,10 @@ int Layer::getLayerIdx() const {
     return _idx;
 }
 
+bool Layer::getDirection() const {
+    return _direction;
+}
+
 Grid& Layer::getGrid(int i) {
     return *_grids[i];
 }

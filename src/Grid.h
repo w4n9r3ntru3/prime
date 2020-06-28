@@ -61,6 +61,7 @@ class Layer {
     // accesser
     const std::string& getLayerName() const;
     int getLayerIdx() const;
+    bool getDirection() const; // 0 for H(column), 1 for V(row)
     Grid& getGrid(int i);
 
    private:
