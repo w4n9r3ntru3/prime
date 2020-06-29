@@ -68,7 +68,7 @@ class Layer {
     const std::string _LayerName;
     const int _idx;
     bool _direction;  // 0 for H(column), 1 for V(row)
-    safe::vector<Grid*> _grids;
+    safe::vector<std::shared_ptr<Grid>> _grids;
 };
 
 class Coordinate {
@@ -78,8 +78,8 @@ class Coordinate {
     Coordinate(const Coordinate& c) noexcept;
 
     // modifier
-    void addAdjH(Coordinate* c1, Coordinate* c2);  // you don't need this
-    void addGrid(Grid* g);                         // you don't need this
+    void addAdjH(std::shared_ptr<Coordinate> c1, std::shared_ptr<Coordinate> c2);  // you don't need this
+    void addGrid(std::shared_ptr<Grid> g);                         // you don't need this
     bool CanAddCell(Cell& cell) const;  // to see if you can add this cell
     void addCell(Cell& cell);
     void moveCell(Cell& cell);
@@ -92,9 +92,9 @@ class Coordinate {
    private:
     int _row;
     int _column;
-    Coordinate* _c1;
-    Coordinate* _c2;
-    safe::vector<Grid*> _grids;
+    std::shared_ptr<Coordinate> _c1;
+    std::shared_ptr<Coordinate> _c2;
+    safe::vector<std::shared_ptr<Grid>> _grids;
     safe::unordered_map<unsigned, unsigned> _MCT2Num;
 };
 
@@ -105,7 +105,7 @@ class Grid {
     Grid(Grid& a);
 
     // modifier
-    void assignCoordinate(Coordinate* c);
+    void assignCoordinate(std::shared_ptr<Coordinate> c);
     void incSupply(int d);
     void decSupply(int d);
     void addNet(GridNet& net);
@@ -124,6 +124,6 @@ class Grid {
    private:
     int _supply;
     Layer& _layer;
-    Coordinate* _coordinate;
-    safe::unordered_map<unsigned, GridNet*> _nets;
+    std::shared_ptr<Coordinate> _coordinate;
+    safe::unordered_map<unsigned, std::shared_ptr<GridNet>> _nets;
 };

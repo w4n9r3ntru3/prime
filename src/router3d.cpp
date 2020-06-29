@@ -4,18 +4,16 @@
 
 int grid::_global_search = 0;
 
-Router3D::Router3D(Chip& pm) : _pm(pm) {
+Router3D::Router3D(Chip& pm) : _pm(pm), _PriorityGrid(nullptr) {
     size_t n = pm.getVolume();
     _GridList.reserve(n);
     for (size_t i = 0; i < n; i++) {
-        grid* g = new grid(i);
-        _GridList.push_back(g);
+        std::unique_ptr<grid> g(new grid(i));
+        _GridList.push_back(std::move(g));
     }
 }
 
 Router3D::~Router3D() {
-    for (int i = 0, n = _GridList.size(); i < n; i++)
-        delete _GridList[i];
 }
 
 bool Router3D::A_star(const unsigned srow,
@@ -31,6 +29,7 @@ bool Router3D::A_star(const unsigned srow,
 {
     _CostType = t;
     grid::_global_search++;
+    if(_PriorityGrid) delete _PriorityGrid;
     _PriorityGrid = new priority_grid;
     const unsigned origin = get_idx(srow, scol, slay);
     unsigned x = origin;

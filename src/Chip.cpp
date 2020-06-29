@@ -84,7 +84,7 @@ void Chip::readFile(std::fstream& input) {
         int supply;
         input >> supply;  //<defaultSupplyOfOneGGrid>
         Layer* l = new Layer(str, idx - 1, direction, supply, _area);
-        _layers[idx - 1] = l;
+        _layers[idx - 1].reset(l);
     }
     connectCoordinateGrid();
 
@@ -211,9 +211,8 @@ void Chip::readFile(std::fstream& input) {
         Cell* cell = new Cell(str, MCT, movable, i);
         int rIdx = row - _rowBase, cIdx = column - _columnBase;
         cell->setCoordinate(rIdx, cIdx);
-        Coordinate* c = _coordinates[getIdx(rIdx, cIdx)];
-        c->addCell(*cell);
-        _cells[i] = cell;
+        _coordinates[getIdx(rIdx, cIdx)]->addCell(*cell);
+        _cells[i].reset(cell);
     }
 
     /*NumNets <netCount>
@@ -260,12 +259,11 @@ void Chip::readFile(std::fstream& input) {
             masterPin = str.substr(pos, str.size() - pos);
             // assert(_Cell2Idx.count(inst) == 1);
             // assert(_Cell2Idx.contains(inst));
-            Cell* cell = _cells[_Cell2Idx.at(inst)];
-            Pin& pin = cell->getPin(masterPin);
+            Pin& pin = _cells[_Cell2Idx.at(inst)]->getPin(masterPin);
             // Cell& cell_ = pin.get_cell();
             // std::cout << &cell << " " << &cell_ << std::endl;
-            _grid_nets[i].addPin(&pin);
-            pin.setNet(&_grid_nets[i]);
+            _grid_nets[i].addPin(std::shared_ptr<Pin>(&pin));
+            pin.setNet(std::shared_ptr<GridNet>(&_grid_nets[i]));
             Grid& g = _layers[pin.getLayer()]->getGrid(
                 getIdx(pin.getRow(), pin.getColumn()));
             g.addNet(_grid_nets[i]);
@@ -311,9 +309,6 @@ void Chip::readFile(std::fstream& input) {
 }
 
 Chip::~Chip() {
-    for (Coordinate* ptr : _coordinates) {
-        delete ptr;
-    }
 
     // debug
     // std::fstream out("out.txt", std::ios::out);
@@ -325,14 +320,6 @@ Chip::~Chip() {
     // }
     // }
     // debug
-
-    for (Layer* ptr : _layers) {
-        delete ptr;
-    }
-
-    for (Cell* ptr : _cells) {
-        delete ptr;
-    }
 }
 
 int Chip::getIdx(int row, int column) const {
@@ -453,15 +440,15 @@ void Chip::constructCoordinate() {
     _coordinates.reserve(_area);
     for (int i = 0; i < _columnRange; ++i) {
         for (int j = 0; j < _rowRange; ++j) {
-            Coordinate* c = new Coordinate(j, i, _layer);
+            std::shared_ptr<Coordinate> c(new Coordinate(j, i, _layer));
             _coordinates.push_back(c);
         }
     }
     for (int i = 0; i < _columnRange; ++i) {
         for (int j = 0; j < _rowRange; ++j) {
             int left = getLeft(j, i), right = getRight(j, i);
-            Coordinate* c1 = (left == -1) ? nullptr : _coordinates[left];
-            Coordinate* c2 = (right == -1) ? nullptr : _coordinates[right];
+            std::shared_ptr<Coordinate> c1 = (left == -1) ? nullptr : _coordinates[left];
+            std::shared_ptr<Coordinate> c2 = (right == -1) ? nullptr : _coordinates[right];
             _coordinates[getIdx(j, i)]->addAdjH(c1, c2);
         }
     }
@@ -469,12 +456,12 @@ void Chip::constructCoordinate() {
 
 void Chip::connectCoordinateGrid() {
     for (int i = 0; i < _area; ++i) {
-        Coordinate* c = _coordinates[i];
+        std::shared_ptr<Coordinate> c = _coordinates[i];
         for (int j = 0; j < _layer; ++j) {
             Layer& l = *_layers[j];
             Grid& g = l.getGrid(i);
             g.assignCoordinate(c);
-            c->addGrid(&g);
+            c->addGrid(std::shared_ptr<Grid>(&g));
         }
     }
 }

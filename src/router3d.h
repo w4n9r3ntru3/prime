@@ -74,9 +74,9 @@ class MyComp {
 };
 
 // typedef
-typedef std::vector<grid*> GridList;
+typedef std::vector<std::unique_ptr<grid>> GridList;
 typedef std::vector<unsigned> IdxList;
-typedef std::priority_queue<grid*, GridList, MyComp> priority_grid;
+typedef std::priority_queue<std::unique_ptr<grid>, GridList, MyComp> priority_grid;
 
 class Router3D {
    public:

@@ -27,7 +27,7 @@
 
 // PinType
 PinType::PinType(const std::string PinName, int layer, MasterCellType& MCT)
-    : _PinName(PinName), _layer(layer), _MCT(&MCT) {
+    : _PinName(PinName), _layer(layer), _MCT(MCT) {
     assert(layer >= 0);
 }
 
@@ -39,7 +39,6 @@ PinType::PinType(const std::string PinName, int layer, MasterCellType& MCT)
 PinType::PinType(PinType&& a)
     : _PinName(std::move(a._PinName)), _layer(a._layer), _MCT(a._MCT) {
     assert(_layer >= 0);
-    a._MCT = nullptr;
 }
 
 // PinType& PinType::operator=(const PinType& a) {
@@ -52,9 +51,7 @@ PinType::PinType(PinType&& a)
 PinType& PinType::operator=(PinType&& a) {
     _PinName = std::move(a._PinName);
     _layer = a._layer;
-    _MCT = a._MCT;
-
-    a._MCT = nullptr;
+    _MCT = std::move(a._MCT);
 
     return *this;
 }
@@ -154,6 +151,19 @@ MasterCellType::MasterCellType(MasterCellType&& mct)
       _adjHGridMC(std::move(mct._adjHGridMC)),
       _adjHGridDemand(std::move(mct._adjHGridDemand)),
       _PinName2Idx(std::move(mct._PinName2Idx)) {}
+
+MasterCellType& MasterCellType::operator=(MasterCellType&& a)
+{
+    _MCName = std::move(a._MCName);
+    _LayerDemand = std::move(a._LayerDemand);
+    _Pins = std::move(a._Pins);
+    _Blkgs = std::move(a._Blkgs);
+    _SameGridMC = std::move(a._SameGridMC);
+    _SameGridDemand = std::move(a._SameGridDemand);
+    _adjHGridMC = std::move(a._adjHGridMC);
+    _adjHGridDemand = std::move(a._adjHGridDemand);
+    _PinName2Idx = std::move(a._PinName2Idx);
+}
 
 void MasterCellType::AddBlkg(const std::string BlkgName,
                              int layer,

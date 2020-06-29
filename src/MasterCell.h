@@ -50,7 +50,7 @@ class PinType {
    private:
     std::string _PinName;
     int _layer;
-    MasterCellType* _MCT;
+    MasterCellType& _MCT;
 };
 
 std::ostream& operator<<(std::ostream& os, const PinType& PT);
@@ -89,6 +89,8 @@ class MasterCellType {
 
     // ! no need for destructor
     // ~MasterCellType();
+
+    MasterCellType& operator=(MasterCellType&& a);
 
     // Modifier
     void AddBlkg(const std::string BlkgName, int layer, int demand);

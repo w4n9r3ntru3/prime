@@ -45,7 +45,7 @@ Pin& Pin::operator=(Pin&& p) {
     return *this;
 }
 
-void Pin::setNet(GridNet* net) {
+void Pin::setNet(std::shared_ptr<GridNet> net) {
     _net = net;
 }
 
@@ -94,7 +94,7 @@ GridNet::GridNet(const GridNet& g) noexcept
 //   _segments(g._segments)
 {}
 
-void GridNet::addPin(Pin* pin) {
+void GridNet::addPin(std::shared_ptr<Pin> pin) {
     _pins.push_back(pin);
 }
 
@@ -146,23 +146,21 @@ Cell::Cell(const std::string CellName,
            bool movable,
            unsigned id) noexcept
     : _CellName(CellName),
-      _MCT(&MCT),
+      _MCT(MCT),
       _Id(id),
       _movable(movable),
       _moved(false) {
-    assert(_MCT != nullptr);
-
     size_t p = getMasterCell().getNumPins();
     _pins.reserve(p);
     size_t l = getMasterCell().getNumLayers();
     _Layer2pin.reserve(l);
     for (size_t i = 0; i < l; ++i) {
-        safe::vector<Pin*> v;
+        safe::vector<std::shared_ptr<Pin>> v;
         _Layer2pin.push_back(std::move(v));
     }
     for (size_t i = 0; i < p; ++i) {
         _pins.push_back(std::move(Pin(getMasterCell().getPinType(i), *this)));
-        _Layer2pin[_pins[i].getLayer()].push_back(&_pins[i]);
+        _Layer2pin[_pins[i].getLayer()].push_back(std::shared_ptr<Pin>(&_pins[i]));
     }
 }
 
@@ -179,7 +177,7 @@ Cell::Cell(Cell&& c) noexcept
 
 Cell& Cell::operator=(Cell&& c) noexcept {
     _CellName = std::move(c._CellName);
-    _MCT = c._MCT;
+    _MCT = std::move(c._MCT);
     _Id = c._Id;
 
     _movable = c._movable;
@@ -218,13 +216,11 @@ unsigned Cell::getId() const {
 }
 
 const MasterCellType& Cell::getMasterCell() const {
-    assert(_MCT != nullptr);
-    return *_MCT;
+    return _MCT;
 }
 
 MasterCellType& Cell::getMasterCell() {
-    assert(_MCT != nullptr);
-    return *_MCT;
+    return _MCT;
 }
 
 int Cell::getMasterCellId() const {
@@ -283,11 +279,11 @@ size_t Cell::getNumPins() const {
     return _pins.size();
 }
 
-const safe::vector<Pin*>& Cell::getPinLayer(int i) const {
+const safe::vector<std::shared_ptr<Pin>>& Cell::getPinLayer(int i) const {
     return _Layer2pin[i];
 }
 
-safe::vector<Pin*>& Cell::getPinLayer(int i) {
+safe::vector<std::shared_ptr<Pin>>& Cell::getPinLayer(int i) {
     return _Layer2pin[i];
 }
 

@@ -36,7 +36,7 @@ Layer::Layer(const std::string name,
     : _LayerName(name), _idx(i), _direction(d) {
     _grids.reserve(area);
     for (int i = 0; i < area; ++i) {
-        Grid* g = new Grid(supply, *this);
+        std::shared_ptr<Grid> g(new Grid(supply, *this));
         _grids.push_back(g);
     }
 }
@@ -48,9 +48,6 @@ Layer::Layer(const Layer& l) noexcept
       _grids(l._grids) {}
 
 Layer::~Layer() {
-    for (int i = 0, n = _grids.size(); i < n; ++i) {
-        delete _grids[i];
-    }
 }
 
 const std::string& Layer::getLayerName() const {
@@ -74,12 +71,12 @@ Coordinate::Coordinate(int x, int y, int layer) : _row(x), _column(y) {
     _grids.reserve(layer);
 }
 
-void Coordinate::addAdjH(Coordinate* c1, Coordinate* c2) {
+void Coordinate::addAdjH(std::shared_ptr<Coordinate> c1, std::shared_ptr<Coordinate> c2) {
     _c1 = c1;
     _c2 = c2;
 }
 
-void Coordinate::addGrid(Grid* g) {
+void Coordinate::addGrid(std::shared_ptr<Grid> g) {
     _grids.push_back(g);
 }
 
@@ -251,9 +248,9 @@ Grid::Grid(Grid& a)
     : _supply(a._supply),
       _layer(a._layer),
       _coordinate(a._coordinate),
-      _nets(safe::unordered_map<unsigned, GridNet*>()) {}
+      _nets(safe::unordered_map<unsigned, std::shared_ptr<GridNet>>()) {}
 
-void Grid::assignCoordinate(Coordinate* c) {
+void Grid::assignCoordinate(std::shared_ptr<Coordinate> c) {
     _coordinate = c;
 }
 
@@ -268,7 +265,7 @@ void Grid::decSupply(int d) {
 void Grid::addNet(GridNet& net) {
     // if (_nets.find(net.getId()) == _nets.end()) {
     if (!_nets.contains(net.getId())) {
-        _nets[net.getId()] = &net;
+        _nets[net.getId()] = std::shared_ptr<GridNet>(&net);
         _supply -= 1;
     }
 }

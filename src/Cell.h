@@ -58,7 +58,7 @@ class Pin {
     Pin& operator=(Pin&& p);
 
     // modifier
-    void setNet(GridNet* net);
+    void setNet(std::shared_ptr<GridNet> net);
 
     // accesser
     PinType& getPinType() const;
@@ -70,9 +70,9 @@ class Pin {
     int getLayer() const;
 
    private:
-    PinType* _PT;
-    Cell* _cell;
-    GridNet* _net;
+    std::shared_ptr<PinType> _PT;
+    std::shared_ptr<Cell> _cell;
+    std::shared_ptr<GridNet> _net;
 };
 
 class GridNet {
@@ -85,7 +85,7 @@ class GridNet {
     GridNet(const GridNet& g) noexcept;
 
     // modifier
-    void addPin(Pin* pin);  // you don't need this
+    void addPin(std::shared_ptr<Pin> pin);  // you don't need this
     // void addSegment(int srow, int scol, int slay, int erow, int ecol, int
     // elay);
 
@@ -103,7 +103,7 @@ class GridNet {
     const unsigned _Id;
     const unsigned _minLayer;
 
-    safe::vector<Pin*> _pins;
+    safe::vector<std::shared_ptr<Pin>> _pins;
 
     // ! TODO deprecate this
     // safe::vector<unsigned> _segments;  // srow, scol, slay, erow, ecol, elay
@@ -154,15 +154,15 @@ class Cell {
 
     size_t getNumPins() const;
 
-    const safe::vector<Pin*>& getPinLayer(int i) const;
-    safe::vector<Pin*>& getPinLayer(int i);
+    const safe::vector<std::shared_ptr<Pin>>& getPinLayer(int i) const;
+    safe::vector<std::shared_ptr<Pin>>& getPinLayer(int i);
 
     // friend
     friend std::ostream& operator<<(std::ostream& os, const Cell& cell);
 
    private:
     std::string _CellName;
-    MasterCellType* _MCT;
+    MasterCellType& _MCT;
 
     unsigned _Id;
     bool _movable;
@@ -171,7 +171,7 @@ class Cell {
     unsigned _column;
 
     safe::vector<Pin> _pins;
-    safe::vector<safe::vector<Pin*>> _Layer2pin;
+    safe::vector<safe::vector<std::shared_ptr<Pin>>> _Layer2pin;
 };
 
 std::ostream& operator<<(std::ostream& os, const Cell& cell);
