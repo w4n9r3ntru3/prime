@@ -11,7 +11,7 @@ QuadNode::QuadNode() noexcept
       coord_x(-1), coord_y(-1) {};
 
 QuadNode::QuadNode(int idx) noexcept 
-    : self(idx), parent(-1), up(-1), down(-1), left(-1), right(-1), 
+    : self(idx), parent(idx), up(-1), down(-1), left(-1), right(-1), 
       coord_x(-1), coord_y(-1) {};
 
 QuadNode::QuadNode(int _s, int _p,
@@ -39,21 +39,29 @@ QuadNode::QuadNode(QuadNode&& qn) noexcept {
     right  =  qn.right; qn.right  = 0;
 }
 
-bool QuadNode::is_root()    const { return parent == -1; }
+bool QuadNode::is_root()    const { return parent == self; }
 bool QuadNode::has_self()   const { return self   >= 0; }
-bool QuadNode::has_parent() const { return parent >= 0; }
+bool QuadNode::has_parent() const { return parent >= 0 && !is_root(); }
 bool QuadNode::has_up()     const { return up     >= 0; }
 bool QuadNode::has_down()   const { return down   >= 0; }
 bool QuadNode::has_left()   const { return left   >= 0; }
 bool QuadNode::has_right()  const { return right  >= 0; }
 
-int QuadNode::get_self()   const { assert(has_self());   return self;   }
-int QuadNode::get_parent() const { assert(has_parent()); return parent; }
-int QuadNode::get_up()     const { assert(has_up());     return up;     }
-int QuadNode::get_down()   const { assert(has_down());   return down;   }
-int QuadNode::get_left()   const { assert(has_left());   return left;   }
-int QuadNode::get_right()  const { assert(has_right());  return right;  }
+bool QuadNode::really_has_up()    const { return has_up()    && up    != parent; }
+bool QuadNode::really_has_down()  const { return has_down()  && down  != parent; }
+bool QuadNode::really_has_left()  const { return has_left()  && left  != parent; }
+bool QuadNode::really_has_right() const { return has_right() && right != parent;}
+
+int QuadNode::get_self()   const { return self;   }
+int QuadNode::get_parent() const { return parent; }
+int QuadNode::get_up()     const { return up;     }
+int QuadNode::get_down()   const { return down;   }
+int QuadNode::get_left()   const { return left;   }
+int QuadNode::get_right()  const { return right;  }
 CoordPair QuadNode::get_coord() const { return CoordPair(coord_x, coord_y); }
+int QuadNode::get_coord_x() const { return coord_x; }
+int QuadNode::get_coord_y() const { return coord_y; }
+unsigned QuadNode::get_flag() const { return flag; }
 
 void QuadNode::set_self   (int s) { self   = s; }
 void QuadNode::set_parent (int p) { parent = p; }
@@ -68,8 +76,20 @@ void QuadNode::reset_node(int s, int p, int u, int d, int l, int r){
 
 void QuadNode::set_x      (int c_x) { coord_x = c_x; }
 void QuadNode::set_y      (int c_y) { coord_y = c_y; }
-void QuadNode::reset_coord(CoordPair c) { coord_x = c.first; coord_y = c.second; }
+void QuadNode::reset_coord(const CoordPair& c) { coord_x = c.first; coord_y = c.second; }
 void QuadNode::reset_coord(int c_x, int c_y) { coord_x = c_x; coord_y = c_y; }
+
+void QuadNode::update_flag(unsigned _flag){ flag = _flag; }
+
+void QuadNode::move_vertical(int _x)  { coord_x += _x; }
+void QuadNode::move_horizontal(int _y){ coord_y += _y; }
+
+unsigned QuadNode::dist(const CoordPair& c) const { // Manhattan distance
+    return (unsigned)(ABS(coord_x - c.first) + ABS(coord_y - c.second));
+}
+unsigned QuadNode::dist(const QuadNode& qn) const { // Manhattan distance
+    return (unsigned)(ABS(coord_x - qn.get_coord_x()) + ABS(coord_y - qn.get_coord_y()));
+}
 
 std::ostream& operator<<(std::ostream& out, const QuadNode& qn) {
     out << "QuadNode{s:" << qn.self << ", p:" << qn.parent
@@ -94,4 +114,3 @@ bool SimpleEdge::operator<(const SimpleEdge& se) const {
 unsigned SimpleEdge::get_v1()     const { return v1; }
 unsigned SimpleEdge::get_v2()     const { return v2; }
 unsigned SimpleEdge::get_weight() const { return weight; }
-

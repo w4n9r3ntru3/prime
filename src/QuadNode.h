@@ -7,6 +7,8 @@
 #include <iostream>
 #include <memory>
 
+#include "QuadUtil.h"
+
 typedef std::pair<int, int> CoordPair; // Coordinate of points
 
 class QuadNode {
@@ -32,6 +34,11 @@ class QuadNode {
     bool has_left()   const;
     bool has_right()  const;
 
+    bool really_has_up()    const;
+    bool really_has_down()  const;
+    bool really_has_left()  const;
+    bool really_has_right() const;
+
     int get_self()    const;
     int get_parent()  const;
     int get_up()      const;
@@ -39,6 +46,9 @@ class QuadNode {
     int get_left()    const;
     int get_right()   const;
     CoordPair get_coord() const;
+    int get_coord_x() const;
+    int get_coord_y() const;
+    unsigned get_flag() const;
 
     void set_self  (int s);
     void set_parent(int p);
@@ -50,12 +60,21 @@ class QuadNode {
 
     void set_x      (int c_x);
     void set_y      (int c_y);
-    void reset_coord(CoordPair c);
+    void reset_coord(const CoordPair& c);
     void reset_coord(int c_x, int c_y);
+
+    void update_flag(unsigned _flag);
+
+    void move_vertical(int _x);
+    void move_horizontal(int _y);
+
+    unsigned dist(const CoordPair& c) const;
+    unsigned dist(const QuadNode& qn) const;
 
    private:
     int self, parent, up, down, left, right;
     int coord_x, coord_y;
+    unsigned flag;
 
     // friends
     friend std::ostream& operator<<(std::ostream& out, const QuadNode& qn);
