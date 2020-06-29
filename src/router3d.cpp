@@ -8,12 +8,9 @@ Router3D::Router3D(Chip& pm) : _pm(pm), _PriorityGrid(nullptr) {
     size_t n = pm.getVolume();
     _GridList.reserve(n);
     for (size_t i = 0; i < n; i++) {
-        std::unique_ptr<grid> g(new grid(i));
-        _GridList.push_back(std::move(g));
+        std::shared_ptr<grid> g(new grid(i));
+        _GridList.push_back(g);
     }
-}
-
-Router3D::~Router3D() {
 }
 
 bool Router3D::A_star(const unsigned srow,

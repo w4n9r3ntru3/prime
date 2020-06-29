@@ -68,21 +68,20 @@ class grid {
 class MyComp {
    public:
     MyComp() {}
-    bool operator()(const grid* lhs, const grid* rhs) const {
+    bool operator()(const std::shared_ptr<grid> lhs, const std::shared_ptr<grid> rhs) const {
         return ((lhs->get_estimated()) > (rhs->get_estimated()));
     }
 };
 
 // typedef
-typedef std::vector<std::unique_ptr<grid>> GridList;
+typedef std::vector<std::shared_ptr<grid>> GridList;
 typedef std::vector<unsigned> IdxList;
-typedef std::priority_queue<std::unique_ptr<grid>, GridList, MyComp> priority_grid;
+typedef std::priority_queue<std::shared_ptr<grid>, GridList, MyComp> priority_grid;
 
 class Router3D {
    public:
     // interface functions
     Router3D(Chip& pm);
-    ~Router3D();
     bool A_star(
         const unsigned srow,
         const unsigned scol,
@@ -95,6 +94,8 @@ class Router3D {
         const GridNet& net,
         IdxList& ans,  // row, column, layer
         cost_type t);  // start, end, net, return route, cost type; true if there is a route, false if no
+
+    bool L_shape();
 
     // friend class of cost functions
     friend class CostGen;
