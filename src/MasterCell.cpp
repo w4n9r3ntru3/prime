@@ -128,13 +128,13 @@ MasterCellType::MasterCellType(const std::string MCName, unsigned id, int layer)
     _adjHGridDemand.reserve(layer);
     for (int i = 0; i < layer; ++i) {
         _LayerDemand.push_back(0);
-        safe::vector<unsigned> v1 = safe::vector<unsigned>();
+        safe::vector<unsigned> v1;
         _SameGridMC.push_back(std::move(v1));
-        safe::vector<unsigned> v2 = safe::vector<unsigned>();
+        safe::vector<unsigned> v2;
         _adjHGridMC.push_back(std::move(v2));
-        safe::vector<int> v3 = safe::vector<int>();
+        safe::vector<int> v3;
         _SameGridDemand.push_back(std::move(v3));
-        safe::vector<int> v4 = safe::vector<int>();
+        safe::vector<int> v4;
         _adjHGridDemand.push_back(std::move(v4));
     }
 }
@@ -163,6 +163,7 @@ MasterCellType& MasterCellType::operator=(MasterCellType&& a)
     _adjHGridMC = std::move(a._adjHGridMC);
     _adjHGridDemand = std::move(a._adjHGridDemand);
     _PinName2Idx = std::move(a._PinName2Idx);
+    return *this;
 }
 
 void MasterCellType::AddBlkg(const std::string BlkgName,

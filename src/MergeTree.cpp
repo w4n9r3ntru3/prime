@@ -14,8 +14,8 @@ void MergeTree::merge_tree(
     const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
     const unsigned num_mtree = 2 * num_pins - 1;
 
-    auto pins = safe::vector<TreeNode>();
-    auto ranks = safe::vector<unsigned>();
+    safe::vector<TreeNode> pins;
+    safe::vector<unsigned> ranks;
     assert(mtree.size() == 0);
 
     pins.reserve(num_pins);
