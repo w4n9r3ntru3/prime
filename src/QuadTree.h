@@ -10,6 +10,7 @@
 #include <utility>
 #include <algorithm>
 
+#include "Chip.h"
 #include "QuadNode.h"
 #include "QuadUtil.h"
 #include "Cell.h"
@@ -50,6 +51,7 @@ class QuadTree {
     QuadNode& get_node(unsigned idx);
     QuadNode& get_node(const CoordPair& _coord);
     QuadNode& get_node(const unsigned _x, const unsigned _y);
+    safe::vector<std::shared_ptr<Pin>>& get_pin_list();
 
     // get information about the net
     unsigned get_net_length() const;
@@ -64,7 +66,7 @@ class QuadTree {
     void optimize(unsigned max_iter = DEFAULT_OPT);
 
     // constructing the tree
-    void add_pin(Pin* p);
+    void add_pin(std::shared_ptr<Pin> p); // TODO: is this necessary?
     void add_segment(int srow, int scol, int slay, int erow, int ecol, int elay);
     void construct_tree();
     void reset_tree();
@@ -80,7 +82,7 @@ class QuadTree {
     unsigned                             flag;
     safe::vector<QuadNode>              nodes; // pins will be at the front of this vector
     safe::map<CoordPair, unsigned> coord2Node;
-    safe::vector<Pin*>                   pins;
+    safe::vector<std::shared_ptr<Pin>>   pins; // TODO: is this necessary?
     
     // Temporary members for constructing the tree
     safe::vector<NetSegment>         segments;
@@ -94,7 +96,6 @@ class QuadTree {
     void delete_node();
     inline int move_pin(unsigned idx, int delta_x, int delta_y);
     
-
     // Optimization
     void self_optimize();
 

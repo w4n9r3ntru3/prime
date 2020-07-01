@@ -1,7 +1,7 @@
 
-CXX = g++
+CXX = g++-9
 CXXFLAGS = -rdynamic -std=c++11 -Wall -Wextra -Werror -flto -g
-TARGETS = main.o Cell.o Grid.o MasterCell.o Chip.o Node.o Tree.o MergeTree.o router3d.o cost_function.o
+TARGETS = main.o Cell.o Grid.o MasterCell.o Chip.o Node.o Tree.o MergeTree.o union_find.o router3d.o cost_function.o
 BINARY = prime
 FLAGS =
 

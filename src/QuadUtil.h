@@ -19,8 +19,8 @@ class NetSegment{
     // constructor
     NetSegment() noexcept
         : x_start(-1), y_start(-1), x_end(-1), y_end(-1) {}
-    NetSegment(int xs, int ys, int xe, int ye) noexcept
-        : x_start(xs), y_start(ys), x_end(xe), y_end(ye){
+    NetSegment(int xs, int ys, int xe, int ye, int l) noexcept
+        : x_start(xs), y_start(ys), x_end(xe), y_end(ye), layer(l) {
             assert(x_start <= x_end);
             assert(y_start <= y_end);
         }
@@ -39,6 +39,7 @@ class NetSegment{
         else if (y_start > ns.get_ys()) return false;
         else if (y_end   < ns.get_ye()) return  true;
         else if (y_end   > ns.get_ye()) return false;
+        else if (layer   < ns.get_layer()) return true;
         else return true;
     }
     bool operator!=(const NetSegment& ns) const {
@@ -49,6 +50,7 @@ class NetSegment{
     const int& get_ys() const { return y_start; }
     const int& get_xe() const { return   x_end; }
     const int& get_ye() const { return   y_end; }
+    const int& get_layer() const { return layer; }
     CoordPair get_start() const { return CoordPair(x_start, y_start); }
     CoordPair get_end()   const { return CoordPair(x_end,   y_end);   }
     // direction: true -> vertical, false -> horizontal
@@ -106,11 +108,11 @@ class NetSegment{
     }
     NetSegment split_segment(CoordPair& coord) { // split segment
         if(get_direction() && x_start < coord.first && x_end > coord.first){ // vertical (difference: x)
-            NetSegment splitted(coord.first, y_start, x_end, y_end);
+            NetSegment splitted(coord.first, y_start, x_end, y_end, layer);
             x_end = coord.first;
             return splitted;
         } else if (!get_direction() && y_start < coord.second && y_end > coord.second) { // horizontal
-            NetSegment splitted(x_start, coord.second, x_end, y_end);
+            NetSegment splitted(x_start, coord.second, x_end, y_end, layer);
             y_end = coord.second;
             return splitted;
         } else {
@@ -119,7 +121,7 @@ class NetSegment{
     }
 
    private:
-    int x_start, y_start, x_end, y_end;
+    int x_start, y_start, x_end, y_end, layer;
 };
 
 // SimpleUnionFind: a simple union find class for Kruskal's MST algorithm
@@ -167,6 +169,8 @@ int clamp(int _x, int _min, int _max){
     return _x;
 }
 int ABS(int _x){ return _x > 0 ? _x : -_x; }
+int MIN(int _x, int _y){ return _x < _y ? _x : _y; }
+int MAX(int _x, int _y){ return _x > _y ? _x : _y; }
 unsigned dir2Num(const std::string s){
     if(s.compare("up") == 0)    return 1;
     if(s.compare("down") == 0)  return 2;

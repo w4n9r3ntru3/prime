@@ -17,26 +17,30 @@ QuadNode::QuadNode(int idx) noexcept
 QuadNode::QuadNode(int _s, int _p,
                    int _u, int _d,
                    int _l, int _r,
-                   int _x ,int _y) noexcept
+                   int _x ,int _y,
+                   int _layer) noexcept
     : self(_s), parent(_p), up(_u), down(_d), left(_l), right(_r), 
-      coord_x(_x), coord_y(_y) {};
+      coord_x(_x), coord_y(_y), layer(_layer) {};
 
 QuadNode::QuadNode(const QuadNode& qn) noexcept {
-    self   = qn.self;
-    parent = qn.parent;
-    up     = qn.up;
-    down   = qn.down;
-    left   = qn.left;
-    right  = qn.right;
+    reset(qn);
 }
 
 QuadNode::QuadNode(QuadNode&& qn) noexcept {
-    self   =   qn.self; qn.self   = 0;
-    parent = qn.parent; qn.parent = 0;
-    up     =     qn.up; qn.up     = 0;
-    down   =   qn.down; qn.down   = 0;
-    left   =   qn.left; qn.left   = 0;
-    right  =  qn.right; qn.right  = 0;
+    self    = qn.get_self();
+    parent  = qn.get_parent();
+    up      = qn.get_up();
+    down    = qn.get_down();
+    left    = qn.get_left();
+    right   = qn.get_right();
+    coord_x = qn.get_coord_x();
+    coord_y = qn.get_coord_y();
+    layer   = qn.get_layer();
+    qn.reset();
+}
+
+QuadNode::~QuadNode() noexcept {
+    reset();
 }
 
 bool QuadNode::is_root()    const { return parent == self; }
@@ -61,6 +65,7 @@ int QuadNode::get_right()  const { return right;  }
 CoordPair QuadNode::get_coord() const { return CoordPair(coord_x, coord_y); }
 int QuadNode::get_coord_x() const { return coord_x; }
 int QuadNode::get_coord_y() const { return coord_y; }
+int QuadNode::get_layer()   const { return layer; }
 unsigned QuadNode::get_flag() const { return flag; }
 
 void QuadNode::set_self   (int s) { self   = s; }
@@ -78,6 +83,23 @@ void QuadNode::set_x      (int c_x) { coord_x = c_x; }
 void QuadNode::set_y      (int c_y) { coord_y = c_y; }
 void QuadNode::reset_coord(const CoordPair& c) { coord_x = c.first; coord_y = c.second; }
 void QuadNode::reset_coord(int c_x, int c_y) { coord_x = c_x; coord_y = c_y; }
+void QuadNode::set_layer(int l) { layer = l; }
+
+void QuadNode::reset(){
+    self = parent = up = down = left = right = coord_x = coord_y = layer = -1;
+    flag = 0;
+}
+void QuadNode::reset(const QuadNode& qn){
+    self    = qn.get_self();
+    parent  = qn.get_parent();
+    up      = qn.get_up();
+    down    = qn.get_down();
+    left    = qn.get_left();
+    right   = qn.get_right();
+    coord_x = qn.get_coord_x();
+    coord_y = qn.get_coord_y();
+    layer   = qn.get_layer();
+}
 
 void QuadNode::update_flag(unsigned _flag){ flag = _flag; }
 
@@ -95,8 +117,8 @@ std::ostream& operator<<(std::ostream& out, const QuadNode& qn) {
     out << "QuadNode{s:" << qn.self << ", p:" << qn.parent
         <<        ", u:" << qn.up   << ", d:" << qn.down
         <<        ", l:" << qn.left << ", r:" << qn.right
+        <<        ", layer: " << qn.layer
         << "}";
-
     return out;
 }
 

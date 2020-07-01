@@ -131,14 +131,17 @@ size_t GridNet::getNumPin() const {
 Pin& GridNet::getPin(unsigned i) {
     return *_pins[i];
 }
+std::shared_ptr<Pin> GridNet::getPinPtr(unsigned i) {
+    return _pins[i];
+}
 
-// size_t GridNet::getNumSegments() const {
-//     return _segments.size();
-// }
+size_t GridNet::getNumSegments() const {
+    return _segments.size();
+}
 
-// safe::vector<unsigned>& GridNet::getSegments() {
-//     return _segments;
-// }
+safe::vector<unsigned>& GridNet::getSegments() {
+    return _segments;
+}
 
 // Cell
 Cell::Cell(const std::string CellName,

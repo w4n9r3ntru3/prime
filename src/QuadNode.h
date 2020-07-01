@@ -19,9 +19,11 @@ class QuadNode {
     QuadNode(int _s, int _p,
              int _u, int _d,
              int _l, int _r,
-             int _x ,int _y) noexcept;
+             int _x ,int _y,
+             int _layer) noexcept;
     QuadNode(const QuadNode& qn) noexcept;
     QuadNode(QuadNode&& qn) noexcept;
+    ~QuadNode() noexcept;
 
     QuadNode& operator=(const QuadNode& tn) noexcept;
     QuadNode& operator=(QuadNode&& tn) noexcept;
@@ -48,6 +50,7 @@ class QuadNode {
     CoordPair get_coord() const;
     int get_coord_x() const;
     int get_coord_y() const;
+    int get_layer()   const;
     unsigned get_flag() const;
 
     void set_self  (int s);
@@ -62,6 +65,10 @@ class QuadNode {
     void set_y      (int c_y);
     void reset_coord(const CoordPair& c);
     void reset_coord(int c_x, int c_y);
+    void set_layer (int l);
+
+    void reset();
+    void reset(const QuadNode& qn);
 
     void update_flag(unsigned _flag);
 
@@ -74,6 +81,7 @@ class QuadNode {
    private:
     int self, parent, up, down, left, right;
     int coord_x, coord_y;
+    int layer;
     unsigned flag;
 
     // friends

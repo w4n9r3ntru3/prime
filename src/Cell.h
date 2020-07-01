@@ -94,8 +94,9 @@ class GridNet {
     unsigned getMinlayer() const;  // min routing layer constraint
     size_t getNumPin() const;
     Pin& getPin(unsigned i);
-    // size_t getNumSegments() const;
-    // safe::vector<unsigned>& getSegments();
+    std::shared_ptr<Pin> getPinPtr(unsigned i);
+    size_t getNumSegments() const;
+    safe::vector<unsigned>& getSegments();
 
    private:
     const std::string _NetName;

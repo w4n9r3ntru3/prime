@@ -10,7 +10,7 @@ QuadTree::QuadTree() noexcept
 }
 
 QuadTree::QuadTree(std::string n, int n_id, int min_lay, int max_row, int max_col) noexcept
-    : _NetName(n), _NetId(n_id), _minLayer(min_lay), _maxRows(max_row), _maxCols(max_col), root_idx(-1), flag(0) {
+    : _NetName(n), _NetId((int)n_id), _minLayer((int)min_lay), _maxRows((int)max_row), _maxCols((int)max_col), root_idx(-1), flag(0) {
     segments.clear();
 }
 
@@ -63,6 +63,9 @@ QuadNode& QuadTree::get_node(const unsigned _x, const unsigned _y){
     assert(is_built() && idx >= 0);
     return nodes[idx];
 }
+safe::vector<std::shared_ptr<Pin>>& QuadTree::get_pin_list() {
+    return pins;
+}
 
 unsigned QuadTree::get_net_length() const { return 0; }
 unsigned QuadTree::get_subnet_length(unsigned idx) const { return 0; }
@@ -81,15 +84,15 @@ void QuadTree::optimize(unsigned max_iter = DEFAULT_OPT){
     // TODO:
 }
 
-void QuadTree::add_pin(Pin* p) { pins.push_back(p); }
+void QuadTree::add_pin(std::shared_ptr<Pin> p) { pins.push_back(p); }
 void QuadTree::add_segment(int srow, int scol, int slay, 
                            int erow, int ecol, int elay){
     if(slay != elay) return; // ignore via
-    segments.push_back(NetSegment(srow, scol, erow, ecol));
+    segments.push_back(NetSegment(srow, scol, erow, ecol, slay));
 }
 void QuadTree::construct_tree(){
     segment_to_tree();
-    optimize();
+    // optimize();
 }
 
 void QuadTree::reset_tree(){
@@ -127,6 +130,7 @@ void QuadTree::merge_nodes(QuadNode& n_1, QuadNode& n_2, const std::string dir){
     } else { // direction == 3 or 4
         // TODO:
     }
+    // TODO: coord2Node
 }
 void QuadTree::insert_node(){
     // TODO:
@@ -154,14 +158,19 @@ inline int QuadTree::move_pin(unsigned idx, int delta_x, int delta_y){
                     unsigned distance = nodes[idx].dist(nodes[up].get_coord());
                     if(distance < (unsigned)ABS(delta_x)){
                         nodes[idx].move_vertical(delta_x);
-                    } else {
-                        if(!nodes[up].has_left()){
-
-                        } else {
-
-                        }
+                        total_movement += delta_x;
                     }
-                } else {
+                    else if(distance == (unsigned)ABS(delta_x)){
+                        if(can_merge(nodes[idx], nodes[up], "down")){
+                            merge_nodes(nodes[idx], nodes[up], "down");
+                        } else { // cannot merge
+                            delta_x = nodes[up].get_coord_x() - 1 - nodes[idx].get_coord_x();
+                            return move_pin(idx, delta_x, 0);
+                        }
+                    } else {
+
+                    }
+                } else { // no upper node -> limit = 0
 
                 }
             } else { // delta_x > 0, move downwards
@@ -182,6 +191,7 @@ void QuadTree::self_optimize(){
 }
 
 void QuadTree::segment_to_tree(){
+    assert(segments.size() > 0);
     bool operation = true;
     while(operation){ // merge overlapping segments
         operation = false;

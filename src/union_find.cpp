@@ -40,7 +40,7 @@ bool union_find_once(safe::vector<TreeNode>& treenodes,
 
 void union_find(safe::vector<TreeNode>& treenodes,
                 const safe::vector<std::pair<unsigned, unsigned>>& pairs) {
-    auto ranks = safe::vector<unsigned>(treenodes.size());
+    safe::vector<unsigned> ranks(treenodes.size());
     std::fill(ranks.begin(), ranks.end(), 0);
 
     // number of times the loop does not terminate early
