@@ -86,8 +86,7 @@ class GridNet {
 
     // modifier
     void addPin(std::shared_ptr<Pin> pin);  // you don't need this
-    // void addSegment(int srow, int scol, int slay, int erow, int ecol, int
-    // elay);
+    void addSegment(int srow, int scol, int slay, int erow, int ecol, int elay);
 
     // accesser
     const std::string& getName() const;
@@ -105,8 +104,8 @@ class GridNet {
 
     safe::vector<std::shared_ptr<Pin>> _pins;
 
-    // ! TODO deprecate this
-    // safe::vector<unsigned> _segments;  // srow, scol, slay, erow, ecol, elay
+    // TODO: this is preserved for constructing QuadForest
+    safe::vector<unsigned> _segments;  // srow, scol, slay, erow, ecol, elay
 };
 
 class Cell {

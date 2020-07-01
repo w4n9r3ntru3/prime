@@ -98,19 +98,19 @@ void GridNet::addPin(std::shared_ptr<Pin> pin) {
     _pins.push_back(pin);
 }
 
-// void GridNet::addSegment(int srow,
-//                          int scol,
-//                          int slay,
-//                          int erow,
-//                          int ecol,
-//                          int elay) {
-//     _segments.push_back(srow);
-//     _segments.push_back(scol);
-//     _segments.push_back(slay);
-//     _segments.push_back(erow);
-//     _segments.push_back(ecol);
-//     _segments.push_back(elay);
-// }
+void GridNet::addSegment(int srow,
+                         int scol,
+                         int slay,
+                         int erow,
+                         int ecol,
+                         int elay) {
+    _segments.push_back(srow);
+    _segments.push_back(scol);
+    _segments.push_back(slay);
+    _segments.push_back(erow);
+    _segments.push_back(ecol);
+    _segments.push_back(elay);
+}
 
 const std::string& GridNet::getName() const {
     return _NetName;

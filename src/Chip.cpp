@@ -290,8 +290,9 @@ void Chip::readFile(std::fstream& input) {
 
         // TODO: change to tree-based net data structure
         GridNet& net = _grid_nets[_Net2Idx.at(str)];
-        assignRoute(srow - _rowBase, scol - _columnBase, slay - 1,
-                    erow - _rowBase, ecol - _columnBase, elay - 1, net);
+        net.addSegment(srow, scol, slay, erow, ecol, elay);
+        // assignRoute(srow - _rowBase, scol - _columnBase, slay - 1,
+        //             erow - _rowBase, ecol - _columnBase, elay - 1, net);
         // _quad_tree_nets[_Net2Idx.at(str)].add_segment(
         //     srow - _rowBase, scol - _columnBase, slay - 1,
         //     erow - _rowBase, ecol - _columnBase, elay - 1);
