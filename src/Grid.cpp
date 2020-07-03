@@ -34,7 +34,7 @@ Layer::Layer(unsigned idx,
              unsigned area)
     : _idx(idx), _direction(d) {
     _grids.reserve(area);
-    for (int i = 0; i < area; ++i) {
+    for (unsigned i = 0; i < area; ++i) {
         _grids.push_back(std::move(Grid(supply)));
     }
 }
@@ -99,7 +99,7 @@ bool Coordinate::CanAddCell(Cell& cell, safe::vector<Coordinate>& coordinates, s
     } else {
         n = 1;
     }
-    for (int i = 0; i < layers.size(); ++i) {
+    for(unsigned i = 0; i < layers.size(); ++i) {
         Layer& layer = layers[i];
         int d = cell.getLayerDemand(i);
         safe::vector<unsigned>& sameGridMC = cell.getSameGridMC(i);

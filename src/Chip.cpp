@@ -57,7 +57,7 @@ void Chip::readFile(std::fstream& input) {
     input >> _layer;  //<LayerCount>
     _layers.reserve(_layer);
     constructCoordinate();
-    for (int i = 0; i < _layer; ++i) {
+    for (unsigned i = 0; i < _layer; ++i) {
         input >> str;  // Lay
         assert(str == "Lay");
         input >> str;  //<LayerName>
@@ -303,24 +303,24 @@ Chip::~Chip() {
     // debug
 }
 
-int Chip::getIdx(int row, int column) const {
-    assert(column >= 0 && column < _columnRange && row >= 0 && row < _rowRange);
+int Chip::getIdx(unsigned row, unsigned column) const {
+    assert(column < _columnRange && row < _rowRange);
     return column * _rowRange + row;
 }
 
-int Chip::getLeft(int row, int column) const {
+int Chip::getLeft(unsigned row, unsigned column) const {
     return (column == 0) ? -1 : getIdx(row, column - 1);
 }
 
-int Chip::getRight(int row, int column) const {
+int Chip::getRight(unsigned row, unsigned column) const {
     return (column == _columnRange - 1) ? -1 : getIdx(row, column + 1);
 }
 
-int Chip::getDown(int row, int column) const {
+int Chip::getDown(unsigned row, unsigned column) const {
     return (row == 0) ? -1 : getIdx(row - 1, column);
 }
 
-int Chip::getUp(int row, int column) const {
+int Chip::getUp(unsigned row, unsigned column) const {
     return (row == _rowRange - 1) ? -1 : getIdx(row + 1, column);
 }
 
@@ -442,13 +442,13 @@ void Chip::log() const {
 void Chip::constructCoordinate() {
     _area = _columnRange * _rowRange;
     _coordinates.reserve(_area);
-    for (int i = 0; i < _columnRange; ++i) {
-        for (int j = 0; j < _rowRange; ++j) {
+    for (unsigned i = 0; i < _columnRange; ++i) {
+        for (unsigned j = 0; j < _rowRange; ++j) {
             _coordinates.push_back(std::move(Coordinate(j, i, _layer)));
         }
     }
-    for (int i = 0; i < _columnRange; ++i) {
-        for (int j = 0; j < _rowRange; ++j) {
+    for (unsigned i = 0; i < _columnRange; ++i) {
+        for (unsigned j = 0; j < _rowRange; ++j) {
             int left = getLeft(j, i), right = getRight(j, i);
             _coordinates[getIdx(j, i)].addAdjH(left, right);
         }

@@ -69,11 +69,11 @@ class Chip {
     ~Chip();
 
     // index(return -1 if out of bound)
-    int getIdx(int row, int column) const;
-    int getLeft(int row, int column) const;
-    int getRight(int row, int column) const;
-    int getDown(int row, int column) const;
-    int getUp(int row, int column) const;
+    int getIdx(unsigned row, unsigned column) const;
+    int getLeft(unsigned row, unsigned column) const;
+    int getRight(unsigned row, unsigned column) const;
+    int getDown(unsigned row, unsigned column) const;
+    int getUp(unsigned row, unsigned column) const;
 
     // modifier
     bool moveCell(Cell& cell, unsigned origin, unsigned target);

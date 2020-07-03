@@ -34,7 +34,7 @@ MasterCellType::MasterCellType(unsigned idx, unsigned layer)
     _adjHGridMC.reserve(layer);
     _SameGridDemand.reserve(layer);
     _adjHGridDemand.reserve(layer);
-    for (int i = 0; i < layer; ++i)
+    for (unsigned i = 0; i < layer; ++i)
     {
         _LayerDemand.push_back(0);
         safe::vector<unsigned> v1;

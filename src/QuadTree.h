@@ -32,7 +32,7 @@ class QuadTree {
     // ~QuadTree() noexcept;
 
     // access to basic attributes
-    std::string    get_name() const;
+    // std::string    get_name() const;
     int          get_net_id() const;
     int       get_min_layer() const;
     int        get_root_idx() const;
@@ -74,7 +74,7 @@ class QuadTree {
     void reset_tree();
 
    private:
-    const std::string                _NetName;
+    //const std::string                _NetName;
     const int                          _NetId;
     const int                        _baseRow;
     const int                        _baseCol;
