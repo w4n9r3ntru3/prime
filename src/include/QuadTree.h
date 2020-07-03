@@ -10,9 +10,9 @@
 #include <utility>
 #include <algorithm>
 
-#include "../core/Chip.h"
+#include "Chip.h"
 #include "QuadNode.h"
-#include "../safe/safe.h"
+#include "safe.h"
 
 typedef std::pair<unsigned, unsigned> VEPair; // vertex index v.s. edge index pair
 const double DINF = 1e9;

@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Node.h"
-#include "safe/safe.h"
+#include "safe.h"
 
 // * These functions can be used in merging tree constructors
 

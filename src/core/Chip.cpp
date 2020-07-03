@@ -12,7 +12,7 @@
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "Chip.h"
+#include "../include/Chip.h"
 
 #include <assert.h>
 

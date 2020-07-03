@@ -10,8 +10,8 @@
 #include <utility>
 #include <algorithm>
 
-#include "../core/Cell.h"
-#include "../safe/safe.h"
+#include "Cell.h"
+#include "safe.h"
 
 typedef std::pair<int, int> CoordPair; // Coordinate of points
 

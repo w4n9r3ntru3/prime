@@ -13,7 +13,7 @@
 ///                          INCLUDES                                ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "MasterCell.h"
+#include "../include/MasterCell.h"
 
 #include <assert.h>
 

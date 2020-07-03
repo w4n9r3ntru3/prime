@@ -2,7 +2,7 @@
 // * Unauthorized copying of this file, via any medium is strictly prohibited
 // * Proprietary and confidential
 
-#include "QuadForest.h"
+#include "../include/QuadForest.h"
 
 QuadForest::QuadForest() noexcept {}
 QuadForest::QuadForest(Chip& chip) noexcept {

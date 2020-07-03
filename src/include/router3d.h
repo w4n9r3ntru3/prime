@@ -16,8 +16,8 @@
 
 #include <utility>
 
-#include "../core/Chip.h"
-#include "../safe/safe.h"
+#include "../include/Chip.h"
+#include "../include/safe.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          DESCRIPTION                             ///

@@ -2,11 +2,11 @@
 // * Unauthorized copying of this file, via any medium is strictly prohibited
 // * Proprietary and confidential
 
-#include "MergeTree.h"
+#include "include/MergeTree.h"
 
 #include <assert.h>
 
-#include "union_find.h"
+#include "include/union_find.h"
 
 void MergeTree::merge_tree(
     unsigned num_pins,

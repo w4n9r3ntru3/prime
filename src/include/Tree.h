@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "Node.h"
-#include "safe/safe.h"
+#include "safe.h"
 #include "union_find.h"
 
 // * A tree only represents a structure

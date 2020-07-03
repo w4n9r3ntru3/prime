@@ -2,7 +2,7 @@
 // * Unauthorized copying of this file, via any medium is strictly prohibited
 // * Proprietary and confidential
 
-#include "QuadTree.h"
+#include "../include/QuadTree.h"
 
 QuadTree::QuadTree() noexcept
     : _NetId(-1), _baseRow(-1), _baseCol(-1), _minLayer(-1), _maxRows(0), _maxCols(0), root_idx(-1), flag(0) {

@@ -2,7 +2,7 @@
 // * Unauthorized copying of this file, via any medium is strictly prohibited
 // * Proprietary and confidential
 
-#include "QuadNode.h"
+#include "../include/QuadNode.h"
 
 #include <assert.h>
 

@@ -2,7 +2,7 @@
 // * Unauthorized copying of this file, via any medium is strictly prohibited
 // * Proprietary and confidential
 
-#include "QuadUtil.h"
+#include "../include/QuadUtil.h"
 
 NetSegment::NetSegment() noexcept
     : x_start(-1), y_start(-1), x_end(-1), y_end(-1), layer_start(-1), layer_end(-1) {}

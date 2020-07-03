@@ -9,7 +9,7 @@
 #include <utility>
 #include "Node.h"
 #include "Tree.h"
-#include "safe/safe.h"
+#include "safe.h"
 
 class MergeTree {
    public:

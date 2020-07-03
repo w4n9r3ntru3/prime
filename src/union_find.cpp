@@ -2,7 +2,7 @@
 // * Unauthorized copying of this file, via any medium is strictly prohibited
 // * Proprietary and confidential
 
-#include "union_find.h"
+#include "include/union_find.h"
 
 #include <assert.h>
 
