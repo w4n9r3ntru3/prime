@@ -42,7 +42,7 @@ class MasterCellType {
     // Modifier
     void AddBlkg(unsigned layer, int demand);
     void reservePin(size_t s);
-    void AddPin(unsigned idx, unsigned layer);
+    void AddPin(unsigned layer);
     void AddExtraSame(unsigned MC, int demand, unsigned layer);
     void AddExtraadjH(unsigned MC, int demand, unsigned layer);
 

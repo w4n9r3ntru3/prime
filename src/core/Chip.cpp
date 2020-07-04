@@ -12,7 +12,7 @@
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "Chip.h"
+#include "../include/Chip.h"
 
 #include <assert.h>
 
@@ -222,9 +222,6 @@ void Chip::readFile(std::fstream& input) {
         }
 
         _grid_nets.push_back(std::move(GridNet(i, numPins, minLay)));
-        // TODO:
-        //_quad_tree_nets.push_back(QuadTree(str, i, minLay, _rowRange, _columnRange));
-
         // ! substituted
         // TreeNet tree_net = TreeNet(std::move(str), i, numPins, minLay);
         // _tree_nets.push_back(std::move(tree_net));
@@ -249,8 +246,6 @@ void Chip::readFile(std::fstream& input) {
             Grid& g = _layers[pin.getLayer()].getGrid(
                 getIdx(getPinRow(pin), getPinColumn(pin)));
             g.addNet(_grid_nets[i]);
-            // TODO: add pin to quad tree
-            //_quad_tree_nets[i].add_pin(&pin);
         }
         return;
     }
@@ -285,10 +280,6 @@ void Chip::readFile(std::fstream& input) {
     }
 
     // safe::unordered_map<std::string, TreeNet> all_nets;
-    // TODO: construct quad trees
-    // for(size_t i = 0; i < _quad_tree_nets.size(); ++i){
-    //     _quad_tree_nets[i].construct_tree();
-    // }
 }
 
 Chip::~Chip() {
@@ -348,6 +339,12 @@ void Chip::decNumMoved() {
     assert(_movedCells.size() > 0);
 }
 
+size_t Chip::getRowBase() const {
+    return _rowBase;
+}
+size_t Chip::getColumnBase() const {
+    return _columnBase;
+}
 size_t Chip::getNumLayers() const {
     return _layers.size();
 }

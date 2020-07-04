@@ -46,6 +46,7 @@
 
 class GridNet;
 class Cell;
+typedef std::pair<unsigned, unsigned> CellPinPair;
 
 class Pin {
    public:
@@ -91,24 +92,23 @@ class GridNet {
 
     // modifier
     void addPin(Pin& pin);  // you don't need this
-    // void addSegment(int srow, int scol, int slay, int erow, int ecol, int
-    // elay);
+    void addSegment(int srow, int scol, int slay, int erow, int ecol, int
+    elay);
 
     // accesser
     unsigned getIdx() const;
     unsigned getMinlayer() const;  // min routing layer constraint
     size_t getNumPin() const;
     Pin& getPin(unsigned i, safe::vector<Cell>& cells);
-    // size_t getNumSegments() const;
-    // safe::vector<unsigned>& getSegments();
+    size_t getNumSegments() const;
+    safe::vector<unsigned>& getSegments();
 
    private:
     unsigned _idx;
     unsigned _minLayer;
-    safe::vector<std::pair<unsigned, unsigned>> _pins;
+    safe::vector<CellPinPair> _pins;
 
-    // ! TODO deprecate this
-    // safe::vector<unsigned> _segments;  // srow, scol, slay, erow, ecol, elay
+    safe::vector<unsigned> _segments;  // srow, scol, slay, erow, ecol, elay
 };
 
 class Cell {

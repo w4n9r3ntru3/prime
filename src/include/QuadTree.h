@@ -25,8 +25,8 @@ class QuadTree {
     // constructor
     QuadTree() noexcept;
     QuadTree(int n_id, int min_lay, 
-             int base_row, int base_col,
-             int max_row, int max_col) noexcept;
+        int base_row, int base_col,
+        int max_row, int max_col) noexcept;
     // ~QuadTree() noexcept;
 
     // access to basic attributes
@@ -49,7 +49,7 @@ class QuadTree {
     QuadNode& get_node(unsigned idx);
     QuadNode& get_node(const CoordPair& _coord);
     QuadNode& get_node(const unsigned _x, const unsigned _y);
-    safe::vector<std::shared_ptr<Pin>>& get_pin_list();
+    safe::vector<CellPinPair>& get_pin_list();
     safe::vector<NetSegment>& get_segments();
 
     // get information about the net
@@ -65,14 +65,14 @@ class QuadTree {
     // void optimize(unsigned max_iter = DEFAULT_OPT);
 
     // constructing the tree
-    void add_pin(std::shared_ptr<Pin> p); // TODO: is this necessary?
+    void add_pin(CellPinPair p); // TODO: is this necessary?
     void add_segment(int srow, int scol, int slay, int erow, int ecol, int elay);
     void construct_tree();
     void convert_to_segments();
     void reset_tree();
 
    private:
-    //const std::string                _NetName;
+    // const std::string                _NetName;
     const int                          _NetId;
     const int                        _baseRow;
     const int                        _baseCol;
@@ -84,7 +84,8 @@ class QuadTree {
     unsigned                             flag;
     safe::vector<QuadNode>              nodes; // pins will be at the front of this vector
     safe::map<CoordPair, unsigned> coord2Node;
-    safe::vector<std::shared_ptr<Pin>>   pins; // TODO: is this necessary?
+    safe::vector<CellPinPair>            pins; // TODO: is this necessary?
+    
     safe::vector<unsigned>       pins2NodeIdx;
 
     // Temporary members for constructing the tree

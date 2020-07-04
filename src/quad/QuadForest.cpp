@@ -19,12 +19,13 @@ void QuadForest::construct_forest(Chip& chip) {
     maxRows    = chip.getNumRows();
     maxCols    = chip.getNumColumns();
     maxLayers  = chip.getNumLayers();
-    std::cout << "Rows: " << maxRows << " Columns: " << maxCols << " Layers: " << maxLayers << std::endl;
+    // std::cout << "Rows: " << maxRows << " Columns: " << maxCols << " Layers: " << maxLayers << std::endl;
 
     // Get net segments from Chip
     size_t num_nets = chip.getNumNets();
     for(size_t i = 0; i < num_nets; ++i){
         GridNet& net = chip.getNet(i); // get net i
+        // std::string net_name     = net.getName();
         unsigned    net_id       = net.getIdx();
         unsigned    net_minlayer = net.getMinlayer();
 

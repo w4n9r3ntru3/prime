@@ -10,7 +10,7 @@ QuadTree::QuadTree() noexcept
 }
 
 QuadTree::QuadTree(int n_id, int min_lay, int base_row, int base_col, int max_row, int max_col) noexcept
-    :  _NetId(n_id), _baseRow(base_row), _baseCol(base_col), _minLayer(min_lay), _maxRows(max_row), _maxCols(max_col), root_idx(-1), flag(0) {
+    : _NetId(n_id), _baseRow(base_row), _baseCol(base_col), _minLayer(min_lay), _maxRows(max_row), _maxCols(max_col), root_idx(-1), flag(0) {
     segments.clear();
 }
 
@@ -19,6 +19,7 @@ QuadTree::QuadTree(int n_id, int min_lay, int base_row, int base_col, int max_ro
 // }
 
 // access to basic attributes
+// std::string QuadTree::get_name() const { return  _NetName; }
 int QuadTree::get_net_id()       const { return    _NetId; }
 int QuadTree::get_min_layer()    const { return _minLayer; }
 int QuadTree::get_root_idx()     const { return  root_idx; }
@@ -62,7 +63,7 @@ QuadNode& QuadTree::get_node(const unsigned _x, const unsigned _y){
     assert(is_built() && idx >= 0);
     return nodes[idx];
 }
-safe::vector<std::shared_ptr<Pin>>& QuadTree::get_pin_list(){
+safe::vector<CellPinPair>& QuadTree::get_pin_list(){
     return pins;
 }
 safe::vector<NetSegment>& QuadTree::get_segments(){
@@ -86,7 +87,7 @@ int QuadTree::move_horizontal(unsigned idx, int delta_y){
 //     // TODO:
 // }
 
-void QuadTree::add_pin(std::shared_ptr<Pin> p) { pins.push_back(p); }
+void QuadTree::add_pin(CellPinPair p) { pins.push_back(p); }
 void QuadTree::add_segment(int srow, int scol, int slay, 
                            int erow, int ecol, int elay){
     if(slay != elay) return; // ignore via
@@ -103,9 +104,6 @@ void QuadTree::reset_tree(){
     root_idx = -1;
     flag = 0;
     nodes.clear();
-    for(size_t i = 0; i < pins.size(); ++i){
-        pins[i].reset();
-    }
     pins.clear();
     coord2Node.clear();
 }
@@ -198,7 +196,7 @@ inline int QuadTree::move_pin(unsigned idx, int delta_x, int delta_y){
 // }
 
 void QuadTree::segment_to_tree(){
-    print_segments();
+    // print_segments();
     safe::unordered_map<unsigned, CoordPair> Vertices;
     safe::map<CoordPair, unsigned> Coord2Vertices;
     safe::vector<SimpleEdge> EdgeGraph;
@@ -207,7 +205,7 @@ void QuadTree::segment_to_tree(){
     unsigned pNum = 0;
     for(size_t i = 0; i < pins.size(); ++i){ // Add pins to Vertices
         CoordPair pinCoord(pins[i]->getRow(), pins[i]->getColumn());
-        std::cout << "pin " << i << " (" << pinCoord.first << ", " << pinCoord.second << ")" << std::endl;
+        // std::cout << "pin " << i << " (" << pinCoord.first << ", " << pinCoord.second << ")" << std::endl;
         if(!Coord2Vertices.contains(pinCoord)){ // Assume that all pins have different coordinates
             Coord2Vertices[pinCoord] = pNum;
             Vertices[pNum] = pinCoord;
@@ -231,7 +229,7 @@ void QuadTree::segment_to_tree(){
                    && !Coord2Vertices.contains(segments[i].get_end())
                    && !Coord2Vertices.contains(segments[j].get_start())
                    && !Coord2Vertices.contains(segments[j].get_end())){
-                    std::cout << "i = " << i << " j = " << j << std::endl;
+                    // std::cout << "i = " << i << " j = " << j << std::endl;
                     segments[i].merge_segment(segments[j]);
                     segments[j] = segments[segments.size() - 1];
                     segments.pop_back();
@@ -240,7 +238,7 @@ void QuadTree::segment_to_tree(){
                 }
             }
         }
-        if(operation) print_segments();
+        // if(operation) print_segments();
     } operation = true;
     while(operation && segments.size() > 0){ // split intersected segments
         operation = false;
@@ -259,7 +257,7 @@ void QuadTree::segment_to_tree(){
             }
         }
     }
-    print_segments();
+    // print_segments();
     
     // Construct graph by segments
     unsigned vNum = pNum;
@@ -307,7 +305,7 @@ void QuadTree::segment_to_tree(){
     safe::vector<unsigned> SimpleTree[vNum];
     unsigned tree_size = 1; // tree size = # of vertices = # of edges + 1
     for(size_t i = 0; i < EdgeGraph.size(); ++i){
-        std::cout << selected_edges[i] << std::endl;
+        // std::cout << selected_edges[i] << std::endl;
         if(selected_edges[i]){
             unsigned v1 = EdgeGraph[i].get_v1(), v2 = EdgeGraph[i].get_v2();
             SimpleTree[v1].push_back(v2);
@@ -332,14 +330,14 @@ void QuadTree::segment_to_tree(){
     safe::vector<int> new_idx_mapping(vNum); // maps old indices to new ones
     unsigned new_idx = 0;
     for(size_t i = 0; i < vNum; ++i){
-        std::cout << vertex_rank[i] << std::endl;
+        // std::cout << vertex_rank[i] << std::endl;
         if(vertex_rank[i] > -EPS){
             new_idx_mapping[i] = new_idx++;
         } else {
             new_idx_mapping[i] = -1;
         }
     }
-    std::cout << new_idx << " " << tree_size << std::endl;
+    // std::cout << new_idx << " " << tree_size << std::endl;
     assert(new_idx == tree_size);
 
     // Construct quad nodes
@@ -355,7 +353,7 @@ void QuadTree::segment_to_tree(){
     for(size_t i = 0; i < nodes.size(); ++i){ // set coordinate to node index mapping
         coord2Node[nodes[i].get_coord()] = i;
     }
-    std::cout << "tree size: " << nodes.size() << std::endl;
+    // std::cout << "tree size: " << nodes.size() << std::endl;
 
     segments.clear();
 }
@@ -550,10 +548,9 @@ void QuadTree::print_segments() {
 std::ostream& operator<<(std::ostream& out, const QuadTree& qt){
     // out << "NumRoutes" << qt.segments.size() << std::endl;
     for(size_t i = 0; i < qt.segments.size(); ++i){
-        out << qt.segments[i].get_xs() + qt._baseRow << " " << qt.segments[i].get_ys() + qt._baseCol << " " << qt.segments[i].get_layer() << " "
-            << qt.segments[i].get_xe() + qt._baseRow << " " << qt.segments[i].get_ye() + qt._baseCol << " " << qt.segments[i].get_layer_end() << " "
-            << qt._NetName << std::endl;
+        out << qt.segments[i].get_xs() + qt._baseRow << " " << qt.segments[i].get_ys() + qt._baseCol << " " << qt.segments[i].get_layer() + 1 << " "
+            << qt.segments[i].get_xe() + qt._baseRow << " " << qt.segments[i].get_ye() + qt._baseCol << " " << qt.segments[i].get_layer_end() + 1 << " "
+            << "N" << qt._NetId + 1 << " " << qstd::endl;
     }
     return out;
 }
-

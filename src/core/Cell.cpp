@@ -85,22 +85,22 @@ GridNet& GridNet::operator=(GridNet&& net){
 }
 
 void GridNet::addPin(Pin& pin) {
-    _pins.push_back(std::make_pair(pin.get_cell_idx(),pin.getIdx()));
+    _pins.push_back(CellPinPair(pin.get_cell_idx(),pin.getIdx()));
 }
 
-// void GridNet::addSegment(int srow,
-//                          int scol,
-//                          int slay,
-//                          int erow,
-//                          int ecol,
-//                          int elay) {
-//     _segments.push_back(srow);
-//     _segments.push_back(scol);
-//     _segments.push_back(slay);
-//     _segments.push_back(erow);
-//     _segments.push_back(ecol);
-//     _segments.push_back(elay);
-// }
+void GridNet::addSegment(int srow,
+                         int scol,
+                         int slay,
+                         int erow,
+                         int ecol,
+                         int elay) {
+    _segments.push_back(srow);
+    _segments.push_back(scol);
+    _segments.push_back(slay);
+    _segments.push_back(erow);
+    _segments.push_back(ecol);
+    _segments.push_back(elay);
+}
 
 unsigned GridNet::getIdx() const {
     return _idx;
@@ -119,13 +119,13 @@ Pin& GridNet::getPin(unsigned i, safe::vector<Cell>& cells) {
     return (cells[_pins[i].first].getPin(_pins[i].second));
 }
 
-// size_t GridNet::getNumSegments() const {
-//     return _segments.size();
-// }
+size_t GridNet::getNumSegments() const {
+    return _segments.size();
+}
 
-// safe::vector<unsigned>& GridNet::getSegments() {
-//     return _segments;
-// }
+safe::vector<unsigned>& GridNet::getSegments() {
+    return _segments;
+}
 
 // Cell
 Cell::Cell(MasterCellType& MCT,
