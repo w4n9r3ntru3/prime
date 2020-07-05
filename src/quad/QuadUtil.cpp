@@ -47,12 +47,12 @@ bool NetSegment::operator!=(const NetSegment& ns) const {
     return x_start != ns.get_xs() || y_start != ns.get_ys() || x_end != ns.get_xe() || y_end != ns.get_ye();
 }
 
-const int& NetSegment::get_xs() const { return x_start; }
-const int& NetSegment::get_ys() const { return y_start; }
-const int& NetSegment::get_xe() const { return   x_end; }
-const int& NetSegment::get_ye() const { return   y_end; }
-const int& NetSegment::get_layer() const { return layer_start; }
-const int& NetSegment::get_layer_end() const { return layer_end; }
+int NetSegment::get_xs() const { return x_start; }
+int NetSegment::get_ys() const { return y_start; }
+int NetSegment::get_xe() const { return   x_end; }
+int NetSegment::get_ye() const { return   y_end; }
+int NetSegment::get_layer() const { return layer_start; }
+int NetSegment::get_layer_end() const { return layer_end; }
 CoordPair NetSegment::get_start() const { return CoordPair(x_start, y_start); }
 CoordPair NetSegment::get_end()   const { return CoordPair(x_end,   y_end);   }
 bool NetSegment::get_direction() const { return (x_start < x_end) ? true : false; }
@@ -129,16 +129,17 @@ std::ostream& operator<<(std::ostream& out, const NetSegment& ns){
 }
 
 // SimpleUnionFind
-SimpleUnionFind::SimpleUnionFind(int N) noexcept { reset(N); }
+SimpleUnionFind::SimpleUnionFind() noexcept {}
+SimpleUnionFind::SimpleUnionFind(size_t N) noexcept { reset(N); }
 SimpleUnionFind::~SimpleUnionFind() noexcept { clear(); }
 
 inline unsigned SimpleUnionFind::find(unsigned x) {
     return (x == parent[x]) ? x : parent[x] = find(parent[x]);
 }
-inline bool SimpleUnionFind::same(unsigned x, unsigned y) {
+bool SimpleUnionFind::same(unsigned x, unsigned y) {
     return find(x) == find(y);
 }
-inline void SimpleUnionFind::merge(unsigned x, unsigned y) {
+void SimpleUnionFind::merge(unsigned x, unsigned y) {
     x = find(x);
     y = find(y);
     if(x == y) return;
@@ -150,12 +151,12 @@ inline void SimpleUnionFind::merge(unsigned x, unsigned y) {
     }
 }
 void SimpleUnionFind::clear() { parent.clear(); rank.clear(); }
-void SimpleUnionFind::reset(int N){
+void SimpleUnionFind::reset(size_t N) {
     clear();
     parent.resize(N);
     rank.resize(N);
-    for(int i = 0; i < N; ++i) parent[i] = i;
-} 
+    for(size_t i = 0; i < N; ++i) parent[i] = i;
+}
 
 // SimplePin
 

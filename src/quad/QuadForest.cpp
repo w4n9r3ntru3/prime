@@ -93,7 +93,20 @@ void QuadForest::push_back(QuadTree&& qt) {
 //     pins_in_tree.clear();
 // }
 
-std::ostream& operator<<(std::ostream& out, QuadForest& qf){
+void QuadForest::return_segments(Chip& chip) {
+    for(size_t i = 0; i < qtrees.size(); ++i) {
+        GridNet& net = chip.getNet(i);
+        qtrees[i].convert_to_segments();
+        safe::vector<NetSegment>& segments = qtrees[i].get_segments();
+        net.clearSegments();
+        for(size_t j = 0; j < segments.size(); ++j){
+            net.addSegment(segments[j].get_xs(), segments[j].get_ys(), segments[j].get_layer(), 
+                           segments[j].get_xe(), segments[j].get_ye(), segments[j].get_layer_end());
+        }
+    }
+}
+
+std::ostream& operator<<(std::ostream& out, QuadForest& qf) {
     size_t numRoutes = 0;
     for(size_t i = 0; i < qf.size(); ++i){
         numRoutes += qf[i].size();

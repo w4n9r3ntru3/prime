@@ -38,12 +38,12 @@ class NetSegment{
     bool operator<(const NetSegment& ns) const;
     bool operator!=(const NetSegment& ns) const;
 
-    const int& get_xs() const;
-    const int& get_ys() const;
-    const int& get_xe() const;
-    const int& get_ye() const;
-    const int& get_layer() const;
-    const int& get_layer_end() const;
+    int get_xs() const;
+    int get_ys() const;
+    int get_xe() const;
+    int get_ye() const;
+    int get_layer() const;
+    int get_layer_end() const;
     CoordPair get_start() const;
     CoordPair get_end() const;
     // direction: true -> vertical, false -> horizontal
@@ -67,15 +67,15 @@ class NetSegment{
 // SimpleUnionFind: a simple union find class for Kruskal's MST algorithm
 class SimpleUnionFind{
    public:
-    SimpleUnionFind() noexcept {}
-    SimpleUnionFind(int N) noexcept;
+    SimpleUnionFind() noexcept;
+    SimpleUnionFind(size_t N) noexcept;
     ~SimpleUnionFind() noexcept;
 
     inline unsigned find(unsigned x);
-    inline bool same(unsigned x, unsigned y);
-    inline void merge(unsigned x, unsigned y);
+    bool same(unsigned x, unsigned y);
+    void merge(unsigned x, unsigned y);
     void clear();
-    void reset(int N);
+    void reset(size_t N);
     
    private:
     safe::vector<unsigned> parent;

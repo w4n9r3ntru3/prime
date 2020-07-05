@@ -31,8 +31,6 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    std::cout << argv[0] << " " << argv[1] << " " << argv[2] << std::endl;
-
     // open files
     std::fstream inputfile(argv[1]);
     if (!inputfile.is_open()) {
@@ -53,8 +51,10 @@ int main(int argc, char* argv[]) {
 
     // Test QuadForest functionality
     QuadForest qf(Mgr);
-    std::cout << qf.size() << std::endl;
-    std::cout << qf << std::endl;
-    // Mgr.output(outputfile);
+    // std::cout << qf.size() << std::endl;
+    // std::cout << qf << std::endl;
+    qf.return_segments(Mgr);
+
+    Mgr.output(outputfile);
     return 0;
 }
