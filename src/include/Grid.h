@@ -83,7 +83,6 @@ class Coordinate {
     Coordinate& operator=(Coordinate&& c);
 
     // modifier
-    void addAdjH(int c1, int c2);  // you don't need this
     bool CanAddCell(Cell& cell, safe::vector<Coordinate>& coordinates, safe::vector<Layer>& layers) const;  // to see if you can add this cell
     void addCell(Cell& cell, safe::vector<Coordinate>& coordinates, safe::vector<Layer>& layers);
     void moveCell(Cell& cell, safe::vector<Coordinate>& coordinates, safe::vector<Layer>& layers);

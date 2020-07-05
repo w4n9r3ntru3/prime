@@ -85,11 +85,6 @@ Coordinate& Coordinate::operator=(Coordinate&& c){
     return *this;
 }
 
-void Coordinate::addAdjH(int c1, int c2) {
-    _c1 = c1;
-    _c2 = c2;
-}
-
 bool Coordinate::CanAddCell(Cell& cell, safe::vector<Coordinate>& coordinates, safe::vector<Layer>& layers) const {
     unsigned id = cell.getMasterCellId();
     unsigned n;
@@ -173,7 +168,7 @@ void Coordinate::addCell(Cell& cell, safe::vector<Coordinate>& coordinates, safe
                 }
             }
         }
-        for (int j = 0, p = sameGridMC.size(); j < p; ++j) {
+        for (int j = 0, p = adjHGridMC.size(); j < p; ++j) {
             int k = adjHGridDemand[j];
             if (_c1 >= 0) {
                 Coordinate& c_1 = coordinates[_c1];
@@ -221,7 +216,7 @@ void Coordinate::moveCell(Cell& cell, safe::vector<Coordinate>& coordinates, saf
                 }
             }
         }
-        for (int j = 0, p = sameGridMC.size(); j < p; ++j) {
+        for (int j = 0, p = adjHGridMC.size(); j < p; ++j) {
             int k = adjHGridDemand[j];
             if (_c1 >= 0) {
                 Coordinate& c_1 = coordinates[_c1];
