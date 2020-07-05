@@ -279,12 +279,12 @@ Chip::~Chip() {
 
     // debug
     // std::fstream out("out.txt", std::ios::out);
-    // for (Layer* ptr : _layers) {
-    //    for (int i = 0; i < _rowRange; ++i) {
-    //        for (int j = 0; j < _columnRange; ++j) {
-    //          out << ptr->getGrid(getIdx(i, j)).getSupply() << std::endl;
-    //    }
-    // }
+    // for (Layer& ptr : _layers) {
+    //     for (unsigned i = 0; i < _rowRange; ++i) {
+    //         for (unsigned j = 0; j < _columnRange; ++j) {
+    //         out << ptr.getGrid(getIdx(i, j)).getSupply() << std::endl;
+    //         }
+    //     }
     // }
     // debug
 }
