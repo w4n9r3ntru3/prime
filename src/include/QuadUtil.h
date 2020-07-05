@@ -67,38 +67,34 @@ class NetSegment{
 // SimpleUnionFind: a simple union find class for Kruskal's MST algorithm
 class SimpleUnionFind{
    public:
-    SimpleUnionFind() noexcept {};
-    SimpleUnionFind(int N) noexcept { reset(N); }
-    ~SimpleUnionFind() noexcept { clear(); }
+    SimpleUnionFind() noexcept {}
+    SimpleUnionFind(int N) noexcept;
+    ~SimpleUnionFind() noexcept;
 
-    inline unsigned find(unsigned x) {
-        return (x == parent[x]) ? x : parent[x] = find(parent[x]);
-    }
-    inline bool same(unsigned x, unsigned y) {
-        return find(x) == find(y);
-    }
-    inline void merge(unsigned x, unsigned y) {
-        x = find(x);
-        y = find(y);
-        if(x == y) return;
-        if(rank[x] < rank[y]){
-            parent[x] = y;
-        } else {
-            if(rank[x] == rank[y]) ++rank[x];
-            parent[y] = x;
-        }
-    }
-    void clear() { parent.clear(); rank.clear(); }
-    void reset(int N){
-        clear();
-        parent.resize(N);
-        rank.resize(N);
-        for(int i = 0; i < N; ++i) parent[i] = i;
-    } 
+    inline unsigned find(unsigned x);
+    inline bool same(unsigned x, unsigned y);
+    inline void merge(unsigned x, unsigned y);
+    void clear();
+    void reset(int N);
     
    private:
     safe::vector<unsigned> parent;
     safe::vector<unsigned> rank;
+};
+
+// Class for storing the information of a pin
+class SimplePin {
+   public:
+    SimplePin() noexcept;
+    SimplePin(unsigned _idx, unsigned _row, unsigned _col, unsigned _lay) noexcept;
+
+    unsigned get_idx() const;
+    unsigned get_row() const;
+    unsigned get_col() const;
+    unsigned get_layer() const;
+
+   private:
+    const unsigned idx, row, column, layer;
 };
 
 // Utility functions

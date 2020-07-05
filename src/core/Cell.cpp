@@ -115,7 +115,6 @@ size_t GridNet::getNumPin() const {
 }
 
 Pin& GridNet::getPin(unsigned i, safe::vector<Cell>& cells) {
-
     return (cells[_pins[i].first].getPin(_pins[i].second));
 }
 

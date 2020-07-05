@@ -49,7 +49,7 @@ class QuadTree {
     QuadNode& get_node(unsigned idx);
     QuadNode& get_node(const CoordPair& _coord);
     QuadNode& get_node(const unsigned _x, const unsigned _y);
-    safe::vector<CellPinPair>& get_pin_list();
+    safe::vector<SimplePin>& get_pin_list();
     safe::vector<NetSegment>& get_segments();
 
     // get information about the net
@@ -65,7 +65,7 @@ class QuadTree {
     // void optimize(unsigned max_iter = DEFAULT_OPT);
 
     // constructing the tree
-    void add_pin(CellPinPair p); // TODO: is this necessary?
+    void add_pin(SimplePin p); // TODO: is this necessary?
     void add_segment(int srow, int scol, int slay, int erow, int ecol, int elay);
     void construct_tree();
     void convert_to_segments();
@@ -84,9 +84,8 @@ class QuadTree {
     unsigned                             flag;
     safe::vector<QuadNode>              nodes; // pins will be at the front of this vector
     safe::map<CoordPair, unsigned> coord2Node;
-    safe::vector<CellPinPair>            pins; // TODO: is this necessary?
-    
-    safe::vector<unsigned>       pins2NodeIdx;
+    safe::vector<SimplePin>              pins; // index of pins
+    safe::vector<unsigned>       pins2NodeIdx; // mapping from pins to index of nodes
 
     // Temporary members for constructing the tree
     safe::vector<NetSegment>         segments;

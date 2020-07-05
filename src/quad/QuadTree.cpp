@@ -63,7 +63,7 @@ QuadNode& QuadTree::get_node(const unsigned _x, const unsigned _y){
     assert(is_built() && idx >= 0);
     return nodes[idx];
 }
-safe::vector<CellPinPair>& QuadTree::get_pin_list(){
+safe::vector<SimplePin>& QuadTree::get_pin_list(){
     return pins;
 }
 safe::vector<NetSegment>& QuadTree::get_segments(){
@@ -87,7 +87,7 @@ int QuadTree::move_horizontal(unsigned idx, int delta_y){
 //     // TODO:
 // }
 
-void QuadTree::add_pin(CellPinPair p) { pins.push_back(p); }
+void QuadTree::add_pin(SimplePin p) { pins.push_back(p); }
 void QuadTree::add_segment(int srow, int scol, int slay, 
                            int erow, int ecol, int elay){
     if(slay != elay) return; // ignore via
@@ -204,12 +204,12 @@ void QuadTree::segment_to_tree(){
     // Construct vertices from pins
     unsigned pNum = 0;
     for(size_t i = 0; i < pins.size(); ++i){ // Add pins to Vertices
-        CoordPair pinCoord(pins[i]->getRow(), pins[i]->getColumn());
+        CoordPair pinCoord(pins[i].get_row(), pins[i].get_col());
         // std::cout << "pin " << i << " (" << pinCoord.first << ", " << pinCoord.second << ")" << std::endl;
         if(!Coord2Vertices.contains(pinCoord)){ // Assume that all pins have different coordinates
             Coord2Vertices[pinCoord] = pNum;
             Vertices[pNum] = pinCoord;
-            VertexLayer[pNum] = pins[i]->getLayer();
+            VertexLayer[pNum] = pins[i].get_layer();
             pins2NodeIdx.push_back(pNum);
             ++pNum;
         } else { // Different pins with same x, y coordinate but on different layers
@@ -471,11 +471,11 @@ void QuadTree::tree_to_segment() {
     // Fix problems of different pins with same coordinates but different layers.
     // Add via for those pins
     for(size_t i = 0; i < pins.size(); ++i){
-        if(nodes[pins2NodeIdx[i]].get_layer() != pins[i]->getLayer()){
+        if(nodes[pins2NodeIdx[i]].get_layer() != pins[i].get_layer()){
             segments.push_back(
                 NetSegment(nodes[pins2NodeIdx[i]].get_coord_x(), nodes[pins2NodeIdx[i]].get_coord_y(),
                            nodes[pins2NodeIdx[i]].get_coord_x(), nodes[pins2NodeIdx[i]].get_coord_y(),
-                           nodes[pins2NodeIdx[i]].get_layer(), pins[i]->getLayer()));
+                           nodes[pins2NodeIdx[i]].get_layer(), pins[i].get_layer()));
         }
     }
 }
@@ -550,7 +550,7 @@ std::ostream& operator<<(std::ostream& out, const QuadTree& qt){
     for(size_t i = 0; i < qt.segments.size(); ++i){
         out << qt.segments[i].get_xs() + qt._baseRow << " " << qt.segments[i].get_ys() + qt._baseCol << " " << qt.segments[i].get_layer() + 1 << " "
             << qt.segments[i].get_xe() + qt._baseRow << " " << qt.segments[i].get_ye() + qt._baseCol << " " << qt.segments[i].get_layer_end() + 1 << " "
-            << "N" << qt._NetId + 1 << " " << qstd::endl;
+            << "N" << qt._NetId + 1 << " " << std::endl;
     }
     return out;
 }

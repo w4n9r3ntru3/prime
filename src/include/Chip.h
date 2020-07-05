@@ -91,12 +91,13 @@ class Chip {
     size_t getNumNets() const;
     size_t getNumCells() const;
     size_t getNumMasterCells() const;
+    size_t getNumPins() const;
     Layer& getLayer(int layer);
     Coordinate& getCoordinate(unsigned idx);
     Cell& getCell(unsigned idx);
     const Pin& getPin(GridNet& net, unsigned idx);
-    unsigned getPinRow(Pin& pin);
-    unsigned getPinColumn(Pin& pin);
+    unsigned getPinRow(const Pin& pin) const;
+    unsigned getPinColumn(const Pin& pin) const;
     GridNet& getNet(unsigned idx);
     Grid& getGrid(unsigned layer, unsigned idx);
     Grid& getGrid(unsigned layer, unsigned row, unsigned column);

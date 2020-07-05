@@ -4,6 +4,7 @@
 
 #include "../include/QuadUtil.h"
 
+// NetSegment
 NetSegment::NetSegment() noexcept
     : x_start(-1), y_start(-1), x_end(-1), y_end(-1), layer_start(-1), layer_end(-1) {}
 
@@ -126,6 +127,47 @@ std::ostream& operator<<(std::ostream& out, const NetSegment& ns){
         << "layer = " << ns.get_layer();
     return out;
 }
+
+// SimpleUnionFind
+SimpleUnionFind::SimpleUnionFind(int N) noexcept { reset(N); }
+SimpleUnionFind::~SimpleUnionFind() noexcept { clear(); }
+
+inline unsigned SimpleUnionFind::find(unsigned x) {
+    return (x == parent[x]) ? x : parent[x] = find(parent[x]);
+}
+inline bool SimpleUnionFind::same(unsigned x, unsigned y) {
+    return find(x) == find(y);
+}
+inline void SimpleUnionFind::merge(unsigned x, unsigned y) {
+    x = find(x);
+    y = find(y);
+    if(x == y) return;
+    if(rank[x] < rank[y]){
+        parent[x] = y;
+    } else {
+        if(rank[x] == rank[y]) ++rank[x];
+        parent[y] = x;
+    }
+}
+void SimpleUnionFind::clear() { parent.clear(); rank.clear(); }
+void SimpleUnionFind::reset(int N){
+    clear();
+    parent.resize(N);
+    rank.resize(N);
+    for(int i = 0; i < N; ++i) parent[i] = i;
+} 
+
+// SimplePin
+
+SimplePin::SimplePin() noexcept 
+    :idx(0), row(0), column(0), layer(0) {}
+SimplePin::SimplePin(unsigned _idx, unsigned _row, unsigned _col, unsigned _lay) noexcept
+    :idx(_idx), row(_row), column(_col), layer(_lay) {}
+
+unsigned SimplePin::get_idx() const { return idx; }
+unsigned SimplePin::get_row() const { return row; }
+unsigned SimplePin::get_col() const { return column; }
+unsigned SimplePin::get_layer() const { return layer; }
 
 // Utility functions
 int clamp(int _x, int _min, int _max){

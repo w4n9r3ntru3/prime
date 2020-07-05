@@ -19,6 +19,9 @@ void QuadForest::construct_forest(Chip& chip) {
     maxRows    = chip.getNumRows();
     maxCols    = chip.getNumColumns();
     maxLayers  = chip.getNumLayers();
+
+    size_t numPins = chip.getNumPins();
+    pinIdx2Tree = safe::vector<unsigned>(numPins);
     // std::cout << "Rows: " << maxRows << " Columns: " << maxCols << " Layers: " << maxLayers << std::endl;
 
     // Get net segments from Chip
@@ -33,7 +36,13 @@ void QuadForest::construct_forest(Chip& chip) {
         // Get pins
         size_t pin_num = net.getNumPin();
         for(size_t j = 0; j < pin_num; ++j){
-            qt.add_pin(net.getPinPtr(j));
+            const Pin& pin = chip.getPin(net, j);
+            unsigned pin_idx = pin.getIdx();
+            unsigned pin_row = chip.getPinRow(pin);
+            unsigned pin_col = chip.getPinColumn(pin);
+            unsigned pin_lay = pin.getLayer();
+            pinIdx2Tree[pin_idx] = i;
+            qt.add_pin(SimplePin(pin_idx, pin_row, pin_col, pin_lay)); // TODO: pin: (index, layer, row, column)
         }
         // Get segments
         safe::vector<unsigned>& segments = net.getSegments();
@@ -44,7 +53,7 @@ void QuadForest::construct_forest(Chip& chip) {
         qt.construct_tree();
 
         qtrees.push_back(qt);
-        name2NetIdx[net_name] = qtrees.size() - 1;
+        // name2NetIdx[net_name] = qtrees.size() - 1;
     }
 }
 
@@ -53,10 +62,10 @@ QuadTree& QuadForest::get_tree(size_t idx) {
     assert(idx < qtrees.size());
     return qtrees[idx];
 }
-QuadTree& QuadForest::get_tree(std::string s) {
-    assert(name2NetIdx.contains(s));
-    return qtrees[name2NetIdx.at(s)];
-}
+// QuadTree& QuadForest::get_tree(std::string s) {
+//     assert(name2NetIdx.contains(s));
+//     return qtrees[name2NetIdx.at(s)];
+// }
 QuadTree& QuadForest::operator[](size_t idx){
     assert(idx < qtrees.size());
     return qtrees[idx];

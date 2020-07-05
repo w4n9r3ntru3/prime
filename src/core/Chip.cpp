@@ -385,6 +385,14 @@ size_t Chip::getNumMasterCells() const {
     return _MasterCells.size();
 }
 
+size_t Chip::getNumPins() const {
+    size_t numPins = 0;
+    for(size_t i = 0; i < _cells.size(); ++i) {
+        numPins += _cells[i].getNumPins();
+    }
+    return numPins;
+}
+
 Layer& Chip::getLayer(int layer) {
     return _layers[layer];
 }
@@ -401,11 +409,11 @@ const Pin& Chip::getPin(GridNet& net, unsigned idx){
     return net.getPin(idx, _cells);
 }
 
-unsigned Chip::getPinRow(Pin& pin) {
+unsigned Chip::getPinRow(const Pin& pin) const {
     return _cells[pin.get_cell_idx()].getRow();
 }
 
-unsigned Chip::getPinColumn(Pin& pin) {
+unsigned Chip::getPinColumn(const Pin& pin) const {
     return _cells[pin.get_cell_idx()].getColumn();
 }
 
