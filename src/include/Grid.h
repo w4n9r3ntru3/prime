@@ -74,7 +74,7 @@ class Layer {
 class Coordinate {
    public:
     // constructor
-    Coordinate(unsigned x, unsigned y, unsigned idx);
+    Coordinate(unsigned x, unsigned y, unsigned idx, int left, int right);
     Coordinate(const Coordinate& c) = delete;
     Coordinate(Coordinate&& c);
 

@@ -247,7 +247,6 @@ void Chip::readFile(std::fstream& input) {
                 getIdx(getPinRow(pin), getPinColumn(pin)));
             g.addNet(_grid_nets[i]);
         }
-        return;
     }
 
     // safe::unordered_map<std::string, std::vector<Segment>> segments;
@@ -347,14 +346,6 @@ size_t Chip::getColumnBase() const {
 }
 size_t Chip::getNumLayers() const {
     return _layers.size();
-}
-
-size_t Chip::getColumnBase() const {
-    return _columnBase;
-}
-
-size_t Chip::getRowBase() const {
-    return _rowBase;
 }
 
 size_t Chip::getNumColumns() const {
@@ -459,13 +450,7 @@ void Chip::constructCoordinate() {
     _coordinates.reserve(_area);
     for (unsigned i = 0; i < _columnRange; ++i) {
         for (unsigned j = 0; j < _rowRange; ++j) {
-            _coordinates.push_back(std::move(Coordinate(j, i, _layer)));
-        }
-    }
-    for (unsigned i = 0; i < _columnRange; ++i) {
-        for (unsigned j = 0; j < _rowRange; ++j) {
-            int left = getLeft(j, i), right = getRight(j, i);
-            _coordinates[getIdx(j, i)].addAdjH(left, right);
+            _coordinates.push_back(std::move(Coordinate(j, i, getIdx(j,i), getLeft(j,i), getRight(j,i))));
         }
     }
 }

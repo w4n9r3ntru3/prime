@@ -13,7 +13,7 @@
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
 
-#include "Grid.h"
+#include "../include/Grid.h"
 
 #include <assert.h>
 
@@ -69,7 +69,7 @@ Grid& Layer::getGrid(unsigned idx) {
 }
 
 // Coordinate
-Coordinate::Coordinate(unsigned x, unsigned y, unsigned idx) : _row(x), _column(y), _idx(idx) {}
+Coordinate::Coordinate(unsigned x, unsigned y, unsigned idx, int left, int right) : _row(x), _column(y), _idx(idx), _c1(left), _c2(right){}
 
 // Coordinate::Coordinate(const Coordinate& c) : _row(c._row), _column(c._column), _idx(c._idx) {}
 
