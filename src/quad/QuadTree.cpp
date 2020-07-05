@@ -212,7 +212,7 @@ void QuadTree::segment_to_tree(){
             VertexLayer[pNum] = pins[i].get_layer();
             pins2NodeIdx.push_back(pNum);
             ++pNum;
-        } else { // Different pins with same x, y coordinate but on different layers
+        } else { // Different pins with same x, y coordinates but on different layers
             pins2NodeIdx.push_back(Coord2Vertices[pinCoord]);
         }
     } // Now we know the number of pins is pNum
@@ -471,7 +471,7 @@ void QuadTree::tree_to_segment() {
     // Fix problems of different pins with same coordinates but different layers.
     // Add via for those pins
     for(size_t i = 0; i < pins.size(); ++i){
-        if(nodes[pins2NodeIdx[i]].get_layer() != pins[i].get_layer()){
+        if(nodes[pins2NodeIdx[i]].get_layer() != (int)pins[i].get_layer()){
             segments.push_back(
                 NetSegment(nodes[pins2NodeIdx[i]].get_coord_x(), nodes[pins2NodeIdx[i]].get_coord_y(),
                            nodes[pins2NodeIdx[i]].get_coord_x(), nodes[pins2NodeIdx[i]].get_coord_y(),
@@ -550,7 +550,7 @@ std::ostream& operator<<(std::ostream& out, const QuadTree& qt){
     for(size_t i = 0; i < qt.segments.size(); ++i){
         out << qt.segments[i].get_xs() + qt._baseRow << " " << qt.segments[i].get_ys() + qt._baseCol << " " << qt.segments[i].get_layer() + 1 << " "
             << qt.segments[i].get_xe() + qt._baseRow << " " << qt.segments[i].get_ye() + qt._baseCol << " " << qt.segments[i].get_layer_end() + 1 << " "
-            << "N" << qt._NetId + 1 << " " << std::endl;
+            << "N" << qt._NetId + 1 << "\n";
     }
     return out;
 }

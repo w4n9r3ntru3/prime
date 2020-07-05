@@ -102,6 +102,10 @@ void GridNet::addSegment(int srow,
     _segments.push_back(elay);
 }
 
+void GridNet::clearSegments() {
+    _segments.clear();
+}
+
 unsigned GridNet::getIdx() const {
     return _idx;
 }
@@ -195,6 +199,10 @@ void Cell::setCoordinate(unsigned x, unsigned y) {
 
 void Cell::move() {
     _moved = true;
+}
+
+const std::string Cell::getCellName() const {
+    return "C" + std::to_string(_idx);
 }
 
 unsigned Cell::getIdx() const {

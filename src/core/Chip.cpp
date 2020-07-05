@@ -247,6 +247,7 @@ void Chip::readFile(std::fstream& input) {
                 getIdx(getPinRow(pin), getPinColumn(pin)));
             g.addNet(_grid_nets[i]);
         }
+        // return;
     }
 
     // safe::unordered_map<std::string, std::vector<Segment>> segments;
@@ -269,13 +270,6 @@ void Chip::readFile(std::fstream& input) {
         GridNet& net = _grid_nets[str2Idx("N",str)];
         assignRoute(srow - _rowBase, scol - _columnBase, slay - 1,
                     erow - _rowBase, ecol - _columnBase, elay - 1, net);
-        // _quad_tree_nets[_Net2Idx.at(str)].add_segment(
-        //     srow - _rowBase, scol - _columnBase, slay - 1,
-        //     erow - _rowBase, ecol - _columnBase, elay - 1);
-        // ! substituted
-        // segments[str].push_back(Segment(srow - _rowBase, scol - _columnBase,
-        //                                 slay - 1, erow - _rowBase,
-        //                                 ecol - _columnBase, elay - 1));
     }
 
     // safe::unordered_map<std::string, TreeNet> all_nets;
@@ -433,17 +427,29 @@ void Chip::log() const {
     maxNetDegree();
 }
 
-// void Chip::output(std::fstream& output) {
-//     int n = _movedCells.size();
-//     output << "NumMovedCellInst " << n << '\n';
-//     for (int i = 0; i < n; ++i) {
-//         const Cell& cell = _cells[i];
-//         output << "CellInst " << cell.getCellName() << " "
-//                << cell.getRow() + _rowBase << " "
-//                << cell.getColumn() + _columnBase << '\n';
-//     }
-//     outputRoute(output);
-// }
+void Chip::output(std::fstream& output) {
+    int n = _movedCells.size();
+    output << "NumMovedCellInst " << n << '\n';
+    for (int i = 0; i < n; ++i) {
+        const Cell& cell = _cells[i];
+        output << "CellInst " << cell.getCellName() << " "
+               << cell.getRow() + _rowBase << " "
+               << cell.getColumn() + _columnBase << '\n';
+    }
+    size_t total_route = 0;
+    for(size_t i = 0; i < _grid_nets.size(); ++i) {
+        total_route += _grid_nets[i].getNumSegments() / 6;
+    }
+    output << "NumRoutes " << total_route << '\n';
+    for(size_t i = 0; i < _grid_nets.size(); ++i) {
+        safe::vector<unsigned>& segments = _grid_nets[i].getSegments();
+        for(size_t j = 0; j < segments.size(); j += 6) {
+            output << segments[j] + _rowBase << " " << segments[j+1] + _columnBase << " " << segments[j+2] + 1 << " "
+                   << segments[j+3] + _rowBase << " " << segments[j+4] + _columnBase << " " << segments[j+5] + 1 << " "
+                   << "N" << _grid_nets[i].getIdx() + 1 << '\n';
+        }
+    }
+}
 
 void Chip::constructCoordinate() {
     _area = _columnRange * _rowRange;
@@ -456,13 +462,12 @@ void Chip::constructCoordinate() {
 }
 
 void Chip::assignRoute(int srow,
-                           int scol,
-                           int slay,
-                           int erow,
-                           int ecol,
-                           int elay,
-                           GridNet& net) {
-    // net.addSegment(srow, scol, slay, erow, ecol, elay);
+                       int scol,
+                       int slay,
+                       int erow,
+                       int ecol,
+                       int elay,
+                       GridNet& net) {
     if (srow > erow) {
         std::swap(srow, erow);
     }
@@ -472,6 +477,7 @@ void Chip::assignRoute(int srow,
     if (slay > elay) {
         std::swap(slay, elay);
     }
+    net.addSegment(srow, scol, slay, erow, ecol, elay);
     for (int i = slay; i <= elay; ++i) {
         Layer& l = _layers[i];
         for (int j = scol; j <= ecol; ++j) {

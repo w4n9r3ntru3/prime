@@ -94,6 +94,7 @@ class GridNet {
     void addPin(Pin& pin);  // you don't need this
     void addSegment(int srow, int scol, int slay, int erow, int ecol, int
     elay);
+    void clearSegments();
 
     // accesser
     unsigned getIdx() const;
@@ -132,7 +133,7 @@ class Cell {
     void move();  // use this to specify that this cell is moved
 
     // accesser
-    const std::string& getCellName() const;
+    const std::string getCellName() const;
     unsigned getIdx() const;
     const MasterCellType& getMasterCell() const;
     MasterCellType& getMasterCell();

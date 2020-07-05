@@ -106,7 +106,7 @@ class Chip {
     void log() const;
 
     // output
-    // void output(std::fstream& output);
+    void output(std::fstream& output);
 
    private:
     unsigned _maxMove;
