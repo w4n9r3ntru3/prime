@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Gradient.h"
+#include "QuadForest.h"
 #include "safe.h"
 
 class ConjugateGradient {
@@ -14,11 +15,14 @@ class ConjugateGradient {
     explicit ConjugateGradient(safe::vector<Gradient>&& grad) noexcept;
     explicit ConjugateGradient(safe::vector<Gradient>&& grad,
                                safe::vector<Gradient>&& prev_grads) noexcept;
+    explicit ConjugateGradient(const QuadForest& qf) noexcept;
 
     size_t size(void) const;
-    void clear(void);
+    void zero_grad_(void);
 
    private:
+    void clear(void);
+
     safe::vector<Gradient> grads;
     safe::vector<Gradient> prev_grads;
 };
