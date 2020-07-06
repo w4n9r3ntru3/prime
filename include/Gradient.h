@@ -6,8 +6,8 @@
 
 class Gradient {
    public:
-    explicit Gradient(void);
-    explicit Gradient(double x, double y);
+    explicit Gradient(void) noexcept;
+    explicit Gradient(double x, double y) noexcept;
 
     double x(void) const;
     double y(void) const;

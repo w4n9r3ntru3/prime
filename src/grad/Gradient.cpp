@@ -6,9 +6,9 @@
 
 #include <iostream>
 
-Gradient::Gradient(void) : horiz(0.), verti(0.) {}
+Gradient::Gradient(void) noexcept : horiz(0.), verti(0.) {}
 
-Gradient::Gradient(double a, double b) : horiz(a), verti(b) {}
+Gradient::Gradient(double a, double b) noexcept : horiz(a), verti(b) {}
 
 double Gradient::x(void) const {
     return horiz;
