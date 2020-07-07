@@ -203,22 +203,23 @@ void QuadTree::segment_to_tree(){
     safe::unordered_map<unsigned, int> VertexLayer;
     // Construct vertices from pins
     unsigned pNum = 0;
+    pins2NodeIdx = safe::vector<unsigned>(pins.size());
     for(size_t i = 0; i < pins.size(); ++i){ // Add pins to Vertices
         CoordPair pinCoord(pins[i].get_row(), pins[i].get_col());
-        // std::cout << "pin " << i << " (" << pinCoord.first << ", " << pinCoord.second << ")" << std::endl;
+        // std::cerr << "pin " << i << " (" << pinCoord.first << ", " << pinCoord.second << ", " << pins[i].get_layer() << ")\n";
         if(!Coord2Vertices.contains(pinCoord)){ // Assume that all pins have different coordinates
             Coord2Vertices[pinCoord] = pNum;
             Vertices[pNum] = pinCoord;
             VertexLayer[pNum] = pins[i].get_layer();
-            pins2NodeIdx.push_back(pNum);
+            pins2NodeIdx[i] = pNum;
             // std::cerr << "Pin " << pNum << " : " << pinCoord.first << ", " << pinCoord.second << "\n";
             ++pNum;
         } else { // Different pins with same x, y coordinates but on different layers
             // std::cerr << "Repeated pin " << i << " " << pinCoord.first << ", " << pinCoord.second << "\n";
-            pins2NodeIdx.push_back(Coord2Vertices[pinCoord]);
+            pins2NodeIdx[i] = Coord2Vertices[pinCoord];
         }
     } // Now we know the number of pins is pNum
-    assert(pins.size() == pins2NodeIdx.size());
+    // assert(pins.size() == pins2NodeIdx.size());
 
     // assert(segments.size() > 0);
     bool operation = true;
@@ -406,15 +407,15 @@ void QuadTree::segment_to_tree(){
         nodes.push_back(QuadNode(i));
     }
     // Construct quad tree
-    dfs_construct_tree(SimpleTree, Vertices, VertexLayer, new_idx_mapping, found_center, -1);
+    dfs_construct_tree(SimpleTree, Vertices, VertexLayer, new_idx_mapping, 0, -1);
     
     // Final preperation
-    root_idx = new_idx_mapping[found_center];
-    assert(nodes[root_idx].get_parent() == -1);
+    // root_idx = new_idx_mapping[found_center];
+    // assert(nodes[root_idx].get_parent() == -1);
     for(size_t i = 0; i < nodes.size(); ++i){ // set coordinate to node index mapping
         coord2Node[nodes[i].get_coord()] = i;
     }
-    // std::cout << "tree size: " << nodes.size() << std::endl;
+    // std::cout << "tree size: " << nodes.size() << ", num pins: " << pins.size() << std::endl;
 
     segments.clear();
 }
@@ -501,19 +502,23 @@ inline void QuadTree::dfs_construct_tree(
         const unsigned now, 
         const int parent){
     // Use DFS to construct quad tree
-    nodes[new_idx_mapping[now]].set_parent(parent);
-    nodes[new_idx_mapping[now]].set_layer(VertexLayer[now]);
+    // nodes[new_idx_mapping[now]].set_parent(parent);
+    nodes[new_idx_mapping[now]].set_layer_self(VertexLayer[now]); // TODO: not sure if it makes sense
     nodes[new_idx_mapping[now]].reset_coord(Vertices[now]);
     for(size_t i = 0; i < SimpleTree[now].size(); ++i){
         unsigned direction = check_direction(Vertices[now], Vertices[SimpleTree[now][i]]);
         if(direction == 1){        // up
             nodes[new_idx_mapping[now]].set_up(new_idx_mapping[SimpleTree[now][i]]);
+            nodes[new_idx_mapping[now]].set_layer_up(VertexLayer[SimpleTree[now][i]]);
         } else if(direction == 2){ // down
             nodes[new_idx_mapping[now]].set_down(new_idx_mapping[SimpleTree[now][i]]);
+            nodes[new_idx_mapping[now]].set_layer_down(VertexLayer[SimpleTree[now][i]]);
         } else if(direction == 3){ // left
             nodes[new_idx_mapping[now]].set_left(new_idx_mapping[SimpleTree[now][i]]);
+            nodes[new_idx_mapping[now]].set_layer_left(VertexLayer[SimpleTree[now][i]]);
         } else if(direction == 4){ // right
             nodes[new_idx_mapping[now]].set_right(new_idx_mapping[SimpleTree[now][i]]);
+            nodes[new_idx_mapping[now]].set_layer_right(VertexLayer[SimpleTree[now][i]]);
         }
         if((int)SimpleTree[now][i] != parent){
             dfs_construct_tree(SimpleTree, Vertices, VertexLayer, new_idx_mapping, SimpleTree[now][i], now);
@@ -537,11 +542,12 @@ void QuadTree::tree_to_segment() {
     // Fix problems of different pins with same coordinates but different layers.
     // Add via for those pins
     for(size_t i = 0; i < pins.size(); ++i){
-        if(nodes[pins2NodeIdx[i]].get_layer() != (int)pins[i].get_layer()){
+        // std::cerr << nodes[pins2NodeIdx[i]].get_layer_self() << " " << pins[i].get_layer() << "\n";
+        if(nodes[pins2NodeIdx[i]].get_layer_self() != (int)pins[i].get_layer()){
             segments.push_back(
                 NetSegment(nodes[pins2NodeIdx[i]].get_coord_x(), nodes[pins2NodeIdx[i]].get_coord_y(),
                            nodes[pins2NodeIdx[i]].get_coord_x(), nodes[pins2NodeIdx[i]].get_coord_y(),
-                           nodes[pins2NodeIdx[i]].get_layer(), pins[i].get_layer()));
+                           nodes[pins2NodeIdx[i]].get_layer_self(), pins[i].get_layer()));
         }
     }
 }
@@ -552,12 +558,18 @@ inline void QuadTree::dfs_extract_segments(const unsigned now, const int parent)
         segments.push_back(
             NetSegment(nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
                         nodes[up].get_coord_x(), nodes[up].get_coord_y(), 
-                        nodes[now].get_layer()));
-        if(nodes[now].get_layer() != nodes[up].get_layer()){
+                        nodes[now].get_layer_up()));
+        if(nodes[now].get_layer_self() != nodes[now].get_layer_up()){
+            segments.push_back(
+                NetSegment(nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
+                           nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
+                           nodes[now].get_layer_self(), nodes[now].get_layer_up())); // via
+        }
+        if(nodes[now].get_layer_up() != nodes[up].get_layer_self()){
             segments.push_back(
                 NetSegment(nodes[up].get_coord_x(), nodes[up].get_coord_y(), 
                            nodes[up].get_coord_x(), nodes[up].get_coord_y(), 
-                           nodes[now].get_layer(), nodes[up].get_layer())); // via
+                           nodes[now].get_layer_up(), nodes[up].get_layer_self())); // via
         }
         dfs_extract_segments(up, now);
     }
@@ -566,12 +578,18 @@ inline void QuadTree::dfs_extract_segments(const unsigned now, const int parent)
         segments.push_back(
             NetSegment(nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
                         nodes[down].get_coord_x(), nodes[down].get_coord_y(), 
-                        nodes[now].get_layer()));
-        if(nodes[now].get_layer() != nodes[down].get_layer()){
+                        nodes[now].get_layer_down()));
+        if(nodes[now].get_layer_self() != nodes[now].get_layer_down()){
+            segments.push_back(
+                NetSegment(nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
+                           nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
+                           nodes[now].get_layer_self(), nodes[now].get_layer_down())); // via
+        }
+        if(nodes[now].get_layer_down() != nodes[down].get_layer_self()){
             segments.push_back(
                 NetSegment(nodes[down].get_coord_x(), nodes[down].get_coord_y(), 
                            nodes[down].get_coord_x(), nodes[down].get_coord_y(), 
-                           nodes[now].get_layer(), nodes[down].get_layer())); // via
+                           nodes[now].get_layer_down(), nodes[down].get_layer_self())); // via
         }
         dfs_extract_segments(down, now);
     }
@@ -580,12 +598,18 @@ inline void QuadTree::dfs_extract_segments(const unsigned now, const int parent)
         segments.push_back(
             NetSegment(nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
                         nodes[left].get_coord_x(), nodes[left].get_coord_y(), 
-                        nodes[now].get_layer()));
-        if(nodes[now].get_layer() != nodes[left].get_layer()){
+                        nodes[now].get_layer_left()));
+        if(nodes[now].get_layer_self() != nodes[now].get_layer_left()){
+            segments.push_back(
+                NetSegment(nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
+                           nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
+                           nodes[now].get_layer_self(), nodes[now].get_layer_left())); // via
+        }
+        if(nodes[now].get_layer_left() != nodes[left].get_layer_self()){
             segments.push_back(
                 NetSegment(nodes[left].get_coord_x(), nodes[left].get_coord_y(), 
                            nodes[left].get_coord_x(), nodes[left].get_coord_y(), 
-                           nodes[now].get_layer(), nodes[left].get_layer())); // via
+                           nodes[now].get_layer_left(), nodes[left].get_layer_self())); // via
         }
         dfs_extract_segments(left, now);
     }
@@ -594,12 +618,18 @@ inline void QuadTree::dfs_extract_segments(const unsigned now, const int parent)
         segments.push_back(
             NetSegment(nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
                         nodes[right].get_coord_x(), nodes[right].get_coord_y(), 
-                        nodes[now].get_layer()));
-        if(nodes[now].get_layer() != nodes[right].get_layer()){
+                        nodes[now].get_layer_right()));
+        if(nodes[now].get_layer_self() != nodes[now].get_layer_right()){
+            segments.push_back(
+                NetSegment(nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
+                           nodes[now].get_coord_x(), nodes[now].get_coord_y(), 
+                           nodes[now].get_layer_self(), nodes[now].get_layer_right())); // via
+        }
+        if(nodes[now].get_layer_right() != nodes[right].get_layer_self()){
             segments.push_back(
                 NetSegment(nodes[right].get_coord_x(), nodes[right].get_coord_y(), 
                            nodes[right].get_coord_x(), nodes[right].get_coord_y(), 
-                           nodes[now].get_layer(), nodes[right].get_layer())); // via
+                           nodes[now].get_layer_right(), nodes[right].get_layer_self())); // via
         }
         dfs_extract_segments(right, now);
     }

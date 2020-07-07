@@ -47,3 +47,5 @@ evaluator/*
 dbg/*
 /*.sh
 *.txt*
+*.py
+python_files/*
