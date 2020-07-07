@@ -87,6 +87,26 @@ unsigned QuadTree::get_top(void) const {
     return top<UseArg::No>(pins);
 }
 
+unsigned QuadTree::get_left_pin(void) const {
+    unsigned p = left<UseArg::Yes>(pins);
+    return pins[p].get_idx();
+}
+
+unsigned QuadTree::get_right_pin(void) const {
+    unsigned p = right<UseArg::Yes>(pins);
+    return pins[p].get_idx();
+}
+
+unsigned QuadTree::get_bottom_pin(void) const {
+    unsigned p = bottom<UseArg::Yes>(pins);
+    return pins[p].get_idx();
+}
+
+unsigned QuadTree::get_top_pin(void) const {
+    unsigned p = top<UseArg::Yes>(pins);
+    return pins[p].get_idx();
+}
+
 std::pair<unsigned, unsigned> QuadTree::get_horiz_bound(void) const {
     unsigned left = get_left(), right = get_right();
     assert(left <= right);

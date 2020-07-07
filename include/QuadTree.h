@@ -15,8 +15,8 @@
 #include "QuadNode.h"
 #include "safe.h"
 
-typedef std::pair<unsigned, unsigned>
-    VEPair;  // vertex index v.s. edge index pair
+// vertex index v.s. edge index pair
+typedef std::pair<unsigned, unsigned> VEPair;
 const double DINF = 1e9;
 const double EPS = 1e-8;
 const unsigned DEFAULT_OPT = 1;
@@ -86,6 +86,10 @@ class QuadTree {
     unsigned get_right(void) const;
     unsigned get_bottom(void) const;
     unsigned get_top(void) const;
+    unsigned get_left_pin(void) const;
+    unsigned get_right_pin(void) const;
+    unsigned get_bottom_pin(void) const;
+    unsigned get_top_pin(void) const;
     std::pair<unsigned, unsigned> get_horiz_bound(void) const;
     std::pair<unsigned, unsigned> get_verti_bound(void) const;
     unsigned get_hpwl(void) const;
@@ -123,10 +127,11 @@ class QuadTree {
 
     // Segment / Tree conversion functions
     void segment_to_tree();
-    inline bool dfs_tree_graph(safe::vector<VEPair> TreeGraph[], 
-                               safe::vector<int>&  selected_edges, 
-                               const unsigned pNum, 
-                               const unsigned now, const int parent,
+    inline bool dfs_tree_graph(safe::vector<VEPair> TreeGraph[],
+                               safe::vector<int>& selected_edges,
+                               const unsigned pNum,
+                               const unsigned now,
+                               const int parent,
                                const int edge_idx);
     inline unsigned dfs_tree_center(safe::vector<unsigned> SimpleTree[],
                                     safe::vector<double>& vertex_rank,

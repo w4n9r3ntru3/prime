@@ -4,32 +4,32 @@
 
 #pragma once
 
-#include "Gradient.h"
+#include "Chip.h"
 #include "QuadForest.h"
 #include "safe.h"
 
+enum class GradientType { Plain };
+
 class ConjugateGradient {
    public:
-    explicit ConjugateGradient(void) noexcept;
-    explicit ConjugateGradient(size_t size) noexcept;
-    explicit ConjugateGradient(safe::vector<Gradient>&& grad) noexcept;
-    explicit ConjugateGradient(safe::vector<Gradient>&& grad,
-                               safe::vector<Gradient>&& prev_grads) noexcept;
-    explicit ConjugateGradient(QuadForest& qf) noexcept;
+    explicit ConjugateGradient(void) = delete;
+    explicit ConjugateGradient(Chip& chip, QuadForest& qf) noexcept;
 
-    size_t size(void) const;
+    size_t dim(void) const;
     void zero_grad_(void);
 
-    // TODO: currently supports one kind of gradient calculations
-    double eval(void);
-    void backward(void);
-    double update_directions(safe::vector<Gradient>& gradients);
+    double eval(GradientType gt);
+    void backward(GradientType gt);
+
+    void move(void);
+
+    void filter_grad(safe::unordered_set<unsigned>&& remaining);
 
    private:
-    void clear(void);
+    double beta(void) const;
 
-    // FIXME: not ideal to have made CG a reference type
-    safe::vector<Gradient> grads;
-    safe::vector<Gradient> prev_grads;
-    QuadForest* qf;
+    Chip& chip;
+    QuadForest& qf;
+    safe::vector<double> grads;
+    safe::vector<double> prev_grads;
 };
