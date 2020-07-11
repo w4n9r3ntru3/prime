@@ -91,7 +91,8 @@ class GridNet {
     GridNet& operator=(GridNet&& net);
 
     // modifier
-    void addPin(Pin& pin);  // you don't need this
+    void addPin(unsigned pin);  // you don't need this
+    void addPin(Pin& pin);
     void addSegment(int srow, int scol, int slay, int erow, int ecol, int
     elay);
     void clearSegments();
@@ -100,16 +101,14 @@ class GridNet {
     unsigned getIdx() const;
     unsigned getMinlayer() const;  // min routing layer constraint
     size_t getNumPin() const;
-    unsigned getCellIdx(unsigned idx) const;
     unsigned getPinIdx(unsigned idx) const;
-    Pin& getPin(unsigned i, safe::vector<Cell>& cells);
     size_t getNumSegments() const;
     safe::vector<unsigned>& getSegments();
 
    private:
     unsigned _idx;
     unsigned _minLayer;
-    safe::vector<CellPinPair> _pins;
+    safe::vector<unsigned> _pins;
 
     safe::vector<unsigned> _segments;  // srow, scol, slay, erow, ecol, elay
 };
@@ -120,7 +119,9 @@ class Cell {
     Cell(MasterCellType& MCT,
          unsigned idx,
          bool movable,
-         unsigned layers);
+         unsigned layers,
+         unsigned& pinIdx,
+         safe::vector<Pin>& pins);
     Cell(const Cell& c) = delete;
     Cell(Cell&& c);
 
@@ -148,7 +149,7 @@ class Cell {
     unsigned getRow() const;
     unsigned getColumn() const;
 
-    Pin& getPin(unsigned i);
+    unsigned getPinIdx(unsigned i);
 
     int getLayerDemand(unsigned layer) const;
     safe::vector<unsigned>& getSameGridMC(unsigned layer);
@@ -170,7 +171,7 @@ class Cell {
     bool _moved;
     unsigned _row;
     unsigned _column;
-    safe::vector<Pin> _pins;
+    safe::vector<unsigned> _pins;
     safe::vector<safe::vector<unsigned>> _Layer2pin;
 };
 

@@ -171,6 +171,7 @@ void Chip::readFile(std::fstream& input) {
     assert(str == "NumCellInst");
     input >> count;  // <cellInstCount>
     _cells.reserve(count);
+    unsigned pinIdx = 0;
     for (int i = 0; i < count; ++i) {
         input >> str;  // CellInst
         assert(str == "CellInst");
@@ -193,7 +194,7 @@ void Chip::readFile(std::fstream& input) {
         // } else {
         //     assert(buf == "Fixed" || buf == "Movable");
         // }
-        _cells.push_back(Cell(MCT, i, movable, _layer));
+        _cells.push_back(Cell(MCT, i, movable, _layer, pinIdx, _pins));
         int rIdx = row - _rowBase, cIdx = column - _columnBase;
         Cell& cell = _cells[i];
         cell.setCoordinate(rIdx, cIdx);
@@ -239,7 +240,7 @@ void Chip::readFile(std::fstream& input) {
             // assert(_Cell2Idx.count(inst) == 1);
             // assert(_Cell2Idx.contains(inst));
             Pin& pin =
-                _cells[str2Idx("C", inst)].getPin(str2Idx("P", masterPin));
+                _pins[_cells[str2Idx("C", inst)].getPinIdx(str2Idx("P", masterPin))];
             // Cell& cell_ = pin.get_cell();
             // std::cout << &cell << " " << &cell_ << std::endl;
             _grid_nets[i].addPin(pin);
@@ -277,14 +278,14 @@ void Chip::readFile(std::fstream& input) {
 
 Chip::~Chip() {
     // debug
-    // std::fstream out("out.txt", std::ios::out);
-    // for (Layer& ptr : _layers) {
-    //     for (unsigned i = 0; i < _rowRange; ++i) {
-    //         for (unsigned j = 0; j < _columnRange; ++j) {
-    //         out << ptr.getGrid(getIdx(i, j)).getSupply() << std::endl;
-    //         }
-    //     }
-    // }
+    std::fstream out("out.txt", std::ios::out);
+    for (Layer& ptr : _layers) {
+        for (unsigned i = 0; i < _rowRange; ++i) {
+            for (unsigned j = 0; j < _columnRange; ++j) {
+                out << ptr.getGrid(getIdx(i, j)).getSupply() << std::endl;
+            }
+        }
+    }
     // debug
 }
 
@@ -390,11 +391,11 @@ Cell& Chip::getCell(unsigned i) {
 }
 
 const Pin& Chip::getPin(GridNet& net, unsigned idx) {
-    return net.getPin(idx, _cells);
+    return _pins[net.getPinIdx(idx)];
 }
 
-const Pin& Chip::getPin(unsigned cell, unsigned idx) {
-    return _cells[cell].getPin(idx);
+const Pin& Chip::getPin(unsigned idx) {
+    return _pins[idx];
 }
 
 unsigned Chip::getPinRow(const Pin& pin) const {

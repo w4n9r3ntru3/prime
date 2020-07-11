@@ -96,7 +96,7 @@ class Chip {
     Coordinate& getCoordinate(unsigned idx);
     Cell& getCell(unsigned idx);
     const Pin& getPin(GridNet& net, unsigned idx);
-    const Pin& getPin(unsigned cell, unsigned idx);
+    const Pin& getPin(unsigned idx);
     unsigned getPinRow(const Pin& pin) const;
     unsigned getPinColumn(const Pin& pin) const;
     GridNet& getNet(unsigned idx);
@@ -121,6 +121,7 @@ class Chip {
     safe::vector<Coordinate> _coordinates;
     safe::vector<MasterCellType> _MasterCells;
     safe::vector<Cell> _cells;
+    safe::vector<Pin> _pins;
 
     // !
     safe::vector<GridNet> _grid_nets;
