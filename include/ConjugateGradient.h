@@ -16,7 +16,7 @@ class Scheduler {
    public:
     // constructor
     explicit Scheduler(void) noexcept = delete;
-    explicit Scheduler(double cur, double rat) noexcept;
+    explicit Scheduler(double ini) noexcept;
     explicit Scheduler(const Scheduler& sch) noexcept = delete;
     explicit Scheduler(Scheduler&& sch) noexcept;
 
@@ -28,8 +28,8 @@ class Scheduler {
     double next(void);
 
    private:
-    double current;
-    double rate;
+    double init;
+    unsigned times;
 };
 
 class ConjGrad {
@@ -45,8 +45,7 @@ class ConjGrad {
                       QuadForest& qf,
                       GradType gt,
                       unsigned times,
-                      double init,
-                      double rate) noexcept;
+                      double init) noexcept;
 
     // operator=
     ConjGrad& operator=(const ConjGrad& cg) noexcept;

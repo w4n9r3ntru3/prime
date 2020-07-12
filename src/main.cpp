@@ -67,10 +67,10 @@ int main(int argc, char* argv[]) {
     usage.reset();
 
     // TODO: tune variable
-    constexpr double init = 1., rate = .5;
+    constexpr double init = 1.;
     constexpr unsigned times = 10;
 
-    ConjGrad conj_grad(chp, qf, GradType::Plain, times, init, rate);
+    ConjGrad conj_grad(chp, qf, GradType::Plain, times, init);
 
     qf.return_segments(chp);
     chp.output(outputfile);

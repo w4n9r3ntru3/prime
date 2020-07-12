@@ -10,15 +10,14 @@
 #include <algorithm>
 #include <memory>
 
-Scheduler::Scheduler(double c, double r) noexcept : current(c), rate(r) {}
+Scheduler::Scheduler(double i) noexcept : init(i), times(0) {}
 
 Scheduler::Scheduler(Scheduler&& sch) noexcept
-    : current(sch.current), rate(sch.rate) {}
+    : init(sch.init), times(sch.times) {}
 
 double Scheduler::next(void) {
-    double c = current;
-    current *= rate;
-    return c;
+    ++times;
+    return init / (double)times;
 }
 
 // ! reference:
@@ -53,8 +52,7 @@ ConjGrad::ConjGrad(Chip& chip,
                    QuadForest& qf,
                    GradType gt,
                    unsigned times,
-                   double init,
-                   double rate) noexcept
+                   double init) noexcept
     : chip(chip),
       qf(qf),
       times(times),
@@ -62,7 +60,7 @@ ConjGrad::ConjGrad(Chip& chip,
       current_best(-1.),
       gt(gt),
       best_step(0.),
-      sch(Scheduler(init, rate)) {
+      sch(Scheduler(init)) {
     size_t size = dim();
     grads = safe::vector<double>(size, 0.);
     prev_grads = safe::vector<double>(size, 0.);
@@ -132,11 +130,11 @@ void ConjGrad::update_positions(void) {
 
     if (coeff) {
         for (; giter != grads.end(); ++giter, ++piter) {
-            *piter += step_size * (*giter);
+            *piter -= step_size * (*giter);
         }
     } else {
         for (; giter != grads.end(); ++giter, ++piter) {
-            *piter -= step_size * (*giter);
+            *piter += step_size * (*giter);
         }
     }
 
