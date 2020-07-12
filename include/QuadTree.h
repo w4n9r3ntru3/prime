@@ -82,7 +82,6 @@ class QuadTree {
     void convert_to_segments();
     void reset_tree();
 
-    // TODO: extensions that are defined in QuadExt.cpp
     unsigned get_left(void) const;
     unsigned get_right(void) const;
     unsigned get_bottom(void) const;
@@ -94,6 +93,8 @@ class QuadTree {
     std::pair<unsigned, unsigned> get_horiz_bound(void) const;
     std::pair<unsigned, unsigned> get_verti_bound(void) const;
     unsigned get_hpwl(void) const;
+
+    // TODO: use union find to create a tree
 
    private:
     // const std::string                _NetName;
@@ -109,12 +110,13 @@ class QuadTree {
     unsigned flag;
     safe::vector<QuadNode> nodes;  // pins will be at the front of this vector
     safe::map<CoordPair, unsigned> coord2Node;
-    safe::vector<SimplePin> pins;         // index of pins
-    safe::unordered_map<unsigned, unsigned> pinIdx2Node;  // mapping from pins to index of nodes
+    safe::vector<SimplePin> pins;  // index of pins
+    // mapping from pins to index of nodes
+    safe::unordered_map<unsigned, unsigned> pinIdx2Node;
     // TODO: nodeIdx2Pin
     // Temporary members for constructing the tree
     safe::vector<NetSegment> segments;
-    safe::vector<NetSegment> vias; // FIXME:
+    safe::vector<NetSegment> vias;  // FIXME:
 
     // Private functions
     // Basic operations

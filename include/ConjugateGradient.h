@@ -14,14 +14,17 @@ enum class GradType { Plain };
 
 class Scheduler {
    public:
+    // constructor
     explicit Scheduler(void) noexcept = delete;
     explicit Scheduler(double cur, double rat) noexcept;
     explicit Scheduler(const Scheduler& sch) noexcept = delete;
     explicit Scheduler(Scheduler&& sch) noexcept;
 
+    // operator=
     Scheduler& operator=(const Scheduler& sch) noexcept = delete;
     Scheduler& operator=(Scheduler&& sch) noexcept;
 
+    // other
     double next(void);
 
    private:
@@ -31,15 +34,28 @@ class Scheduler {
 
 class ConjGrad {
    public:
+    // constructor
     explicit ConjGrad(void) noexcept = delete;
     explicit ConjGrad(Chip& chip,
                       QuadForest& qf,
                       GradType gt,
+                      unsigned times,
                       Scheduler&& sch) noexcept;
+    explicit ConjGrad(Chip& chip,
+                      QuadForest& qf,
+                      GradType gt,
+                      unsigned times,
+                      double init,
+                      double rate) noexcept;
 
+    // operator=
     ConjGrad& operator=(const ConjGrad& cg) noexcept;
     ConjGrad& operator=(ConjGrad&& cg) noexcept = delete;
 
+    // do all
+    void all(void);
+
+    // other
     size_t dim(void) const;
 
     safe::vector<double>& positions(void);
@@ -67,6 +83,11 @@ class ConjGrad {
     }
 
    private:
+    // do all once
+    // if return true, do not revert the gradient
+    // else revert gradient
+    bool all_once(void);
+
     void mv(void);
     double beta(void) const;
 
@@ -81,6 +102,9 @@ class ConjGrad {
     safe::vector<double> grads;
     safe::vector<double> prev_grads;
     safe::vector<double> pos;
+    unsigned times;
+    bool coeff;
+    double current_best;
     GradType gt;
     double best_step;
     Scheduler sch;

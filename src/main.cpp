@@ -68,9 +68,9 @@ int main(int argc, char* argv[]) {
 
     // TODO: tune variable
     constexpr double init = 1., rate = .5;
-    GradType gt = GradType::Plain;
-    Scheduler sch(init, rate);
-    ConjGrad conj_grad(chp, qf, gt, std::move(sch));
+    constexpr unsigned times = 10;
+
+    ConjGrad conj_grad(chp, qf, GradType::Plain, times, init, rate);
 
     qf.return_segments(chp);
     chp.output(outputfile);

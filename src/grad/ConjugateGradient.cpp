@@ -27,8 +27,42 @@ double Scheduler::next(void) {
 ConjGrad::ConjGrad(Chip& chip,
                    QuadForest& qf,
                    GradType gt,
+                   unsigned times,
                    Scheduler&& sch) noexcept
-    : chip(chip), qf(qf), gt(gt), best_step(0.), sch(std::move(sch)) {
+    : chip(chip),
+      qf(qf),
+      times(times),
+      coeff(true),
+      current_best(-1.),
+      gt(gt),
+      best_step(0.),
+      sch(std::move(sch)) {
+    size_t size = dim();
+    grads = safe::vector<double>(size, 0.);
+    prev_grads = safe::vector<double>(size, 0.);
+
+    pos.reserve(2 * chip.getNumCells());
+    for (unsigned i = 0; i < chip.getNumCells(); ++i) {
+        const Cell& cell = chip.getCell(i);
+        pos.push_back((double)cell.getColumn());
+        pos.push_back((double)cell.getRow());
+    }
+}
+
+ConjGrad::ConjGrad(Chip& chip,
+                   QuadForest& qf,
+                   GradType gt,
+                   unsigned times,
+                   double init,
+                   double rate) noexcept
+    : chip(chip),
+      qf(qf),
+      times(times),
+      coeff(true),
+      current_best(-1.),
+      gt(gt),
+      best_step(0.),
+      sch(Scheduler(init, rate)) {
     size_t size = dim();
     grads = safe::vector<double>(size, 0.);
     prev_grads = safe::vector<double>(size, 0.);
@@ -96,12 +130,45 @@ void ConjGrad::update_positions(void) {
     auto giter = grads.begin();
     auto piter = pos.begin();
 
-    for (; giter != grads.end(); ++giter, ++piter) {
-        *piter += step_size * (*giter);
+    if (coeff) {
+        for (; giter != grads.end(); ++giter, ++piter) {
+            *piter += step_size * (*giter);
+        }
+    } else {
+        for (; giter != grads.end(); ++giter, ++piter) {
+            *piter -= step_size * (*giter);
+        }
     }
 
     assert(giter == grads.end());
     assert(piter == pos.end());
+}
+
+void ConjGrad::all(void) {
+    current_best = value_and_grad();
+
+    for (unsigned i = 0; i < times; ++i) {
+        if (!all_once()) {
+            coeff = !coeff;
+        }
+    }
+}
+
+bool ConjGrad::all_once(void) {
+    // calculate value and gradients
+    // values are returned
+    // gradients are stored in `grads`
+    double val = value();
+
+    update_positions();
+
+    assert(current_best >= 0.);
+    if (val < current_best) {
+        current_best = val;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 static double dot(const safe::vector<double>& left,
