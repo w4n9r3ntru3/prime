@@ -5,7 +5,7 @@ TARGETS = src/main.o \
 		  src/core/Cell.o src/core/Grid.o src/core/MasterCell.o src/core/Chip.o \
 		  src/grad/ConjugateGradient.o \
 		  src/router/router3d.o src/router/cost_function.o \
-		  src/quad/QuadUtil.o src/quad/QuadNode.o src/quad/QuadTree.o src/quad/QuadForest.o src/quad/QuadExt.o
+		  src/quad/QuadUtil.o src/quad/QuadNode.o src/quad/QuadTree.o src/quad/QuadForest.o
 
 BINARY = prime
 FLAGS =
