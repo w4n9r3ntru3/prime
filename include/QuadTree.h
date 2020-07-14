@@ -99,6 +99,8 @@ class QuadTree {
     std::pair<unsigned, unsigned> get_verti_bound(void) const;
     unsigned get_hpwl(void) const;
 
+    safe::vector<QuadNode>& get_nodes(void);
+
     // TODO: use union find to create a tree
 
    private:
