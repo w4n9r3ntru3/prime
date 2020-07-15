@@ -4,19 +4,20 @@
 
 #pragma once
 
+#include <assert.h>
+
+#include <algorithm>
 #include <iostream>
 #include <memory>
-#include <assert.h>
 #include <utility>
-#include <algorithm>
 
 #include "Cell.h"
 #include "safe.h"
 
-typedef std::pair<int, int> CoordPair; // Coordinate of points
+typedef std::pair<int, int> CoordPair;  // Coordinate of points
 
 // NetSegment: the class for storing the segments of nets from the input
-class NetSegment{
+class NetSegment {
    public:
     // constructor
     NetSegment() noexcept;
@@ -63,12 +64,14 @@ class NetSegment{
     int x_start, y_start, x_end, y_end, layer_start, layer_end;
 
     friend std::ostream& operator<<(std::ostream& out, const NetSegment& ns);
-    friend std::tuple<NetSegment, NetSegment, NetSegment>
-        merge_segments(const NetSegment& ns1, const NetSegment& ns2, const unsigned importance);
+    friend std::tuple<NetSegment, NetSegment, NetSegment> merge_segments(
+        const NetSegment& ns1,
+        const NetSegment& ns2,
+        const unsigned importance);
 };
 
 // SimpleUnionFind: a simple union find class for Kruskal's MST algorithm
-class SimpleUnionFind{
+class SimpleUnionFind {
    public:
     SimpleUnionFind() noexcept;
     SimpleUnionFind(size_t N) noexcept;
@@ -81,7 +84,8 @@ class SimpleUnionFind{
     unsigned first_not_merged();
     void clear();
     void reset(size_t N);
-    
+    void reserve(size_t N);
+
    private:
     safe::vector<unsigned> parent;
     safe::vector<unsigned> rank;
@@ -91,7 +95,10 @@ class SimpleUnionFind{
 class SimplePin {
    public:
     SimplePin() noexcept;
-    SimplePin(unsigned _idx, unsigned _row, unsigned _col, unsigned _lay) noexcept;
+    SimplePin(unsigned _idx,
+              unsigned _row,
+              unsigned _col,
+              unsigned _lay) noexcept;
 
     unsigned get_idx() const;
     unsigned get_row() const;
@@ -111,4 +118,3 @@ unsigned dir2Num(const std::string s);
 std::string num2Dir(const unsigned dir);
 unsigned opposite_dir(unsigned dir);
 unsigned opposite_dir(const std::string s);
-

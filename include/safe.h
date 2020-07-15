@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "safe_deque.h"
 #include "safe_map.h"
 #include "safe_set.h"
 #include "safe_typedefs.h"

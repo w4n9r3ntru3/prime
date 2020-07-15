@@ -16,19 +16,33 @@ inline T minimum(T a, T b) {
     return a > b ? b : a;
 }
 
+constexpr Bounds::Bounds(void) noexcept
+    : top(0), bottom(0), left(0), right(0) {}
+
 Bounds::Bounds(unsigned t, unsigned b, unsigned l, unsigned r) noexcept
     : top(t), bottom(b), left(l), right(r) {}
 
 Bounds::Bounds(Bounds&& b) noexcept
     : top(b.top), bottom(b.bottom), left(b.left), right(b.right) {}
 
-Bounds::Bounds(Bounds&& a, Bounds&& b) noexcept {
+Bounds::Bounds(const Bounds& a, const Bounds& b) noexcept {
     top = maximum(a.top, b.top);
     bottom = minimum(a.bottom, b.bottom);
     left = minimum(a.left, b.left);
-    right = minimum(a.right, b.right);
+    right = maximum(a.right, b.right);
+}
 
-    // TODO: handle more interactions between bounds
+inline bool Bounds::operator==(const Bounds& b) const {
+    return top == b.top && bottom == b.bottom && left == b.left &&
+           right == b.right;
+}
+
+inline bool Bounds::operator!=(const Bounds& b) const {
+    return !(*this == b);
+}
+
+inline bool Bounds::is_initialized(void) const {
+    return *this != Bounds();
 }
 
 inline unsigned Bounds::get_top(void) const {
@@ -62,3 +76,34 @@ inline void Bounds::set_left(unsigned val) {
 inline void Bounds::set_right(unsigned val) {
     right = val;
 }
+
+BoundsNode::BoundsNode(void) noexcept : BoundsNode(nullptr, nullptr, nullptr) {}
+
+BoundsNode::BoundsNode(std::shared_ptr<BoundsNode> left,
+                       std::shared_ptr<BoundsNode> right) noexcept
+    : BoundsNode(left, right, nullptr) {}
+
+BoundsNode::BoundsNode(std::shared_ptr<BoundsNode> left,
+                       std::shared_ptr<BoundsNode> right,
+                       std::shared_ptr<BoundsNode> parent) noexcept
+    : l(left), r(right) {
+    p = parent;
+}
+
+BoundsTree::BoundsTree(void) noexcept
+    : root(std::shared_ptr<BoundsNode>(nullptr)), sz(0) {}
+
+BoundsTree::BoundsTree(Bounds&& b) noexcept
+    : root(std::make_shared<BoundsNode>(std::move(b))), sz(1) {}
+
+BoundsTree::BoundsTree(BoundsTree&& bt) noexcept
+    : root(std::move(bt.root)), sz(bt.sz) {}
+
+BoundsTree::BoundsTree(BoundsTree&& a, BoundsTree&& b) noexcept
+    : root(std::make_shared<BoundsNode>(a, b)), sz(a.sz + b.sz + 1) {}
+
+inline size_t BoundsTree::size(void) const {
+    return sz;
+}
+
+void flatten_recursive(const BoundsTree& bt, safe::vector<Bounds>& accum) {}
