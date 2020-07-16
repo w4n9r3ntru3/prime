@@ -18,6 +18,7 @@
 #include "MyUsage.h"
 #include "QuadForest.h"
 #include "mmapstream.h"
+#include "Force.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          PARAMETERS                              ///
@@ -58,6 +59,14 @@ int main(int argc, char* argv[]) {
     chp.log();
 
     std::cout << "Finished reading input file\n";
+    usage.report(true, true);
+    usage.reset();
+
+    Force frc(chp);
+    std::cout << "HPWL before : " << frc.HPWL() << '\n';
+    frc.balance(3);
+    std::cout << "HPWL after : " << frc.HPWL() << '\n';
+    std::cout << "Finished placement\n";
     usage.report(true, true);
     usage.reset();
 

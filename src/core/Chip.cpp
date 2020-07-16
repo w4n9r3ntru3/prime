@@ -195,8 +195,10 @@ void Chip::readFile(mstream& input) {
         //     assert(buf == "Fixed" || buf == "Movable");
         // }
         _cells.push_back(Cell(MCT, i, movable, _layer, pinIdx, _pins));
-        int rIdx = row - _rowBase, cIdx = column - _columnBase;
+        unsigned rIdx = row - _rowBase, cIdx = column - _columnBase;
         Cell& cell = _cells[i];
+        assert(rIdx < _rowRange);
+        assert(cIdx < _columnRange);
         cell.setCoordinate(rIdx, cIdx);
         _coordinates[getIdx(rIdx, cIdx)].initCell(cell, _coordinates, _layers);
     }

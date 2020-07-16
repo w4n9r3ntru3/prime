@@ -8,8 +8,6 @@
 
 ***********************************************************************/
 
-#pragma once
-
 ////////////////////////////////////////////////////////////////////////
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
@@ -38,8 +36,12 @@ Force::Force(Chip& chip) : _chip(chip) {
     _movable.reserve(_chip.getMaxMove());
 
     for (unsigned i = 0; i < _chip.getNumCells(); ++i) {
+        assert(_chip.getCell(i).getRow() < _chip.getNumRows());
+        assert(_chip.getCell(i).getColumn() < _chip.getNumColumns());
         _row.push_back(_chip.getCell(i).getRow());
+        // std::cout << "row[" << i << "]" << _row[i] << '\n';
         _column.push_back(_chip.getCell(i).getColumn());
+        // std::cout << "column[" << i << "]" << _column[i] << '\n';
         _rowNew.push_back(0);
         _columnNew.push_back(0);
     }
@@ -88,7 +90,7 @@ inline void Force::balance_init() {
     }
 }
 
-inline void balance_ite(unsigned ite){
+inline void Force::balance_ite(unsigned ite){
     for (unsigned i = 0; i < ite; ++i) {
         balance_in();
     }
@@ -113,21 +115,33 @@ inline void Force::NetSum(unsigned idx) {
     }
     _rowSum[idx] = rowSum;
     _columnSum[idx] = columnSum;
+    assert(rowSum < _chip.getNumRows()*net.getNumPin());
+    assert(columnSum < _chip.getNumColumns()*net.getNumPin());
 }
 
 inline void Force::UpdateCell(unsigned idx) {
     Cell& cell = _chip.getCell(idx);
-    unsigned rowNew = 0, columnNew = 0;
+    double rowNew = 0, columnNew = 0;
+    unsigned row = _row[idx], column = _column[idx];
     for (unsigned i = 0; i < cell.getNumPins(); ++i) {
-        unsigned net = _chip.getPin(cell.getPinIdx(i)).get_net_idx();
-        rowNew += _rowSum[net];
-        columnNew += _columnSum[net];
+        int net = _chip.getPin(cell.getPinIdx(i)).get_net_idx();
+        if (net == -1) {
+            continue;
+        }
+        assert(net >= 0);
+        unsigned w = _chip.getNet(net).getNumPin() - 1;
+        rowNew += double(_rowSum[net] - row)/w;
+        columnNew += double(_columnSum[net] - column)/w;
     }
-    _rowNew[idx] = unsigned(double(rowNew)/cell.getNumPins() - _row[idx] + 0.5);
-    _columnNew[idx] = unsigned(double(columnNew)/cell.getNumPins() - _column[idx] + 0.5);
+    unsigned newRow = unsigned(rowNew/cell.getNumPins() + 0.5);
+    unsigned newColumn = unsigned(columnNew/cell.getNumPins() + 0.5);
+    assert(newRow < _chip.getNumRows());
+    assert(newColumn < _chip.getNumColumns());
+    _rowNew[idx] = newRow;
+    _columnNew[idx] = newColumn;
 }
 
-inline unsigned Force::HPWL() const {
+unsigned Force::HPWL() const {
     unsigned ret = 0;
     for (unsigned i = 0; i < _chip.getNumNets(); ++i) {
         ret += HPWL_NET(i);
@@ -137,25 +151,28 @@ inline unsigned Force::HPWL() const {
 
 inline unsigned Force::HPWL_NET(unsigned idx) const {
     GridNet& net = _chip.getNet(idx);
-    unsigned maxRow = 1, minRow = _chip.getNumRows(),
-             maxColumn = 1, minColumn = _chip.getNumColumns();
+    unsigned maxRow = 0, minRow = _chip.getNumRows(),
+             maxColumn = 0, minColumn = _chip.getNumColumns();
     for (unsigned i = 0; i < net.getNumPin(); ++i) {
         unsigned cell = _chip.getPin(net.getPinIdx(i)).get_cell_idx();
         unsigned row = _row[cell],
                  column = _column[cell];
+        assert(row < _chip.getNumRows());
+        assert(column < _chip.getNumColumns());
         if (row > maxRow) {
             maxRow = row;
         }
-        else if (row < minRow) {
+        if (row < minRow) {
             minRow = row;
         }
         if (column > maxColumn) {
             maxColumn = column;
         }
-        else if (column < minColumn) {
+        if (column < minColumn) {
             minColumn = column;
         }
     }
+    assert(maxRow >= minRow && maxColumn >= minColumn);
     return maxRow - minRow + maxColumn - minColumn;
 }
 

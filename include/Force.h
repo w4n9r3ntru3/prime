@@ -61,6 +61,7 @@ class Force {
     // private function
     void balance_init();
     void balance_ite(unsigned ite);
+    void balance_in();
     void NetSum(unsigned idx);
     void UpdateCell(unsigned idx);
 };
