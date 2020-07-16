@@ -6,7 +6,7 @@ A prototype Placement and Routing Incremental Movement Engine.
 #### Placement
 
 - Force directed
-  - Greedy method. Adding SA to improve solution quality.
+  - Greedy method. Adding SA to improve solution quality. (Currently does not work)
   
 - Gradient based
   - Analytical method. Adding step-size search to improve quality.
