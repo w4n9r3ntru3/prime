@@ -26,9 +26,8 @@
 ///                          FUNCTIONS                               ///
 ////////////////////////////////////////////////////////////////////////
 
-Cost::Cost(Chip& chip)
-    : _chip(chip){
-    unsigned dimension = chip.getNumCells()*2;
+Cost::Cost(Chip& chip) : _chip(chip) {
+    unsigned dimension = chip.getNumCells() * 2;
     _f_max_val.reserve(dimension);
     _f_max_wei.reserve(dimension);
     _f_min_val.reserve(dimension);
@@ -49,93 +48,73 @@ void Cost::evaluateFG(const safe::vector<double>& x,
         g[i] = 0;
     }
 
-    ////////////////////////////////////////////////////////////////////////
-    ///                         WIRELENGTH                               ///
-    ////////////////////////////////////////////////////////////////////////
-    #ifdef WIRELENTH_WA
-        for (unsigned i = 0; i < _f_max_wei.size(); i++) {
-            double val = x[i];
-            _f_max_wei[i] = exp(val / gamma);
-            _f_max_val[i] = _f_max_wei[i] * val;
-            _f_min_wei[i] = exp(-val / gamma);
-            _f_min_val[i] = _f_min_wei[i] * val;
-        }
-        for (unsigned i = 0; i < _chip.getNumNets(); i++)  // for every net
+////////////////////////////////////////////////////////////////////////
+///                         WIRELENGTH                               ///
+////////////////////////////////////////////////////////////////////////
+#ifdef WIRELENTH_WA
+    for (unsigned i = 0; i < _f_max_wei.size(); i++) {
+        double val = x[i];
+        _f_max_wei[i] = exp(val / gamma);
+        _f_max_val[i] = _f_max_wei[i] * val;
+        _f_min_wei[i] = exp(-val / gamma);
+        _f_min_val[i] = _f_min_wei[i] * val;
+    }
+    for (unsigned i = 0; i < _chip.getNumNets(); i++)  // for every net
+    {
+        double x_max_val = 0, x_max_wei = 0, x_min_val = 0, x_min_wei = 0,
+               y_max_val = 0, y_max_wei = 0, y_min_val = 0, y_min_wei = 0;
+        GridNet& net = _chip.getNet(i);
+        for (unsigned j = 0; j < net.getNumPin(); j++)  // for every pin, f
         {
-            double x_max_val = 0, x_max_wei = 0, x_min_val = 0, x_min_wei = 0,
-                   y_max_val = 0, y_max_wei = 0, y_min_val = 0, y_min_wei = 0;
-            GridNet& net = _chip.getNet(i);
-            for (unsigned j = 0; j < net.getNumPin(); j++)  // for every pin, f
-            {
-                const Pin& pin = _chip.getPin(net.getPinIdx(j));
-                unsigned x_idx = 2 * pin.get_cell_idx();
-                unsigned y_idx = 2 * pin.get_cell_idx() + 1;
-                x_max_val += _f_max_val[x_idx];
-                y_max_val += _f_max_val[y_idx];
-                x_max_wei += _f_max_wei[x_idx];
-                y_max_wei += _f_max_wei[y_idx];
-                x_min_val += _f_min_val[x_idx];
-                y_min_val += _f_min_val[y_idx];
-                x_min_wei += _f_min_wei[x_idx];
-                y_min_wei += _f_min_wei[y_idx];
-            }
-            double x_max = x_max_val / x_max_wei, x_min = x_min_val / x_min_wei,
-                   y_max = y_max_val / y_max_wei, y_min = y_min_val / y_min_wei;
-            for (unsigned j = 0; j < net.getNumPin(); j++)  // for every pin, g
-            {
-                const Pin& pin = _chip.getPin(net.getPinIdx(j));
-                unsigned x_idx = 2 * pin.get_cell_idx();
-                unsigned y_idx = 2 * pin.get_cell_idx() + 1;
-                // calculate x
-                g[x_idx] += (_f_max_wei[x_idx] * (1 + (x[x_idx] - x_max) / gamma) /
-                             x_max_wei)  // max term
-                            -
-                            (_f_min_wei[x_idx] * (1 - (x[x_idx] - x_min) / gamma) /
-                            x_min_wei);  // min term
-                // calculate y
-                g[y_idx] += (_f_max_wei[y_idx] * (1 + (x[y_idx] - y_max) / gamma) /
-                             y_max_wei)  // max term
-                            -
-                            (_f_min_wei[y_idx] * (1 - (x[y_idx] - y_min) / gamma) /
-                             y_min_wei);  // min term
-            }
-            wirelength += x_max - x_min + y_max - y_min;
+            const Pin& pin = _chip.getPin(net.getPinIdx(j));
+            unsigned x_idx = 2 * pin.get_cell_idx();
+            unsigned y_idx = 2 * pin.get_cell_idx() + 1;
+            x_max_val += _f_max_val[x_idx];
+            y_max_val += _f_max_val[y_idx];
+            x_max_wei += _f_max_wei[x_idx];
+            y_max_wei += _f_max_wei[y_idx];
+            x_min_val += _f_min_val[x_idx];
+            y_min_val += _f_min_val[y_idx];
+            x_min_wei += _f_min_wei[x_idx];
+            y_min_wei += _f_min_wei[y_idx];
         }
-    #endif
+        double x_max = x_max_val / x_max_wei, x_min = x_min_val / x_min_wei,
+               y_max = y_max_val / y_max_wei, y_min = y_min_val / y_min_wei;
+        for (unsigned j = 0; j < net.getNumPin(); j++)  // for every pin, g
+        {
+            const Pin& pin = _chip.getPin(net.getPinIdx(j));
+            unsigned x_idx = 2 * pin.get_cell_idx();
+            unsigned y_idx = 2 * pin.get_cell_idx() + 1;
+            // calculate x
+            g[x_idx] += (_f_max_wei[x_idx] * (1 + (x[x_idx] - x_max) / gamma) /
+                         x_max_wei)  // max term
+                        -
+                        (_f_min_wei[x_idx] * (1 - (x[x_idx] - x_min) / gamma) /
+                         x_min_wei);  // min term
+            // calculate y
+            g[y_idx] += (_f_max_wei[y_idx] * (1 + (x[y_idx] - y_max) / gamma) /
+                         y_max_wei)  // max term
+                        -
+                        (_f_min_wei[y_idx] * (1 - (x[y_idx] - y_min) / gamma) /
+                         y_min_wei);  // min term
+        }
+        wirelength += x_max - x_min + y_max - y_min;
+    }
+#endif
     ////////////////////////////////////////////////////////////////////////
     ///                           DENSITY                                ///
     ////////////////////////////////////////////////////////////////////////
 
     // assert(wirelength==0);
-    f = /*(1. - _lambda/2)*/ wirelength +
-        lambda_ /*_lambda*/ * density /*_bin_area*/;
-    // cout << wirelength << " " << density << endl;
-    // cout << "-------------------------" << endl;
-    // for(int i = 0,n = _chip.numModules(); i < n; ++i)  cout << g[2*i] << " "
-    // << g[2*i+1] << endl; cout /*<< (lambda_-_lambda) << " "*/ << wirelength
-    // << " " << _lambda << " " << density << " " << f << '\n';
+    f = wirelength + density;
 }
 
-void Cost::evaluateF(const safe::vector<double>& x,
-                     double& f) { /*cout << "Hi" << endl;*/
-    f = /*(1. - _lambda/2)*/ Wirelength(x) +
-        lambda_ * /*_lambda*/ Density(x) /*_bin_area*/;
+void Cost::evaluateF(const safe::vector<double>& x, double& f) {
+    f = Wirelength(x) + Density(x);
 }
 
 double Cost::Wirelength(const safe::vector<double>& x) {
     double ret = 0;
-/*vector<double> x; x.reserve(_dimension); for(int i=0;i<_dimension;i++)
-x.push_back(_x[i]); for(int i=0,n = _chip.numModules(); i < n;++i)//update every
-weighted value
-    {
-        unsigned x_idx = 2*i, y_idx = 2*i+1;
-        double x_val = x[x_idx], y_val = x[y_idx];
-        if(x[x_idx] < _chip.boundryLeft()) x[x_idx] = _chip.boundryLeft();
-        else if(x[x_idx] >= _chip.boundryRight()) x[x_idx] =
-_chip.boundryRight(); if(x[y_idx] < _chip.boundryBottom()) x[y_idx] =
-_chip.boundryBottom(); else if(x[y_idx] >= _chip.boundryTop()) x[y_idx] =
-_chip.boundryTop();
-    }*/
 #ifdef WIRELENTH_WA
     for (unsigned i = 0; i < _f_max_wei.size(); i++) {
         double val = x[i];
@@ -173,6 +152,5 @@ _chip.boundryTop();
 
 double Cost::Density(const safe::vector<double>& x) {
     double ret = 0;
-    // cout << ret << endl;
     return ret;
 }
