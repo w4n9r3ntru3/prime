@@ -27,9 +27,9 @@
 ///                          PARAMETERS                              ///
 ////////////////////////////////////////////////////////////////////////
 
-#define iter 100
+// #define iter 100
 #define StepSize    1000
-// #define gamma       300
+#define gamma       300
 #define lambda_ 3.
 #define WIRELENTH_WA
 
@@ -49,13 +49,6 @@ class Cost {
 
    private:
     Chip& _chip;
-    double _gamma;
-    double _Mb;
-    double _lambda;
-    double _lambda_step;
-    double _bin_width;
-    double _bin_height;
-    double _bin_area;
     safe::vector<double> _f_max_val, _f_min_val, _f_max_wei,
         _f_min_wei;  // buffer for calculating f; odd for y, even for x
     double Wirelength(const safe::vector<double>& x);
