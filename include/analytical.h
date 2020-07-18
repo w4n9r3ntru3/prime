@@ -45,7 +45,6 @@ class Cost {
 
     void evaluateFG(const safe::vector<double>& x, double& f, safe::vector<double>& g);
     void evaluateF(const safe::vector<double>& x, double& f);
-    unsigned dimension();
 
    private:
     Chip& _chip;
