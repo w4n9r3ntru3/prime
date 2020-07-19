@@ -24,9 +24,9 @@ class map {
     typedef typename std::map<K, V>::const_iterator const_iterator;
 
     // constructor
-    explicit map(void) noexcept : field(std::map<K, V>()) {}
-    explicit map(const map& hashmap) noexcept : field(hashmap.field) {}
-    explicit map(map&& hashmap) noexcept : field(std::move(hashmap.field)) {}
+    map(void) noexcept : field(std::map<K, V>()) {}
+    map(const map& hashmap) noexcept : field(hashmap.field) {}
+    map(map&& hashmap) noexcept : field(std::move(hashmap.field)) {}
 
     // operator=
     map& operator=(const map& hashmap) noexcept {

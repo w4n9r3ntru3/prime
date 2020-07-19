@@ -24,10 +24,10 @@ class unordered_map {
     typedef typename std::unordered_map<K, V>::const_iterator const_iterator;
 
     // constructor
-    explicit unordered_map(void) noexcept : field(std::unordered_map<K, V>()) {}
-    explicit unordered_map(const unordered_map& hashmap) noexcept
+    unordered_map(void) noexcept : field(std::unordered_map<K, V>()) {}
+    unordered_map(const unordered_map& hashmap) noexcept
         : field(hashmap.field) {}
-    explicit unordered_map(unordered_map&& hashmap) noexcept
+    unordered_map(unordered_map&& hashmap) noexcept
         : field(std::move(hashmap.field)) {}
 
     // operator=

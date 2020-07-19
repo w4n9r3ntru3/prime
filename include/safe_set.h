@@ -24,9 +24,9 @@ class set {
     typedef typename std::set<T>::iterator iterator;
 
     // constructor
-    explicit set(void) noexcept : field(std::set<T>()) {}
-    explicit set(const set& set) noexcept : field(set.field) {}
-    explicit set(set&& set) noexcept : field(std::move(set.field)) {}
+    set(void) noexcept : field(std::set<T>()) {}
+    set(const set& set) noexcept : field(set.field) {}
+    set(set&& set) noexcept : field(std::move(set.field)) {}
 
     // operator=
     set& operator=(const set& set) noexcept {

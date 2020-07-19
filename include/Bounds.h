@@ -47,19 +47,19 @@ class Bounds {
 
 class BoundsNode {
    public:
-    explicit BoundsNode(void) noexcept;
-    explicit BoundsNode(Bounds&& b) noexcept;
-    explicit BoundsNode(Bounds&& b,
-                        std::shared_ptr<BoundsNode> left,
-                        std::shared_ptr<BoundsNode> right) noexcept;
+    BoundsNode(void) noexcept;
+    BoundsNode(Bounds&& b) noexcept;
+    BoundsNode(Bounds&& b,
+               std::shared_ptr<BoundsNode> left,
+               std::shared_ptr<BoundsNode> right) noexcept;
     // ! primary constructor
-    explicit BoundsNode(std::shared_ptr<BoundsNode> left,
-                        std::shared_ptr<BoundsNode> right) noexcept;
-    explicit BoundsNode(Bounds&& b,
-                        std::shared_ptr<BoundsNode> left,
-                        std::shared_ptr<BoundsNode> right,
-                        std::shared_ptr<BoundsNode> parent) noexcept;
-    explicit BoundsNode(BoundsNode&& other) noexcept;
+    BoundsNode(std::shared_ptr<BoundsNode> left,
+               std::shared_ptr<BoundsNode> right) noexcept;
+    BoundsNode(Bounds&& b,
+               std::shared_ptr<BoundsNode> left,
+               std::shared_ptr<BoundsNode> right,
+               std::shared_ptr<BoundsNode> parent) noexcept;
+    BoundsNode(BoundsNode&& other) noexcept;
 
     void left(std::shared_ptr<BoundsNode> lft);
     void right(std::shared_ptr<BoundsNode> rgt);
@@ -84,11 +84,11 @@ class BoundsNode {
 
 class BoundsTree {
    public:
-    explicit BoundsTree(void) noexcept;
-    explicit BoundsTree(Bounds&& b) noexcept;
-    explicit BoundsTree(BoundsNode&& b) noexcept;
-    explicit BoundsTree(BoundsTree&& bt) noexcept;
-    explicit BoundsTree(BoundsTree&& a, BoundsTree&& b) noexcept;
+    BoundsTree(void) noexcept;
+    BoundsTree(Bounds&& b) noexcept;
+    BoundsTree(BoundsNode&& b) noexcept;
+    BoundsTree(BoundsTree&& bt) noexcept;
+    BoundsTree(BoundsTree&& a, BoundsTree&& b) noexcept;
 
     size_t size(void) const;
 

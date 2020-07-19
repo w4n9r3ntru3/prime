@@ -26,11 +26,11 @@ class vector {
     typedef typename std::vector<T>::const_iterator const_iterator;
 
     // constructor
-    explicit vector(void) noexcept : field(std::vector<T>()) {}
-    explicit vector(const vector& vec) noexcept : field(vec.field) {}
-    explicit vector(vector&& vec) noexcept : field(std::move(vec.field)) {}
-    explicit vector(size_t size) noexcept : field(std::vector<T>(size)) {}
-    explicit vector(size_t size, const T& value) noexcept
+    vector(void) noexcept : field(std::vector<T>()) {}
+    vector(const vector& vec) noexcept : field(vec.field) {}
+    vector(vector&& vec) noexcept : field(std::move(vec.field)) {}
+    vector(size_t size) noexcept : field(std::vector<T>(size)) {}
+    vector(size_t size, const T& value) noexcept
         : field(std::vector<T>(size, value)) {}
 
     // operator=

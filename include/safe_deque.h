@@ -26,11 +26,11 @@ class deque {
     typedef typename std::deque<T>::const_iterator const_iterator;
 
     // constructor
-    explicit deque(void) noexcept : field(std::deque<T>()) {}
-    explicit deque(const deque& vec) noexcept : field(vec.field) {}
-    explicit deque(deque&& vec) noexcept : field(std::move(vec.field)) {}
-    explicit deque(size_t size) noexcept : field(std::deque<T>(size)) {}
-    explicit deque(size_t size, const T& value) noexcept
+    deque(void) noexcept : field(std::deque<T>()) {}
+    deque(const deque& vec) noexcept : field(vec.field) {}
+    deque(deque&& vec) noexcept : field(std::move(vec.field)) {}
+    deque(size_t size) noexcept : field(std::deque<T>(size)) {}
+    deque(size_t size, const T& value) noexcept
         : field(std::deque<T>(size, value)) {}
 
     // operator=

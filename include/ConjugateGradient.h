@@ -15,10 +15,10 @@ enum class GradType { Plain };
 class Scheduler {
    public:
     // constructor
-    explicit Scheduler(void) noexcept = delete;
-    explicit Scheduler(double ini) noexcept;
-    explicit Scheduler(const Scheduler& sch) noexcept = delete;
-    explicit Scheduler(Scheduler&& sch) noexcept;
+    Scheduler(void) noexcept = delete;
+    Scheduler(double ini) noexcept;
+    Scheduler(const Scheduler& sch) noexcept = delete;
+    Scheduler(Scheduler&& sch) noexcept;
 
     // operator=
     Scheduler& operator=(const Scheduler& sch) noexcept = delete;
@@ -35,17 +35,17 @@ class Scheduler {
 class ConjGrad {
    public:
     // constructor
-    explicit ConjGrad(void) noexcept = delete;
-    explicit ConjGrad(Chip& chip,
-                      QuadForest& qf,
-                      GradType gt,
-                      unsigned times,
-                      Scheduler&& sch) noexcept;
-    explicit ConjGrad(Chip& chip,
-                      QuadForest& qf,
-                      GradType gt,
-                      unsigned times,
-                      double init) noexcept;
+    ConjGrad(void) noexcept = delete;
+    ConjGrad(Chip& chip,
+             QuadForest& qf,
+             GradType gt,
+             unsigned times,
+             Scheduler&& sch) noexcept;
+    ConjGrad(Chip& chip,
+             QuadForest& qf,
+             GradType gt,
+             unsigned times,
+             double init) noexcept;
 
     // operator=
     ConjGrad& operator=(const ConjGrad& cg) noexcept;
