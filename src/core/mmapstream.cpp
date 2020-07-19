@@ -8,22 +8,20 @@
 
 ***********************************************************************/
 
-#include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include <assert.h>
 
 #include "mmapstream.h"
 
-mstream::mstream(const char* filepath)
-{
+mstream::mstream(const char* filepath) {
     int fd = open(filepath, O_RDONLY);
 
-    if(fd == -1)
-    {
+    if (fd == -1) {
         _is_opened = false;
         return;
     }
@@ -33,8 +31,7 @@ mstream::mstream(const char* filepath)
     _max_size = buf.st_size;
     _content = (char*)mmap(NULL, buf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 
-    if(_content == MAP_FAILED)
-    {
+    if (_content == MAP_FAILED) {
         _is_opened = false;
         return;
     }
@@ -43,76 +40,87 @@ mstream::mstream(const char* filepath)
     _current = 0;
 }
 
-mstream& mstream::operator>>(std::string &dest)
-{
+mstream& mstream::operator>>(std::string& dest) {
     assert(_current < _max_size);
-    while((_content[_current] == '\n' || _content[_current] == ' ') && _current < _max_size) _current++;
+    while ((_content[_current] == '\n' || _content[_current] == ' ') &&
+           _current < _max_size) {
+        _current++;
+    }
     assert(_current < _max_size);
     int base = _current;
     int length = 0;
-    while((_content[_current] != '\n' && _content[_current] != ' ') && _current < _max_size) _current++, length++;
+    while ((_content[_current] != '\n' && _content[_current] != ' ') &&
+           _current < _max_size) {
+        _current++, length++;
+    }
     assert(_current < _max_size);
 
     dest.clear();
-    dest.reserve(length+1);
-    for(int i = 0; i < length; i++)
-    {
-        dest.push_back(_content[base+i]);
+    dest.reserve(length + 1);
+    for (int i = 0; i < length; i++) {
+        dest.push_back(_content[base + i]);
     }
 
     return *this;
 }
 
-mstream& mstream::operator>>(unsigned &dest)
-{
+mstream& mstream::operator>>(unsigned& dest) {
     assert(_current < _max_size);
-    while((_content[_current] == '\n' || _content[_current] == ' ') && _current < _max_size) _current++;
+    while ((_content[_current] == '\n' || _content[_current] == ' ') &&
+           _current < _max_size) {
+        _current++;
+    }
     assert(_current < _max_size);
     int base = _current;
     int length = 0;
-    while((_content[_current] != '\n' && _content[_current] != ' ') && _current < _max_size) _current++, length++;
+    while ((_content[_current] != '\n' && _content[_current] != ' ') &&
+           _current < _max_size) {
+        _current++;
+        length++;
+    }
     assert(_current < _max_size);
 
     dest = 0;
-    for(int i = 0; i < length; i++)
-    {
+    for (int i = 0; i < length; i++) {
         dest *= 10;
-        assert(_content[base+i] >= '0' && _content[base+i] <= '9');
-        dest += _content[base+i] - '0';
+        assert(_content[base + i] >= '0' && _content[base + i] <= '9');
+        dest += _content[base + i] - '0';
     }
 
     return *this;
 }
 
-mstream& mstream::operator>>(int &dest)
-{
+mstream& mstream::operator>>(int& dest) {
     assert(_current < _max_size);
-    while((_content[_current] == '\n' || _content[_current] == ' ') && _current < _max_size) _current++;
+    while ((_content[_current] == '\n' || _content[_current] == ' ') &&
+           _current < _max_size) {
+        _current++;
+    }
     assert(_current < _max_size);
     int base = _current;
     int length = 0;
-    while((_content[_current] != '\n' && _content[_current] != ' ') && _current < _max_size) _current++, length++;
+    while ((_content[_current] != '\n' && _content[_current] != ' ') &&
+           _current < _max_size) {
+        _current++;
+        length++;
+    }
     assert(_current < _max_size);
 
     dest = 0;
     int sign = 1;
-    if(_content[base] == '-')
-    {
+    if (_content[base] == '-') {
         sign = -1;
         base++;
         length--;
-    }
-    else if(_content[base] == '+')
-    {
+    } else if (_content[base] == '+') {
         base++;
         length--;
     }
 
-    for(int i = 0; i < length; i++)
-    {
+    for (int i = 0; i < length; i++) {
         dest *= 10;
-        assert(_content[base+i] >= '0' && _content[base+i] <= '9');
-        dest += _content[base+i] - '0';
+        assert(_content[base + i] >= '0' && _content[base + i] <= '9');
+        dest += _content[base + i] - '0';
     }
 
     dest *= sign;
@@ -120,7 +128,6 @@ mstream& mstream::operator>>(int &dest)
     return *this;
 }
 
-bool mstream::is_open() const
-{
+bool mstream::is_open() const {
     return _is_opened;
 }

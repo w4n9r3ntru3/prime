@@ -11,8 +11,7 @@
 
 // TODO: finish tree implementation
 
-using EndPoints =
-    std::pair<std::pair<unsigned, unsigned>, std::pair<unsigned, unsigned>>;
+using EndPoints = std::pair<std::pair<float, float>, std::pair<float, float>>;
 
 enum class Corner { TL, TR, BL, BR, None };
 
@@ -48,6 +47,9 @@ class Bounds {
     void right(unsigned val);
 
     bool in_box(unsigned x, unsigned y) const;
+
+    float centx(void) const;
+    float centy(void) const;
 
     std::pair<Corner, Corner> overlap_with(const Bounds& other) const;
 
