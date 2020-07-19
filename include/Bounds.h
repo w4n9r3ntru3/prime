@@ -73,20 +73,20 @@ class BoundsNode {
     BoundsNode(Bounds&& b,
                std::shared_ptr<BoundsNode> left,
                std::shared_ptr<BoundsNode> right,
-               std::shared_ptr<BoundsNode> parent) noexcept;
+               std::weak_ptr<BoundsNode> parent) noexcept;
     BoundsNode(BoundsNode&& other) noexcept;
 
-    void left(std::shared_ptr<BoundsNode> lft);
-    void right(std::shared_ptr<BoundsNode> rgt);
-    void parent(std::shared_ptr<BoundsNode> par);
+    void left(std::weak_ptr<BoundsNode> lft);
+    void right(std::weak_ptr<BoundsNode> rgt);
+    void parent(std::weak_ptr<BoundsNode> par);
 
-    std::shared_ptr<BoundsNode> left(void);
-    const std::shared_ptr<BoundsNode> left(void) const;
-    std::shared_ptr<BoundsNode> right(void);
-    const std::shared_ptr<BoundsNode> right(void) const;
+    std::weak_ptr<BoundsNode> left(void);
+    const std::weak_ptr<BoundsNode> left(void) const;
+    std::weak_ptr<BoundsNode> right(void);
+    const std::weak_ptr<BoundsNode> right(void) const;
 
-    std::shared_ptr<BoundsNode> parent(void);
-    const std::shared_ptr<BoundsNode> parent(void) const;
+    std::weak_ptr<BoundsNode> parent(void);
+    const std::weak_ptr<BoundsNode> parent(void) const;
 
     Bounds data(void) const;
     void data(Bounds b);
@@ -96,7 +96,7 @@ class BoundsNode {
    private:
     Bounds d;
     std::shared_ptr<BoundsNode> l, r;
-    std::shared_ptr<BoundsNode> p;
+    std::weak_ptr<BoundsNode> p;
 };
 
 class BoundsTree {

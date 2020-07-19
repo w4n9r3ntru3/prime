@@ -134,25 +134,23 @@ float Bounds::centy(void) const {
     return (float)(t + b) / 2.f;
 }
 
-BoundsNode::BoundsNode(void) noexcept
-    : BoundsNode(Bounds(), nullptr, nullptr, nullptr) {}
+BoundsNode::BoundsNode(void) noexcept : d(Bounds()) {}
 
-BoundsNode::BoundsNode(Bounds&& b) noexcept
-    : BoundsNode(std::move(b), nullptr, nullptr, nullptr) {}
+BoundsNode::BoundsNode(Bounds&& b) noexcept : d(std::move(b)) {}
 
 BoundsNode::BoundsNode(Bounds&& b,
                        std::shared_ptr<BoundsNode> left,
                        std::shared_ptr<BoundsNode> right) noexcept
-    : BoundsNode(std::move(b), left, right, nullptr) {}
+    : d(std::move(b)), l(left), r(right) {}
 
 BoundsNode::BoundsNode(std::shared_ptr<BoundsNode> left,
                        std::shared_ptr<BoundsNode> right) noexcept
-    : BoundsNode(Bounds(left->data(), right->data()), left, right, nullptr) {}
+    : d(Bounds(left->data(), right->data())), l(left), r(right) {}
 
 BoundsNode::BoundsNode(Bounds&& b,
                        std::shared_ptr<BoundsNode> left,
                        std::shared_ptr<BoundsNode> right,
-                       std::shared_ptr<BoundsNode> parent) noexcept
+                       std::weak_ptr<BoundsNode> parent) noexcept
     : d(std::move(b)), l(left), r(right), p(parent) {}
 
 BoundsNode::BoundsNode(BoundsNode&& other) noexcept
@@ -161,40 +159,40 @@ BoundsNode::BoundsNode(BoundsNode&& other) noexcept
       r(std::move(other.r)),
       p(std::move(other.p)) {}
 
-std::shared_ptr<BoundsNode> BoundsNode::left(void) {
+std::weak_ptr<BoundsNode> BoundsNode::left(void) {
     return l;
 }
 
-const std::shared_ptr<BoundsNode> BoundsNode::left(void) const {
+const std::weak_ptr<BoundsNode> BoundsNode::left(void) const {
     return l;
 }
 
-void BoundsNode::left(std::shared_ptr<BoundsNode> lft) {
-    l = lft;
+void BoundsNode::left(std::weak_ptr<BoundsNode> lft) {
+    l = lft.lock();
 }
 
-std::shared_ptr<BoundsNode> BoundsNode::right(void) {
-    return l;
+std::weak_ptr<BoundsNode> BoundsNode::right(void) {
+    return r;
 }
 
-const std::shared_ptr<BoundsNode> BoundsNode::right(void) const {
-    return l;
+const std::weak_ptr<BoundsNode> BoundsNode::right(void) const {
+    return r;
 }
 
-void BoundsNode::right(std::shared_ptr<BoundsNode> lft) {
-    l = lft;
+void BoundsNode::right(std::weak_ptr<BoundsNode> rgt) {
+    r = rgt.lock();
 }
 
-std::shared_ptr<BoundsNode> BoundsNode::parent(void) {
-    return l;
+std::weak_ptr<BoundsNode> BoundsNode::parent(void) {
+    return p;
 }
 
-const std::shared_ptr<BoundsNode> BoundsNode::parent(void) const {
-    return l;
+const std::weak_ptr<BoundsNode> BoundsNode::parent(void) const {
+    return p;
 }
 
-void BoundsNode::parent(std::shared_ptr<BoundsNode> lft) {
-    l = lft;
+void BoundsNode::parent(std::weak_ptr<BoundsNode> par) {
+    p = par;
 }
 
 Bounds BoundsNode::data(void) const {
@@ -249,7 +247,8 @@ static void recursive_bounds_check(std::shared_ptr<BoundsNode> node) {
         return;
     }
 
-    std::shared_ptr<BoundsNode> l = node->left(), r = node->right();
+    std::shared_ptr<BoundsNode> l = node->left().lock(),
+                                r = node->right().lock();
 
     if (l == nullptr && r == nullptr) {
     } else if (l == nullptr) {
