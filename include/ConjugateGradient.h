@@ -17,7 +17,7 @@ class Scheduler {
    public:
     // constructor
     Scheduler(void) noexcept = delete;
-    Scheduler(double ini) noexcept;
+    Scheduler(double ini, unsigned t) noexcept;
     Scheduler(const Scheduler& sch) noexcept = delete;
     Scheduler(Scheduler&& sch) noexcept;
 

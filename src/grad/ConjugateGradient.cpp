@@ -10,14 +10,14 @@
 #include <algorithm>
 #include <memory>
 
-Scheduler::Scheduler(double i) noexcept : init(i), times(0) {}
+Scheduler::Scheduler(double i, unsigned t) noexcept : init(i), times(t) {}
 
 Scheduler::Scheduler(Scheduler&& sch) noexcept
     : init(sch.init), times(sch.times) {}
 
 double Scheduler::next(void) {
     ++times;
-    return init / (double)times;
+    return init;// / (double)times;
 }
 
 // ! reference:
@@ -61,7 +61,7 @@ ConjGrad::ConjGrad(Chip& chip,
       current_best(-1.),
       gt(gt),
       best_step(0.),
-      sch(Scheduler(init)), 
+      sch(Scheduler(init,times)), 
       cst(chip) {
     size_t size = dim();
     grads = safe::vector<double>(size, 0.);
