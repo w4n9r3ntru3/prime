@@ -63,6 +63,8 @@ class ConjGrad {
 
     void apply(void);
 
+    unsigned HPWL();
+
     template <bool backward>
     double cg(void) {
         if (!backward) {

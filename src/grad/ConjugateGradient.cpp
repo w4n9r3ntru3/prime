@@ -99,6 +99,10 @@ void ConjGrad::apply(void) {
     assert(iter == pos.end());
 }
 
+unsigned ConjGrad::HPWL() {
+    return cst.HPWL(pos);
+}
+
 void ConjGrad::mv(void) {
     prev_grads = std::move(grads);
     grads = safe::vector<double>(dim(), 0.);

@@ -77,9 +77,13 @@ int main(int argc, char* argv[]) {
 
     // TODO: tune variable
     constexpr double init = 1.;
-    constexpr unsigned times = 10;
-
+    constexpr unsigned times = 2;
     ConjGrad conj_grad(chp, qf, GradType::Plain, times, init);
+    std::cout << "HPWL before : " << conj_grad.HPWL() << '\n';
+    conj_grad.all();
+    std::cout << "HPWL after : " << conj_grad.HPWL() << '\n';
+    usage.report(true, true);
+    usage.reset();
 
     qf.return_segments(chp);
     chp.output(outputfile);
