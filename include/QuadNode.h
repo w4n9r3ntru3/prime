@@ -28,7 +28,8 @@ class QuadNode {
     QuadNode& operator=(const QuadNode& tn) noexcept;
     QuadNode& operator=(QuadNode&& tn) noexcept;
 
-    bool is_root()    const;
+    bool is_pin()     const;
+    // bool is_root()    const;
     bool has_self()   const;
     // bool has_parent() const;
     bool has_up()     const;
@@ -79,6 +80,7 @@ class QuadNode {
     void reset();
     void reset(const QuadNode& qn);
 
+    void set_pin(int idx);
     void update_flag(unsigned _flag);
 
     void move_vertical(int _x);
@@ -91,6 +93,7 @@ class QuadNode {
     int self, up, down, left, right;
     int coord_x, coord_y;
     int lay_s, lay_u, lay_d, lay_l, lay_r;
+    int pin_idx;
     unsigned flag;
 
     // friends
