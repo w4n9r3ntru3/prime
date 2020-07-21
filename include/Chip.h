@@ -81,6 +81,7 @@ class Chip {
     // modifier
     bool moveCellLegal(Cell& cell, unsigned origin, unsigned target);
     void moveCell(Cell& cell, unsigned origin, unsigned target);
+    void moveCelltry(Cell& cell, unsigned origin, unsigned target);
     void revert(Cell& cell, unsigned origin, unsigned target);
     void decNumMoved();  // trigger it if you want to move a cell back to its
                          // original position

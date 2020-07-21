@@ -346,6 +346,15 @@ void Chip::moveCell(Cell& cell, unsigned origin, unsigned target) {
     return;
 }
 
+void Chip::moveCelltry(Cell& cell, unsigned origin, unsigned target) {
+    assert(cell.movable(limited()));
+    Coordinate& c_target = _coordinates[target];
+    Coordinate& c_origin = _coordinates[origin];
+    c_origin.rmCell(cell, _coordinates, _layers, _pins);
+    c_target.addCell(cell, _coordinates, _layers, _pins);
+    return;
+}
+
 void Chip::revert(Cell& cell, unsigned origin, unsigned target)
 {
     // TODO
