@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
 
     // TODO: tune variable
     constexpr double init = 2.;
-    constexpr unsigned times = 5;
+    constexpr unsigned times = 1; // default
     ConjGrad conj_grad(chp, qf, GradType::Plain, times, init);
     std::cout << "HPWL before : " << conj_grad.HPWL() << '\n';
     conj_grad.all();

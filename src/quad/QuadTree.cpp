@@ -50,16 +50,18 @@ enum class Direction { Up, Down, Left, Right };
 // TODO: update cap within the same cell
 template <bool ripup>
 static inline void modify_self_capacity(Chip& chip, QuadNode& qn) {
-    int min_lay = -1, max_lay = -1;
+    // int min_lay = -1, max_lay = -1;
 
-    assert(max_lay >= 0);
-    assert(min_lay >= 0);
-    int span = max_lay - min_lay;
+    // assert(max_lay >= 0);
+    // assert(min_lay >= 0);
+    // int span = max_lay - min_lay;
 
     // TODO: update the nets
-    int positions[4] = {};
+    // FIXME: ripup pins only or the entire cell??
+    // int positions[4] = {};
     Grid& grid = chip.getGrid(qn.get_layer_self(), qn.get_coord_x(), qn.get_coord_y());
-
+    if (ripup) grid.incSupply(1);
+    else grid.decSupply(1);
 }
 
 // TODO: update cap in between cells
@@ -73,27 +75,39 @@ static inline void modify_edge_capacity(Chip& chip,
     // TODO: in the for loop update the cost
     switch (dir) {
         case Direction::Up:
-            other = qt.get_nodes()[qn.get_up()];
-            dist = other.get_coord_y() - qn.get_coord_y();
+            other = qt.get_node(qn.get_up()); // upper node has smaller x coordinate
+            dist = qn.get_coord_x() - other.get_coord_x();
             for (int i = 0; i < dist; ++i) {
+                Grid& grid = chip.getGrid(qn.get_layer_up(), qn.get_coord_x() + i, qn.get_coord_y());
+                if (ripup) grid.incSupply(1);
+                else grid.decSupply(1);
             }
             break;
         case Direction::Down:
-            other = qt.get_nodes()[qn.get_down()];
-            dist = qn.get_coord_y() - other.get_coord_y();
-            for (int i = 0; i < dist; ++i) {
+            other = qt.get_node(qn.get_down());
+            dist = other.get_coord_x() - qn.get_coord_x();
+            for (int i = 0; i <= dist; ++i) {
+                Grid& grid = chip.getGrid(qn.get_layer_down(), qn.get_coord_x() + i, qn.get_coord_y());
+                if (ripup) grid.incSupply(1);
+                else grid.decSupply(1);
             }
             break;
         case Direction::Left:
-            other = qt.get_nodes()[qn.get_left()];
-            dist = qn.get_coord_x() - other.get_coord_x();
-            for (int i = 0; i < dist; ++i) {
+            other = qt.get_node(qn.get_left());
+            dist = qn.get_coord_y() - other.get_coord_y();
+            for (int i = 0; i <= dist; ++i) {
+                Grid& grid = chip.getGrid(qn.get_layer_left(), qn.get_coord_x() + i, qn.get_coord_y());
+                if (ripup) grid.incSupply(1);
+                else grid.decSupply(1);
             }
             break;
         case Direction::Right:
-            other = qt.get_nodes()[qn.get_right()];
-            dist = other.get_coord_x() - qn.get_coord_x();
-            for (int i = 0; i < dist; ++i) {
+            other = qt.get_node(qn.get_right());
+            dist = other.get_coord_y() - qn.get_coord_y();
+            for (int i = 0; i <= dist; ++i) {
+                Grid& grid = chip.getGrid(qn.get_layer_right(), qn.get_coord_x() + i, qn.get_coord_y());
+                if (ripup) grid.incSupply(1);
+                else grid.decSupply(1);
             }
             break;
     }
@@ -441,14 +455,6 @@ void QuadTree::segment_to_tree() {
                         segments[j].get_layer() ==
                             VertexLayer[Coord2Vertices[segments[j].get_end()]])
                         ++importance_j;
-                    // if(HasVia.contains(segments[i].get_start()))
-                    // ++importance_i;
-                    // if(HasVia.contains(segments[i].get_end()))
-                    // ++importance_i;
-                    // if(HasVia.contains(segments[j].get_start()))
-                    // ++importance_j;
-                    // if(HasVia.contains(segments[j].get_end()))
-                    // ++importance_j;
                     std::tuple<NetSegment, NetSegment, NetSegment>
                         segment_tuple =
                             merge_segments(segments[i], segments[j],
@@ -658,11 +664,16 @@ void QuadTree::segment_to_tree() {
         }
     }
     // std::cout << new_idx << " " << tree_size << std::endl;
-    assert(new_idx == tree_size);
+    // assert(new_idx == tree_size);
 
     // Construct quad nodes
     for (size_t i = 0; i < new_idx; ++i) {
         nodes.push_back(QuadNode(i));
+    }
+    for (size_t i = 0; i < pNum; ++i) {
+        if (vertex_rank[i] > -EPS) {
+            nodes[new_idx_mapping[i]].set_pin(pins[i].get_idx());
+        }
     }
     // Construct quad tree
     dfs_construct_tree(SimpleTree, Vertices, VertexLayer, new_idx_mapping,
@@ -826,7 +837,7 @@ void QuadTree::tree_to_segment() {
     // TODO: vias may be piecewise!!!!!
     safe::vector<unsigned> vias[nodes.size()];
     for (size_t i = 0; i < nodes.size(); ++i) {
-        vias[i] = safe::vector<unsigned>(_maxLayers + 1);
+        vias[i] = safe::vector<unsigned>(_maxLayers + 1, 0);
     }
     // for (size_t i = 0; i < nodes.size(); ++i) {
     //     vias.push_back(LayerInterval(nodes[i].get_layer_self(), nodes[i].get_layer_self()));
@@ -851,30 +862,6 @@ void QuadTree::tree_to_segment() {
             //     nodes[pinIdx2Node[idx]].get_layer_self(), pins[i].get_layer()));
         }
     }
-    for (size_t i = 0; i < nodes.size(); ++i) {
-        for (size_t j = 0; j < vias[i].size(); ++j) {
-            if (vias[i][j] == 0) continue;
-            size_t begin = j;
-            while (j < vias[i].size() && vias[i][j] == 1) {
-                ++j;
-            }
-            --j;
-            segments.push_back(NetSegment(
-                nodes[i].get_coord_x(),
-                nodes[i].get_coord_y(),
-                nodes[i].get_coord_x(),
-                nodes[i].get_coord_y(),
-                begin, j));
-        }
-        // if (vias[i].first != vias[i].second) {
-        //     segments.push_back(NetSegment(
-        //         nodes[i].get_coord_x(),
-        //         nodes[i].get_coord_y(),
-        //         nodes[i].get_coord_x(),
-        //         nodes[i].get_coord_y(),
-        //         vias[i].first, vias[i].second));
-        // }
-    }
     if (segments.size() == 0) {
         // TODO: choose the pin closest to the minLayer
         size_t closest = 0, closest_idx = 0;
@@ -891,12 +878,28 @@ void QuadTree::tree_to_segment() {
             }
         }
         if (min_dist > 0 && min_dist < DINF) {
-            segments.push_back(
-                NetSegment(nodes[pinIdx2Node[closest]].get_coord_x(),
-                           nodes[pinIdx2Node[closest]].get_coord_y(),
-                           nodes[pinIdx2Node[closest]].get_coord_x(),
-                           nodes[pinIdx2Node[closest]].get_coord_y(),
-                           pins[closest_idx].get_layer(), _minLayer));
+            add_via_segment(vias[pinIdx2Node[closest]], pins[closest_idx].get_layer(), _minLayer);
+            // segments.push_back(
+            //     NetSegment(nodes[pinIdx2Node[closest]].get_coord_x(),
+            //                nodes[pinIdx2Node[closest]].get_coord_y(),
+            //                nodes[pinIdx2Node[closest]].get_coord_x(),
+            //                nodes[pinIdx2Node[closest]].get_coord_y(),
+            //                pins[closest_idx].get_layer(), _minLayer));
+        }
+    }
+    for (size_t i = 0; i < nodes.size(); ++i) {
+        for (size_t j = 0; j < vias[i].size(); ++j) {
+            if (vias[i][j] == 0) continue;
+            size_t begin = j;
+            while (j < vias[i].size() && vias[i][j] == 1) {
+                ++j;
+            }
+            segments.push_back(NetSegment(
+                nodes[i].get_coord_x(),
+                nodes[i].get_coord_y(),
+                nodes[i].get_coord_x(),
+                nodes[i].get_coord_y(),
+                begin, j - 1));
         }
     }
 }
@@ -966,6 +969,7 @@ inline void QuadTree::add_via_segment(
         safe::vector<unsigned>& via_now,
         size_t bound_1,
         size_t bound_2) {
+    assert(bound_1 != bound_2);
     size_t lowerbound = MIN(bound_1, bound_2);
     size_t upperbound = MAX(bound_1, bound_2);
     for (size_t i = lowerbound; i <= upperbound; ++i) {

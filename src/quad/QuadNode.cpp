@@ -9,11 +9,11 @@
 QuadNode::QuadNode() noexcept 
     : self(-1), up(-1), down(-1), left(-1), right(-1), 
       coord_x(-1), coord_y(-1),
-      lay_s(-1), lay_u(-1), lay_d(-1), lay_l(-1), lay_r(-1) {};
+      lay_s(-1), lay_u(-1), lay_d(-1), lay_l(-1), lay_r(-1), pin_idx(-1) {};
 
 QuadNode::QuadNode(int idx) noexcept 
     : self(idx), up(-1), down(-1), left(-1), right(-1), 
-      coord_x(-1), coord_y(-1) {};
+      coord_x(-1), coord_y(-1), pin_idx(-1) {};
 
 QuadNode::QuadNode(int _s,
                    int _u, int _d,
@@ -24,7 +24,7 @@ QuadNode::QuadNode(int _s,
                    int _ll, int _lr) noexcept
     : self(_s), up(_u), down(_d), left(_l), right(_r), 
       coord_x(_x), coord_y(_y), 
-      lay_s(_ls), lay_u(_lu), lay_d(_ld), lay_l(_ll), lay_r(_lr) {};
+      lay_s(_ls), lay_u(_lu), lay_d(_ld), lay_l(_ll), lay_r(_lr), pin_idx(-1) {};
 
 QuadNode::QuadNode(const QuadNode& qn) noexcept {
     reset(qn);
@@ -50,6 +50,7 @@ QuadNode::~QuadNode() noexcept {
     reset();
 }
 
+bool QuadNode::is_pin() const { return pin_idx >= 0; }
 // bool QuadNode::is_root()    const { return parent == self; }
 bool QuadNode::has_self()   const { return self   >= 0; }
 // bool QuadNode::has_parent() const { return parent >= 0 && !is_root(); }
@@ -101,7 +102,7 @@ void QuadNode::reset_coord(const CoordPair& c) { coord_x = c.first; coord_y = c.
 void QuadNode::reset_coord(int c_x, int c_y) { coord_x = c_x; coord_y = c_y; }
 
 void QuadNode::reset(){
-    self = up = down = left = right = coord_x = coord_y = lay_s = lay_u = lay_d = lay_l, lay_r = -1;
+    self = up = down = left = right = coord_x = coord_y = lay_s = lay_u = lay_d = lay_l = lay_r = pin_idx = -1;
     flag = 0;
 }
 void QuadNode::reset(const QuadNode& qn){
@@ -119,6 +120,7 @@ void QuadNode::reset(const QuadNode& qn){
     lay_r   = qn.lay_r;
 }
 
+void QuadNode::set_pin(int idx) { pin_idx = idx; }
 void QuadNode::update_flag(unsigned _flag){ flag = _flag; }
 
 void QuadNode::move_vertical(int _x)  { coord_x += _x; }

@@ -329,7 +329,6 @@ bool Chip::moveCellLegal(Cell& cell, unsigned origin, unsigned target) {
     Coordinate& c_origin = _coordinates[origin];
     c_origin.rmCell(cell, _coordinates, _layers, _pins);
     c_target.addCell(cell, _coordinates, _layers, _pins);
-    _movedCells.push_back(cell.getIdx());
     return true;
 }
 
@@ -344,7 +343,6 @@ void Chip::moveCell(Cell& cell, unsigned origin, unsigned target) {
     Coordinate& c_origin = _coordinates[origin];
     c_origin.rmCell(cell, _coordinates, _layers, _pins);
     c_target.addCell(cell, _coordinates, _layers, _pins);
-    _movedCells.push_back(cell.getIdx());
     return;
 }
 
