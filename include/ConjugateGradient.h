@@ -99,6 +99,8 @@ class ConjGrad {
     double value(void);
     double value_and_grad(void);
 
+    void clip(void);
+
     Chip& chip;
     QuadForest& qf;
     safe::vector<double> grads;

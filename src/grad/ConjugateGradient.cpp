@@ -212,6 +212,7 @@ double ConjGrad::value(void) {
         case GradType::Plain:
             // TODO calculate final value
             cst.evaluateF(pos, ret);
+            clip();
             return ret;
     }
     return ILLEGAL;
@@ -223,7 +224,24 @@ double ConjGrad::value_and_grad(void) {
         case GradType::Plain:
             // TODO calculate gradient
             cst.evaluateFG(pos, ret, grads);
+            clip();
             return ret;
     }
     return ILLEGAL;
+}
+
+
+void ConjGrad::clip(void) {
+    for (unsigned i = 0; i < chip.getNumCells(); ++i) {
+        if (pos[2*i] < 0.) {
+            pos[2*i] = 0.;
+        } else if (pos[2*i] >= chip.getNumRows()){
+            pos[2*i] = double(chip.getNumRows()) - 1.;
+        }
+        if (pos[2*i + 1] < 0.) {
+            pos[2*i + 1] = 0.;
+        } else if (pos[2*i + 1] >= chip.getNumColumns()) {
+            pos[2*i + 1] = double(chip.getNumColumns()) - 1.;
+        }
+    }
 }
