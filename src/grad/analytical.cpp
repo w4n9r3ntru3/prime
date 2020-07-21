@@ -105,6 +105,33 @@ void Cost::evaluateFG(const safe::vector<double>& x,
     ///                           DENSITY                                ///
     ////////////////////////////////////////////////////////////////////////
 
+    ////////////////////////////////////////////////////////////////////////
+    ///                           SORTING                                ///
+    ////////////////////////////////////////////////////////////////////////
+
+    argList list;
+    for (unsigned i = 0; i < _chip.getNumCells(); ++i) {
+        if (_chip.getCell(i).movable(_chip.limited())) {
+            double rowDiff = abs(g[2 * i]), columnDiff = abs(g[2 * i + 1]);
+            list.push_back(std::make_pair(i, rowDiff + columnDiff));
+        }
+    }
+    std::sort(list.begin(), list.end(), myfunc);
+    for (auto i = list.begin(); i != list.end(); ++i) {
+        if (i->second == 0) {
+            break;
+        }
+        unsigned idx = i->first;
+        _movable.insert(idx);
+    }
+
+    for (unsigned i = 0; i < _chip.getNumCells(); ++i) {
+        if (!_movable.contains(i)) {
+            g[2 * i] = 0.;
+            g[2 * i + 1] = 0.;
+        }
+    }
+
     // assert(wirelength==0);
     f = wirelength + density;
 }

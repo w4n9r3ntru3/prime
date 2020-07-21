@@ -37,6 +37,8 @@
 ///                           CLASSES                                ///
 ////////////////////////////////////////////////////////////////////////
 
+typedef safe::vector<std::pair<unsigned, double>> argList; // arg, val
+
 class Cost {
    public:
     Cost(Chip& chip);
@@ -54,6 +56,9 @@ class Cost {
     Chip& _chip;
     safe::vector<double> _f_max_val, _f_min_val, _f_max_wei,
         _f_min_wei;  // buffer for calculating f; odd for y, even for x
+    safe::unordered_set<unsigned> _movable;
     double Wirelength(const safe::vector<double>& x);
     double Density(const safe::vector<double>& x);
 };
+
+bool myfunc(std::pair<unsigned, double> a, std::pair<unsigned, double> b);
