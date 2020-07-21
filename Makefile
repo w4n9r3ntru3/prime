@@ -6,7 +6,7 @@ TARGETS = src/main.cpp \
 		  src/grad/ConjugateGradient.cpp src/grad/analytical.cpp \
 		  src/router/router3d.cpp src/router/cost_function.cpp \
 		  src/quad/QuadUtil.cpp src/quad/QuadNode.cpp src/quad/QuadTree.cpp src/quad/QuadForest.cpp src/quad/Bounds.cpp \
-		  src/core/mmapstream.cpp \
+		  src/core/mmapstream.cpp  src/placement/Legalizer.cpp \
 
 BINARY = prime
 FLAGS =

@@ -81,6 +81,7 @@ class Chip {
     // modifier
     bool moveCellLegal(Cell& cell, unsigned origin, unsigned target);
     void moveCell(Cell& cell, unsigned origin, unsigned target);
+    void revert(Cell& cell, unsigned origin, unsigned target);
     void decNumMoved();  // trigger it if you want to move a cell back to its
                          // original position
 
@@ -111,6 +112,8 @@ class Chip {
     unsigned getNumMoved() const;
     bool limited() const;
     void log() const;
+
+    bool isValidPosition(int layer, int row, int cloumn);
 
     // output
     void output(std::fstream& output);

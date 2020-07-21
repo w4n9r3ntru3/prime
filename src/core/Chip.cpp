@@ -348,6 +348,11 @@ void Chip::moveCell(Cell& cell, unsigned origin, unsigned target) {
     return;
 }
 
+void Chip::revert(Cell& cell, unsigned origin, unsigned target)
+{
+    // TODO
+}
+
 void Chip::decNumMoved() {
     assert(_movedCells.size() > 0);
 }
@@ -457,6 +462,14 @@ bool Chip::limited() const {
 
 void Chip::log() const {
     maxNetDegree();
+}
+
+bool Chip::isValidPosition(int layer, int row, int column)
+{
+    bool a = (layer >= 0 && (unsigned)layer < _layer);
+    bool b = (row >= 0 && (unsigned)row >= _rowBase && (unsigned)row < _rowRange);
+    bool c = (column >= 0 && (unsigned)column >= _columnBase && (unsigned)column < _columnRange);
+    return a && b && c;
 }
 
 void Chip::output(std::fstream& output) {
