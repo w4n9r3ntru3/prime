@@ -209,7 +209,7 @@ void Cell::move() {
 }
 
 const std::string Cell::getCellName() const {
-    return "C" + std::to_string(_idx);
+    return "C" + std::to_string(_idx + 1);
 }
 
 unsigned Cell::getIdx() const {

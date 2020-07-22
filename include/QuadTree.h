@@ -128,6 +128,7 @@ class QuadTree {
     safe::unordered_map<unsigned, unsigned> nodeIdx2Pin;
     // Temporary members for constructing the tree
     safe::vector<NetSegment> segments;
+    safe::vector<NetSegment> segments_backup;
     // safe::vector<NetSegment> vias;  // FIXME:
 
     // Private functions

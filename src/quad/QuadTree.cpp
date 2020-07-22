@@ -225,7 +225,11 @@ safe::vector<SimplePin>& QuadTree::get_pin_list() {
     return pins;
 }
 safe::vector<NetSegment>& QuadTree::get_segments() {
-    return segments;
+    if (segments_backup.size() > 0) {
+        return segments_backup;
+    } else {
+        return segments;
+    }
 }
 
 unsigned QuadTree::get_net_length() const {
@@ -264,6 +268,7 @@ void QuadTree::add_segment(int srow,
     if (slay == elay) {
         segments.push_back(NetSegment(srow, scol, erow, ecol, slay));
     }
+    segments_backup.push_back(NetSegment(srow, scol, erow, ecol, slay, elay));
     // } else {
     //     vias.push_back(NetSegment(srow, scol, erow, ecol, slay));
     // }
