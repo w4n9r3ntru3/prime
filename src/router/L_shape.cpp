@@ -1,27 +1,88 @@
-#include "router3d.h"
 #include <cmath>
+#include <climits>
 
-bool Router3D::L_shape(
-    const unsigned srow,
-    const unsigned scol,
-    const unsigned slay,
-    const unsigned erow,
-    const unsigned ecol,
-    const unsigned elay,
-    const GridNet& net,
-    IdxList& ans) {
-    std::vector<int> cost; // -1 means unavailable
-    cost.reserve(abs(srow-erow)+abs(scol-ecol));
-    std::vector<unsigned> pi;
-    pi.reserve(abs(srow-erow)+abs(scol-ecol));
+#include "router3d.h"
 
-    unsigned iter = 0;
-    for (unsigned i = 0; i < _pm.getNumLayers(); ++i) {
-        if (_pm.getGrid(i,_pm.getIdx(srow+1,scol)))
-    }
-    if(srow < erow) {
-        for (unsigned i = srow + 2; i < erow; i) {
-            for ()
+bool Router3D::L_shape(const unsigned srow,
+                       const unsigned scol,
+                       const unsigned slay,
+                       const unsigned erow,
+                       const unsigned ecol,
+                       const unsigned elay,
+                       const GridNet& net,
+                       IdxList& ans) {
+    // row-column L shape
+    safe::vector<int> table(_pm.getNumLayers(), -1);
+    safe::vector<unsigned> cost(_pm.getNumLayers(), UINT_MAX);
+    for (unsigned i = 0; i < _pm.getNumLayers(); i += 2) {
+        int minSupply = INT_MAX;
+        if (Via_Assignment(slay, i, srow, scol, net, minSupply) &&
+            Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
+            table[i] = minSupply;
         }
     }
+    for (unsigned i = 1; i < _pm.getNumLayers(); i += 2) {
+        int minSupply = INT_MAX;
+        if (Via_Assignment(slay, i, srow, scol, net, minSupply) &&
+            Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
+            table[i] = minSupply;
+        }
+    }
+}
+
+bool Router3D::Layer_Assignment_H(const unsigned scol,
+                                  const unsigned ecol,
+                                  const unsigned row,
+                                  const unsigned lay,
+                                  const GridNet& net,
+                                  int& minSupply) {
+    for (unsigned i = scol; i <= ecol; (scol < ecol) ? ++i : --i) {
+        Grid& grid = _pm.getGrid(lay, _pm.getIdx(row, i));
+        if (!grid.routable(net)) {
+            return false;
+        }
+        int supply = grid.getSupply();
+        if (supply < minSupply) {
+            minSupply = supply;
+        }
+    }
+    return true;
+}
+
+bool Router3D::Layer_Assignment_V(const unsigned srow,
+                                  const unsigned erow,
+                                  const unsigned col,
+                                  const unsigned lay,
+                                  const GridNet& net,
+                                  int& minSupply) {
+    for (unsigned i = srow; i <= erow; (srow < erow) ? ++i : --i) {
+        Grid& grid = _pm.getGrid(lay, _pm.getIdx(i, col));
+        if (!grid.routable(net)) {
+            return false;
+        }
+        int supply = grid.getSupply();
+        if (supply < minSupply) {
+            minSupply = supply;
+        }
+    }
+    return true;
+}
+
+bool Router3D::Via_Assignment(const unsigned slay,
+                              const unsigned elay,
+                              const unsigned row,
+                              const unsigned col,
+                              const GridNet& net,
+                              int& minSupply) {
+    for (unsigned i = slay; i <= elay; (slay < elay) ? ++i : --i) {
+        Grid& grid = _pm.getGrid(i, _pm.getIdx(row, col));
+        if (!grid.routable(net)) {
+            return false;
+        }
+        int supply = grid.getSupply();
+        if (supply < minSupply) {
+            minSupply = supply;
+        }
+    }
+    return true;
 }

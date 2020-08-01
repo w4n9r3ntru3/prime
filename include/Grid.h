@@ -142,6 +142,7 @@ class Grid {
     int getSupply() const;
     bool canGetNet(const GridNet& net) const;
     bool canGetNet(unsigned i) const;
+    bool routable(const GridNet& net) const;
 
    private:
     int _supply;

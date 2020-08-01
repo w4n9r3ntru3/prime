@@ -16,8 +16,8 @@
 
 #include <utility>
 
-#include "../include/Chip.h"
-#include "../include/safe.h"
+#include "Chip.h"
+#include "safe.h"
 
 ////////////////////////////////////////////////////////////////////////
 ///                          DESCRIPTION                             ///
@@ -97,7 +97,35 @@ class Router3D {
         cost_type t);  // start, end, net, return route, cost type; true if
                        // there is a route, false if no
 
-    bool L_shape();
+    bool L_shape(const unsigned srow,
+                 const unsigned scol,
+                 const unsigned slay,
+                 const unsigned erow,
+                 const unsigned ecol,
+                 const unsigned elay,
+                 const GridNet& net,
+                 IdxList& ans);
+
+    bool Layer_Assignment_H(const unsigned scol,
+                            const unsigned ecol,
+                            const unsigned row,
+                            const unsigned lay,
+                            const GridNet& net,
+                            int& minSupply);
+
+    bool Layer_Assignment_V(const unsigned srow,
+                            const unsigned erow,
+                            const unsigned col,
+                            const unsigned lay,
+                            const GridNet& net,
+                            int& minSupply);
+
+    bool Via_Assignment(const unsigned slay,
+                        const unsigned elay,
+                        const unsigned row,
+                        const unsigned col,
+                        const GridNet& net,
+                        int& minSupply);
 
     // friend class of cost functions
     friend class CostGen;

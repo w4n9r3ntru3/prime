@@ -453,9 +453,17 @@ int Grid::getSupply() const {
 
 bool Grid::canGetNet(const GridNet& net) const {
     // return _nets.find(net.getId()) != _nets.end();
-    return _nets.contains(net.getIdx());
+    return _nets.contains(net.getIdx()) || _pins.contains(net.getIdx());
 }
 
 bool Grid::canGetNet(unsigned i) const {
-    return _nets.contains(i);
+    return _nets.contains(i) || _pins.contains(i);
+}
+
+bool Grid::routable(const GridNet& net) const {
+    if (canGetNet(net)) {
+        return true;
+    }
+    assert(_supply >= 0);
+    return _supply > 0;
 }
