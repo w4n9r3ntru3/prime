@@ -139,16 +139,3 @@ void Router3D::backtrace(const unsigned target,
         ans.push_back(get_layer(x));
     }
 }
-
-
-bool L_shape(
-        const unsigned srow,
-        const unsigned scol,
-        const unsigned slay,
-        const unsigned erow,
-        const unsigned ecol,
-        const unsigned elay,
-        const bool allow_middle_point,  // true if you want to return when find
-                                        // a middle point of the same net
-        const GridNet& net,
-        IdxList& ans);

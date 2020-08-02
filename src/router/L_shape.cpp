@@ -14,27 +14,62 @@ bool Router3D::L_shape(const unsigned srow,
     // H-V L shape
     safe::vector<int> table(_pm.getNumLayers(), -1);
     safe::vector<unsigned> cost(_pm.getNumLayers(), UINT_MAX);
-    // H
-    for (int i = slay; i > 0; (i ^ 01) ? i -= 1 : i -= 2) {
+    // H down
+    for (int i = slay, j = slay; i >= net.getMinlayer();
+         (i ^ 01) ? i -= 1 : i -= 2) {
+        if (i ^ 01) {
+            continue;
+        }
         int minSupply = INT_MAX;
-        if (Via_Assignment(slay, i, srow, scol, net, minSupply) &&
+        if (Via_Assignment(j, i, srow, scol, net, minSupply) &&
             Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
             table[i] = minSupply;
+            cost[i] = abs(i - slay);
+            j = i;
         }
     }
-    for (int i = slay; i < _pm.getNumLayers(); (i ^ 01) ? i += 1 : i += 2) {
+    // H up
+    for (int i = slay, j = slay;
+         i < _pm.getNumLayers() && i >= net.getMinlayer();
+         (i ^ 01) ? i += 1 : i += 2) {
+        if (i ^ 01) {
+            continue;
+        }
         int minSupply = INT_MAX;
-        if (Via_Assignment(slay, i, srow, scol, net, minSupply) &&
+        if (Via_Assignment(j, i, srow, scol, net, minSupply) &&
             Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
             table[i] = minSupply;
+            cost[i] = abs(i - slay);
+            j = i;
         }
     }
-    // V
-    for (unsigned i = 1; i < _pm.getNumLayers(); i += 2) {
+    // V down
+    for (int i = slay, j = slay; i >= net.getMinlayer();
+         (i ^ 01) ? i -= 1 : i -= 2) {
+        if (i ^ 01) {
+            continue;
+        }
         int minSupply = INT_MAX;
-        if (Via_Assignment(slay, i, srow, scol, net, minSupply) &&
+        if (Via_Assignment(j, i, srow, scol, net, minSupply) &&
             Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
             table[i] = minSupply;
+            cost[i] = abs(i - slay);
+            j = i;
+        }
+    }
+    // V up
+    for (int i = slay, j = slay;
+         i < _pm.getNumLayers() && i >= net.getMinlayer();
+         (i ^ 01) ? i += 1 : i += 2) {
+        if (i ^ 01) {
+            continue;
+        }
+        int minSupply = INT_MAX;
+        if (Via_Assignment(j, i, srow, scol, net, minSupply) &&
+            Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
+            table[i] = minSupply;
+            cost[i] = abs(i - slay);
+            j = i;
         }
     }
 }
