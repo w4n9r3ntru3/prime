@@ -1,5 +1,5 @@
-#include <cmath>
 #include <climits>
+#include <cmath>
 
 #include "router3d.h"
 
@@ -11,16 +11,25 @@ bool Router3D::L_shape(const unsigned srow,
                        const unsigned elay,
                        const GridNet& net,
                        IdxList& ans) {
-    // row-column L shape
+    // H-V L shape
     safe::vector<int> table(_pm.getNumLayers(), -1);
     safe::vector<unsigned> cost(_pm.getNumLayers(), UINT_MAX);
-    for (unsigned i = 0; i < _pm.getNumLayers(); i += 2) {
+    // H
+    for (int i = slay; i > 0; (i ^ 01) ? i -= 1 : i -= 2) {
         int minSupply = INT_MAX;
         if (Via_Assignment(slay, i, srow, scol, net, minSupply) &&
             Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
             table[i] = minSupply;
         }
     }
+    for (int i = slay; i < _pm.getNumLayers(); (i ^ 01) ? i += 1 : i += 2) {
+        int minSupply = INT_MAX;
+        if (Via_Assignment(slay, i, srow, scol, net, minSupply) &&
+            Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
+            table[i] = minSupply;
+        }
+    }
+    // V
     for (unsigned i = 1; i < _pm.getNumLayers(); i += 2) {
         int minSupply = INT_MAX;
         if (Via_Assignment(slay, i, srow, scol, net, minSupply) &&
