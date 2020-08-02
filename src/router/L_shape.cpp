@@ -44,31 +44,31 @@ bool Router3D::L_shape(const unsigned srow,
         }
     }
     // V down
-    for (int i = slay, j = slay; i >= net.getMinlayer();
-         (i ^ 01) ? i -= 1 : i -= 2) {
-        if (i ^ 01) {
+    for (int i = elay, j = elay; i >= net.getMinlayer();
+         (i ^ 01) ? i -= 2 : i -= 1) {
+        if (!(i ^ 01)) {
             continue;
         }
         int minSupply = INT_MAX;
-        if (Via_Assignment(j, i, srow, scol, net, minSupply) &&
-            Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
+        if (Via_Assignment(j, i, erow, ecol, net, minSupply) &&
+            Layer_Assignment_V(srow, erow, ecol, i, net, minSupply)) {
             table[i] = minSupply;
-            cost[i] = abs(i - slay);
+            cost[i] = abs(i - elay);
             j = i;
         }
     }
     // V up
     for (int i = slay, j = slay;
          i < _pm.getNumLayers() && i >= net.getMinlayer();
-         (i ^ 01) ? i += 1 : i += 2) {
-        if (i ^ 01) {
+         (i ^ 01) ? i += 2 : i += 1) {
+        if (!(i ^ 01)) {
             continue;
         }
         int minSupply = INT_MAX;
-        if (Via_Assignment(j, i, srow, scol, net, minSupply) &&
-            Layer_Assignment_H(scol, ecol, srow, i, net, minSupply)) {
+        if (Via_Assignment(j, i, erow, ecol, net, minSupply) &&
+            Layer_Assignment_V(srow, erow, ecol, i, net, minSupply)) {
             table[i] = minSupply;
-            cost[i] = abs(i - slay);
+            cost[i] = abs(i - elay);
             j = i;
         }
     }
