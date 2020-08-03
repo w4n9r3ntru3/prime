@@ -247,9 +247,11 @@ void Chip::readFile(mstream& input) {
             // std::cout << &cell << " " << &cell_ << std::endl;
             _grid_nets[i].addPin(pin);
             pin.setNet(_grid_nets[i]);
-            Grid& g = _layers[pin.getLayer()].getGrid(
+            for (int k = 0; k < getNumLayers(); ++k) {
+            Grid& g = _layers[k].getGrid(
                 getIdx(getPinRow(pin), getPinColumn(pin)));
             g.addPin(i);
+            }
         }
         // return;
     }
@@ -280,14 +282,14 @@ void Chip::readFile(mstream& input) {
 
 Chip::~Chip() {
     // debug
-    /*std::fstream out("out.txt", std::ios::out);
+    std::fstream out("out.txt", std::ios::out);
     for (Layer& ptr : _layers) {
         for (unsigned i = 0; i < _rowRange; ++i) {
             for (unsigned j = 0; j < _columnRange; ++j) {
                 out << ptr.getGrid(getIdx(i, j)).getSupply() << std::endl;
             }
         }
-    }*/
+    }
     // debug
 }
 
