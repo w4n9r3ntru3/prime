@@ -167,7 +167,7 @@ class Router3D {
                         const GridNet& net,
                         int& minSupply);
 
-    void Rout_H(const unsigned lay,
+    bool Rout_H(const unsigned lay,
                 const unsigned row,
                 const unsigned scol,
                 const unsigned ecol,
@@ -175,13 +175,18 @@ class Router3D {
                 safe::vector<int>& minSupplyTable,
                 safe::vector<unsigned>& cost);
 
-    void Rout_V(const unsigned lay,
+    bool Rout_V(const unsigned lay,
                 const unsigned col,
                 const unsigned srow,
                 const unsigned erow,
                 const GridNet& net,
                 safe::vector<int>& minSupplyTable,
                 safe::vector<unsigned>& cost);
+
+    unsigned Select(const safe::vector<int>& minSupplyTable,
+               const safe::vector<unsigned>& cost,
+               unsigned& layH,
+               unsigned& layV); // -1 means no solution
 };
 
 bool isOdd(int a);  // V
