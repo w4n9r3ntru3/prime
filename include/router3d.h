@@ -184,9 +184,17 @@ class Router3D {
                 safe::vector<unsigned>& cost);
 
     unsigned Select(const safe::vector<int>& minSupplyTable,
-               const safe::vector<unsigned>& cost,
-               unsigned& layH,
-               unsigned& layV); // -1 means no solution
+                    const safe::vector<unsigned>& cost,
+                    unsigned& layH,
+                    unsigned& layV,
+                    int& minSupply);  // -1 means no solution
+    void assignWire(const unsigned srow,
+                    const unsigned scol,
+                    const unsigned slay,
+                    const unsigned erow,
+                    const unsigned ecol,
+                    const unsigned elay,
+                    IdxList& ans);
 };
 
 bool isOdd(int a);  // V
