@@ -247,11 +247,9 @@ void Chip::readFile(mstream& input) {
             // std::cout << &cell << " " << &cell_ << std::endl;
             _grid_nets[i].addPin(pin);
             pin.setNet(_grid_nets[i]);
-            for (int k = 0; k < getNumLayers(); ++k) {
-                Grid& g = _layers[k].getGrid(
-                    getIdx(getPinRow(pin), getPinColumn(pin)));
-                g.addPin(i);
-            }
+            Grid& g = _layers[pin.getLayer()].getGrid(
+                getIdx(getPinRow(pin), getPinColumn(pin)));
+            g.addPin(i);
         }
         // return;
     }
@@ -560,15 +558,15 @@ void Chip::assignRoute(int srow,
         std::swap(slay, elay);
     }
     net.addSegment(srow, scol, slay, erow, ecol, elay);
-    // for (int i = slay; i <= elay; ++i) {
-    //     Layer& l = _layers[i];
-    //     for (int j = scol; j <= ecol; ++j) {
-    //         for (int k = srow; k <= erow; ++k) {
-    //             Grid& g = l.getGrid(getIdx(k, j));
-    //             g.addNet(net);
-    //         }
-    //     }
-    // }
+    for (int i = slay; i <= elay; ++i) {
+        Layer& l = _layers[i];
+        for (int j = scol; j <= ecol; ++j) {
+            for (int k = srow; k <= erow; ++k) {
+                Grid& g = l.getGrid(getIdx(k, j));
+                g.addNet(net);
+            }
+        }
+    }
 }
 
 // void Chip::outputRoute(std::fstream& output) {
