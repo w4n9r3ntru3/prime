@@ -8,8 +8,6 @@
 
 ***********************************************************************/
 
-#pragma once
-
 ////////////////////////////////////////////////////////////////////////
 ///                           INCLUDES                               ///
 ////////////////////////////////////////////////////////////////////////
@@ -223,6 +221,7 @@ inline bool Router3D::Rout_H(const unsigned lay,
             j = i;
         }
     }
+    return ret;
 }
 
 inline bool Router3D::Rout_V(const unsigned lay,
@@ -263,12 +262,13 @@ inline bool Router3D::Rout_V(const unsigned lay,
             Layer_Assignment_V(srow, erow, col, i, net, minSupply, cover)) {
             ret = true;
             minSupplyTable[i] = minSupply;
-            unsigned c = abs(i-lay);
+            int c = abs(i-lay);
             assert(c >= cover);
             cost[i] = c-cover;
             j = i;
         }
     }
+    return ret;
 }
 
 inline unsigned Router3D::Select(const safe::vector<int>& minSupplyTable,
