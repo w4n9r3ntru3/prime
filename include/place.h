@@ -27,17 +27,24 @@
 
 class BoundingNet {
    public:
-    BoundingNet(GridNet& net);
+    BoundingNet(Chip& chp, GridNet& net);
+    BoundingNet(BoundingNet&& other);
+    BoundingNet(const BoundingNet& other) = delete;
 
    private:
-    unsigned leftmax, leftnext;
-    unsigned rightmax, rightnext;
-    unsigned topmax, topnext;
-    unsigned bottommax, bottomnext;
-    unsigned leftmaxpin;
-    unsigned rightmaxpin;
-    unsigned topmaxpin;
-    unsigned bottommaxpin;
+    unsigned _leftmost, _leftnext;
+    unsigned _rightmost, _rightnext;
+    unsigned _topmost, _topnext;
+    unsigned _bottommost, _bottomnext;
+    unsigned _leftmostpin;
+    unsigned _rightmostpin;
+    unsigned _topmostpin;
+    unsigned _bottommostpin;
+
+    // private function
+    void updatePos(const unsigned row,
+                   const unsigned column,
+                   const unsigned pin);
 };
 
 class Place {
