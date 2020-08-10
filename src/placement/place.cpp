@@ -15,6 +15,8 @@
 
 #include "place.h"
 
+#include <climits>
+
 ////////////////////////////////////////////////////////////////////////
 ///                          DESCRIPTION                             ///
 ////////////////////////////////////////////////////////////////////////
@@ -122,7 +124,14 @@ void BoundingNet::updatePos(const unsigned row,
     }
 }
 
-moveCell::moveCell() {}
+moveCell::moveCell()
+    : _H(0),
+      _V(0),
+      _rightRange(UINT_MAX),
+      _leftRange(UINT_MAX),
+      _upRange(UINT_MAX),
+      _downRange(UINT_MAX) {}
+
 moveCell::moveCell(moveCell&& other)
     : _H(other._H),
       _V(other._V),
@@ -192,6 +201,7 @@ unsigned moveCell::getUpRange() const {
 }
 
 Place::Place(Chip& chp) : _chp(chp) {
+    _cells.reserve(_chp.getNumCells());
     _nets.reserve(_chp.getNumNets());
     for (unsigned i = 0; i < _chp.getNumCells(); ++i) {
         _cells.push_back(std::move(moveCell()));
@@ -210,19 +220,25 @@ Place::Place(Chip& chp) : _chp(chp) {
         }
     }
     std::sort(list.begin(), list.end(), myfunc);
-    for (auto i = list.begin(); i != list.end(); ++i) {
-        if (i->second == 0) {
+    for (unsigned i = 0; i < _chp.getMaxMove(); ++i) {
+        auto j = list[i];
+        if (j.second == 0) {
             break;
         }
-        unsigned idx = i->first;
+        unsigned idx = j.first;
         Cell& cell = _chp.getCell(idx);
         moveCell& m_cell = _cells[idx];
-        unsigned erow = m_cell.getH() > 0
-                            ? cell.getRow() + m_cell.getRightRange()
-                            : cell.getRow() - m_cell.getLeftRange();
-        unsigned ecol = m_cell.getV() > 0
-                            ? cell.getColumn() + m_cell.getUpRange()
-                            : cell.getColumn() - m_cell.getDownRange();
+        unsigned erow = 0, ecol = 0;
+        if (m_cell.getH() > 0) {
+            ecol = cell.getColumn() + m_cell.getRightRange();
+        } else if (m_cell.getH() < 0) {
+            ecol = cell.getColumn() - m_cell.getLeftRange();
+        }
+        if (m_cell.getV() > 0) {
+            erow = cell.getRow() + m_cell.getUpRange();
+        } else if (m_cell.getV() < 0) {
+            erow = cell.getRow() - m_cell.getDownRange();
+        }
         _chp.moveCell(cell, cell.getRow(), cell.getColumn(), erow, ecol);
     }
 }
@@ -231,12 +247,23 @@ inline void Place::updateCell(const unsigned i) {
     BoundingNet& net = _nets[i];
     unsigned cell;
     cell = _chp.getPin(net.getLeftmost()).get_cell_idx();
+    Cell& c1 = _chp.getCell(cell);
+    assert(c1.getColumn() >= net.getLeftRange());
     _cells[cell].setleftRange(net.getLeftRange());
+
     cell = _chp.getPin(net.getRightmost()).get_cell_idx();
+    Cell& c2 = _chp.getCell(cell);
+    assert(c2.getColumn() + net.getRightRange() < _chp.getNumColumns());
     _cells[cell].setrightRange(net.getRightRange());
+
     cell = _chp.getPin(net.getTopmost()).get_cell_idx();
+    Cell& c3 = _chp.getCell(cell);
+    assert(c3.getRow() + net.getUpRange() < _chp.getNumRows());
     _cells[cell].setupRange(net.getUpRange());
+
     cell = _chp.getPin(net.getBottommost()).get_cell_idx();
+    Cell& c4 = _chp.getCell(cell);
+    assert(c4.getRow() >= net.getDownRange());
     _cells[cell].setdownRange(net.getDownRange());
 }
 

@@ -81,7 +81,7 @@ void Legalizer::_legalize(Chip& chip, int pos_x, int pos_y, Cell& cell)
                     dest_x = dx;
                     dest_y = dy;
                 }
-                chip.revert(cell, pos_x, pos_y, dx, dy);
+                // chip.revert(cell, pos_x, pos_y, dx, dy);
             }
 
             dx = pos_x - x;
@@ -96,7 +96,7 @@ void Legalizer::_legalize(Chip& chip, int pos_x, int pos_y, Cell& cell)
                     dest_x = dx;
                     dest_y = dy;
                 }
-                chip.revert(cell, pos_x, pos_y, dx, dy);
+                // chip.revert(cell, pos_x, pos_y, dx, dy);
             }
 
             dx = pos_x + x;
@@ -111,7 +111,7 @@ void Legalizer::_legalize(Chip& chip, int pos_x, int pos_y, Cell& cell)
                     dest_x = dx;
                     dest_y = dy;
                 }
-                chip.revert(cell, pos_x, pos_y, dx, dy);
+                // chip.revert(cell, pos_x, pos_y, dx, dy);
             }
 
             dx = pos_x - x;
@@ -126,7 +126,7 @@ void Legalizer::_legalize(Chip& chip, int pos_x, int pos_y, Cell& cell)
                     dest_x = dx;
                     dest_y = dy;
                 }
-                chip.revert(cell, pos_x, pos_y, dx, dy);
+                // chip.revert(cell, pos_x, pos_y, dx, dy);
             }
         }
 
